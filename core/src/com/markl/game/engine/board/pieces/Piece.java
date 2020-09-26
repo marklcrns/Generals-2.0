@@ -20,10 +20,10 @@ public abstract class Piece {
 
     public String rank;                  // Rank of the piece
     public int powerLevel;               // Power level of the piece to compare ranks
-    public int pieceCoords;              // Coordinates of this Piece instance
+    public int coords;              // Coordinates of this Piece instance
     public int legalPieceInstanceCount;  // Allowed amount of piece instance owned by a Player in a single game
-    public final Player pieceOwner;      // Player that owns this Piece
-    public final Alliance pieceAlliance; // Piece alliance of this Piece
+    public final Player owner;      // Player that owns this Piece
+    public final Alliance alliance; // Piece alliance of this Piece
     private Map<String, Move> moveSet;   // HashMap containing all currently available moves for this Piece instance
 
     /**
@@ -40,9 +40,9 @@ public abstract class Piece {
      * Sets pieceCoords to -1 temporarily.
      */
     public Piece(final Player owner, final Alliance alliance) {
-        this.pieceOwner = owner;
-        this.pieceAlliance = alliance;
-        this.pieceCoords = -1;
+        this.owner = owner;
+        this.alliance = alliance;
+        this.coords = -1;
     }
 
     /**
@@ -51,9 +51,9 @@ public abstract class Piece {
      */
     public Piece(final Player owner, final Alliance alliance,
             final int coords) {
-        this.pieceOwner = owner;
-        this.pieceAlliance = alliance;
-        this.pieceCoords = coords;
+        this.owner = owner;
+        this.alliance = alliance;
+        this.coords = coords;
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class Piece {
      * @return Player pieceOwner field.
      */
     public Player getPieceOwner() {
-        return this.pieceOwner;
+        return this.owner;
     }
 
     /**
@@ -69,7 +69,7 @@ public abstract class Piece {
      * @return int pieceCoords field.
      */
     public int getPieceCoords() {
-        return this.pieceCoords;
+        return this.coords;
     }
 
     /**
@@ -77,7 +77,7 @@ public abstract class Piece {
      * @param coords new piece coordinates.
      */
     public void setPieceCoords(final int coords) {
-        this.pieceCoords = coords;
+        this.coords = coords;
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class Piece {
      */
     // TODO: Improve to a no argument method.
     public Tile getTile(final Board board) {
-        return board.getTile(pieceCoords);
+        return board.getTile(coords);
     }
 
     /**
@@ -95,7 +95,7 @@ public abstract class Piece {
      * @return Alliance of this Piece.
      */
     public Alliance getPieceAlliance() {
-        return this.pieceAlliance;
+        return this.alliance;
     }
 
     /**
@@ -108,34 +108,37 @@ public abstract class Piece {
     public Map<String, Move> evaluateMoves(final Board board) {
         moveSet = new HashMap<String, Move>();
 
-        final int upAdjacentPieceCoords = this.pieceCoords + mobility.get("u");
-        if (pieceCoords >= BoardUtils.SECOND_ROW_INIT) {
-            moveSet.put("up", new Move(pieceOwner, board, pieceCoords, upAdjacentPieceCoords));
+        final int upAdjacentPieceCoords = this.coords + mobility.get("u");
+        if (coords >= BoardUtils.SECOND_ROW_INIT) {
+            moveSet.put("up", new Move(owner, board, coords, upAdjacentPieceCoords));
             moveSet.get("up").evaluateMove();
         }
-        final int downAdjacentPieceCoords = this.pieceCoords + mobility.get("d");
-        if (pieceCoords < BoardUtils.LAST_ROW_INIT) {
-            moveSet.put("down", new Move(pieceOwner, board, pieceCoords, downAdjacentPieceCoords));
+        final int downAdjacentPieceCoords = this.coords + mobility.get("d");
+        if (coords < BoardUtils.LAST_ROW_INIT) {
+            moveSet.put("down", new Move(owner, board, coords, downAdjacentPieceCoords));
             moveSet.get("down").evaluateMove();
         }
-        final int leftAdjacentPieceCoords = this.pieceCoords + mobility.get("l");
-        if (this.pieceCoords % 9 != 0) {
-            moveSet.put("left", new Move(pieceOwner, board, pieceCoords, leftAdjacentPieceCoords));
+        final int leftAdjacentPieceCoords = this.coords + mobility.get("l");
+        if (this.coords % 9 != 0) {
+            moveSet.put("left", new Move(owner, board, coords, leftAdjacentPieceCoords));
             moveSet.get("left").evaluateMove();
         }
-        final int rightAdjacentPieceCoords = this.pieceCoords + mobility.get("r");
+        final int rightAdjacentPieceCoords = this.coords + mobility.get("r");
         if (rightAdjacentPieceCoords % 9 != 0) {
-            moveSet.put("right", new Move(pieceOwner, board, pieceCoords, rightAdjacentPieceCoords));
+            moveSet.put("right", new Move(owner, board, coords, rightAdjacentPieceCoords));
             moveSet.get("right").evaluateMove();
         }
 
         return moveSet;
     }
 
+    public int getLegalPieceInstanceCount() {
+        return this.legalPieceInstanceCount;
+    }
+
     //////////////////// Abstract methods to implement ////////////////////
 
     public abstract String getRank();
-    public abstract int getLegalPieceInstanceCount();
     public abstract int getPowerLevel();
     public abstract Piece clone();
 }

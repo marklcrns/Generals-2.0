@@ -16,7 +16,7 @@ public class Board {
     private String playerWhiteName; // White player's name assigned when game initialized
 
     public Board() {
-        init();
+        this.init();
     }
 
     private void init() {
@@ -39,14 +39,14 @@ public class Board {
      * @return Tile from gameBoard field List.
      */
     public Tile getTile(int tileNum) {
-        return tiles.get(tileNum);
+        return this.tiles.get(tileNum);
     }
 
     /**
      * Method that empties board Tiles pieces.
      */
     private void emptyBoard() {
-        tiles = new ArrayList<Tile>();
+        this.tiles = new ArrayList<Tile>();
         // Add new empty Tiles in board
         for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES; i++) {
             // Set Tile territory
@@ -65,9 +65,9 @@ public class Board {
      */
     public Player getPlayer(final Alliance alliance) {
         if (alliance == Alliance.BLACK)
-            return playerBlack;
+            return this.playerBlack;
         else
-            return playerWhite;
+            return this.playerWhite;
     }
 
 }
