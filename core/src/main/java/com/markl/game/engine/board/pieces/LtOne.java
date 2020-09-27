@@ -12,67 +12,80 @@ import com.markl.game.engine.board.Player;
  */
 public class LtOne extends Piece {
 
-  /** Rank of the piece */
-  private final String rank = BoardUtils.LT_ONE_RANK;
+    private final String rank = BoardUtils.LT_ONE_RANK;                  // Rank of the piece
+    private final int powerLevel = 5;                                    // Power level of the piece to compare ranks
+    private final int legalPieceInstanceCount = BoardUtils.LT_ONE_COUNT; // Allowed amount of piece instance owned by a Player in a single game
 
-  /** Power level of the piece to compare ranks */
-  private final int powerLevel = 5;
+    /**
+     * Constructor that takes in the owner Player, and Alliance of this piece.
+     * Sets coords to -1 temporarily.
+     */
+    public LtOne(final Player owner, final Alliance alliance) {
+        super(owner, alliance);
+    }
 
-  /** Allowed amount of piece instance owned by a Player in a single game */
-  private final int legalPieceInstanceCount = 1;
+    /**
+     * Constructor that takes in the owner Player, Alliance and coordinates of
+     * this Piece.
+     */
+    public LtOne(final Player owner, final Alliance alliance,
+            final int coords) {
+        super(owner, alliance, coords);
+    }
 
-  /**
-   * Constructor that takes in the owner Player, and Alliance of this piece.
-   * Sets coords to -1 temporarily.
-   */
-  public LtOne(final Player owner, final Alliance alliance) {
-    super(owner, alliance);
-  }
+    /**
+     * Get piece rank.
+     * @return String rank field.
+     */
+    @Override
+    public final String getRank() {
+        return this.rank;
+    }
 
-  /**
-   * Constructor that takes in the owner Player, Alliance and coordinates of
-   * this Piece.
-   */
-  public LtOne(final Player owner, final Alliance alliance,
-               final int coords) {
-    super(owner, alliance, coords);
-  }
+    /**
+     * Get piece power level.
+     * @return piece powerLevel.
+     */
+    @Override
+    public final int getPowerLevel() {
+        return this.powerLevel;
+    }
 
-  /**
-   * Gets the current rank of this specific Piece instance.
-   * @return String rank field.
-   */
-  @Override
-  public final String getRank() {
-    return this.rank;
-  }
+    /**
+     * Get piece legal instance count.
+     * @return int getLegalPieceInstanceCount field.
+     */
+    @Override
+    public final int getLegalPieceInstanceCount() {
+        return this.legalPieceInstanceCount;
+    }
 
-  /**
-   * Gets this Pieces instance power level.
-   * @return int powerLevel field.
-   */
-  @Override
-  public final int getPowerLevel() {
-    return this.powerLevel;
-  }
+    /**
+     * Gets piece {@link Alliance}.
+     * @return piece alliance.
+     */
+    @Override
+    public final Alliance getPieceAlliance() {
+        return this.alliance;
+    }
 
-  /**
-   * Create deep copy of this specific Piece instance.
-   * @return Piece deep copy if this Piece instance.
-   */
-  @Override
-  public final Piece clone() {
-    final LtOne copy = new LtOne(
-        this.owner, this.alliance, this.coords);
-    return copy;
-  }
+    /**
+     * Create deep copy of this specific Piece instance.
+     * @return Piece deep copy of this Piece instance.
+     */
+    @Override
+    public final Piece clone() {
+        final LtOne copy = new LtOne(
+                this.owner, this.alliance, this.coords);
+        return copy;
+    }
 
-  @Override
-  public String toString() {
-    return "piece=" + rank + ";powerLevel=" + powerLevel +
-           ";coords=" + coords +
-           ";legalPieceInstanceCount=" + legalPieceInstanceCount +
-           ";owner=" + owner.getAlliance() +
-           ";alliance=" + alliance;
-  }
+    @Override
+    public String toString() {
+        return "piece=" + rank + ";powerLevel=" + powerLevel +
+            ";coords=" + coords +
+            ";legalPieceInstanceCount=" + legalPieceInstanceCount +
+            ";owner=" + owner.getAlliance() +
+            ";alliance=" + alliance;
+    }
 }

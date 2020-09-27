@@ -119,9 +119,6 @@ public class BoardUtils {
         else if (pieceRankName.contains(SPY_RANK))
             piece = new Spy(owner, alliance);
 
-        // if (piece != null)
-        //   System.out.println(piece);
-
         return piece;
     }
 

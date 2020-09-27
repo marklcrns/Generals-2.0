@@ -18,13 +18,13 @@ import com.markl.game.engine.board.Tile;
  */
 public abstract class Piece {
 
-    public String rank;                  // Rank of the piece
-    public int powerLevel;               // Power level of the piece to compare ranks
-    public int coords;              // Coordinates of this Piece instance
-    public int legalPieceInstanceCount;  // Allowed amount of piece instance owned by a Player in a single game
-    public final Player owner;      // Player that owns this Piece
-    public final Alliance alliance; // Piece alliance of this Piece
-    private Map<String, Move> moveSet;   // HashMap containing all currently available moves for this Piece instance
+    public String rank;                 // Rank of the piece
+    public int powerLevel;              // Power level of the piece to compare ranks
+    public int coords;                  // Coordinates of this Piece instance
+    public int legalPieceInstanceCount; // Allowed amount of piece instance owned by a Player in a single game
+    public final Player owner;          // Player that owns this Piece
+    public final Alliance alliance;     // Piece alliance of this Piece
+    private Map<String, Move> moveSet;  // HashMap containing all currently available moves for this Piece instance
 
     /**
      * HashMap that contains the Piece mobility according to the Board coordinates
@@ -91,14 +91,6 @@ public abstract class Piece {
     }
 
     /**
-     * Gets this Piece Alliance.
-     * @return Alliance of this Piece.
-     */
-    public Alliance getPieceAlliance() {
-        return this.alliance;
-    }
-
-    /**
      * Evaluate this Piece current possible moves.
      * Depends on Move.evaluateMove() method.
      * @param board Board to evaluate the move from.
@@ -132,13 +124,11 @@ public abstract class Piece {
         return moveSet;
     }
 
-    public int getLegalPieceInstanceCount() {
-        return this.legalPieceInstanceCount;
-    }
-
     //////////////////// Abstract methods to implement ////////////////////
 
-    public abstract String getRank();
-    public abstract int getPowerLevel();
     public abstract Piece clone();
+    public abstract String getRank();
+    public abstract Alliance getPieceAlliance();
+    public abstract int getPowerLevel();
+    public abstract int getLegalPieceInstanceCount();
 }

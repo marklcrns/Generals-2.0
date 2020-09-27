@@ -10,7 +10,9 @@ public class Generals extends ApplicationAdapter {
         Board board = new Board();
         BoardBuilder builder = new BoardBuilder(board);
         builder.createDemoBoardBuild();
+        builder.build();
         System.out.println(builder.toString());
+        System.out.println(board.toString());
     }
 
     @Override
