@@ -13,7 +13,7 @@ import com.markl.game.engine.board.Tile;
  * the same, i.e. a step forwards, backwards and sidewards. Also, Move class
  * evaluates all the four possible moves and categorized them as one of the
  * following, "aggressive", "draw", "normal", and "invalid." Finally, Move class
- * checks to see if the executing move will conclude the game and declase the
+ * checks to see if the executing move will conclude the game and declare the
  * winner.
  *
  * Author: Mark Lucernas
@@ -88,7 +88,7 @@ public class Move {
      */
     public boolean execute() {
         if (legalMoveCheck()) {
-            this.turnId = board.getCurrentTurn();
+            // TODO: this.turnId = board.getCurrentTurn();
 
             switch (this.moveType) {
 
@@ -97,11 +97,11 @@ public class Move {
                     if (isTargetPieceFlag()) {
                         System.out.println("\n" + sourcePieceCopy.getPieceAlliance() +
                                 " player WON!\n");
-                        board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
+                        // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
                     } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
                         System.out.println("\n" + targetPieceCopy.getPieceAlliance() +
                                 " player WON!\n");
-                        board.setEndGameWinner(targetPieceCopy.getPieceAlliance());
+                        // TODO: board.setEndGameWinner(targetPieceCopy.getPieceAlliance());
                     }
 
                     // Eliminate low ranking piece from the aggressive engagement.
@@ -121,7 +121,7 @@ public class Move {
                     if (isFlagSucceeded()) {
                         System.out.println("\n" + sourcePieceCopy.getPieceAlliance() +
                                 " player WON!\n");
-                        board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
+                        // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
                     }
 
                     // Move Tile normally
@@ -170,19 +170,6 @@ public class Move {
 
         // set move type to "invalid" if not in possible moves.
         moveType = "invalid";
-
-        if (this.board.isDebugMode()) {
-            String targetPiece;
-            if (targetPieceCopy == null)
-                targetPiece = "";
-            else
-                targetPiece = targetPieceCopy.getRank();
-
-            System.out.println(sourcePieceCopy.getPieceAlliance() + " " +
-                    sourcePieceCopy.getRank() + " " + sourceTileCoords + " to " +
-                    targetPiece + " " + targetTileCoords + " " +
-                    this.moveType + " ILLEGAL MOVE");
-        }
 
         return false;
     }
