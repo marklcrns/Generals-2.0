@@ -7,6 +7,7 @@ import java.util.Map;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardUtils;
+import com.markl.game.engine.board.Move;
 import com.markl.game.engine.board.Player;
 import com.markl.game.engine.board.Tile;
 

@@ -1,12 +1,8 @@
-package com.markl.game.engine.board.pieces;
+package com.markl.game.engine.board;
 
 import java.util.Map;
 
-import com.markl.game.engine.board.Alliance;
-import com.markl.game.engine.board.Board;
-import com.markl.game.engine.board.BoardUtils;
-import com.markl.game.engine.board.Player;
-import com.markl.game.engine.board.Tile;
+import com.markl.game.engine.board.pieces.Piece;
 
 /**
  * Move class that serves as the mobility of each Piece. All pieces movement are

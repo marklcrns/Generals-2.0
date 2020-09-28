@@ -1,7 +1,6 @@
 package com.markl.game.engine.board;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import com.markl.game.engine.board.pieces.Piece;
 
@@ -11,7 +10,7 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-    private List<Tile> tiles;        // List of all Tiles containing data of each piece
+    private LinkedList<Tile> tiles;        // List of all Tiles containing data of each piece
     private Player playerBlack;      // Player instance that all contains all infos on black pieces
     private Player playerWhite;      // Player instance that all contains all infos on white pieces
     private String playerBlackName;  // Black player's name assigned when game initialized
@@ -24,14 +23,14 @@ public class Board {
     }
 
     private void init() {
-        this.tiles = new ArrayList<Tile>();
+        this.tiles = new LinkedList<Tile>();
     }
 
     /**
      * Method that empties board Tiles pieces.
      */
-    protected void emptyBoard() {
-        this.tiles = new ArrayList<Tile>();
+    protected void discardPieces() {
+        this.tiles = new LinkedList<Tile>();
         // Add new empty Tiles in board
         for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES; i++) {
             // Set Tile territory
@@ -41,24 +40,20 @@ public class Board {
                 this.addTile(i, Alliance.WHITE);
         }
     }
+
     /**
-     * Swaps two pieces and update piece coordinates.
+     * Inserts piece into an empty tile.
      * @param sourcePieceCoords source piece coordinates.
-     * @param targetPieceCoords target piece coordinates.
+     * @param piece Piece instance to insert.
      * @return boolean true if successful, else false.
      */
-    protected boolean swapPiece(final int sourcePieceCoords, final int targetPieceCoords) {
-        if (this.getTile(sourcePieceCoords).isTileOccupied() &&
-                this.getTile(targetPieceCoords).isTileOccupied()) {
-            final Piece sourcePiece = this.getTile(sourcePieceCoords).getPiece().clone();
-            final Piece targetPiece = this.getTile(targetPieceCoords).getPiece().clone();
-            sourcePiece.setPieceCoords(targetPieceCoords);
-            targetPiece.setPieceCoords(sourcePieceCoords);
-            this.getAllTiles().get(sourcePieceCoords).replacePiece(targetPiece);
-            this.getAllTiles().get(targetPieceCoords).replacePiece(sourcePiece);
-
+    protected boolean insertPiece(final int sourcePieceCoords, final Piece piece) {
+        if (this.getTile(sourcePieceCoords).isTileEmpty()) {
+            piece.setPieceCoords(sourcePieceCoords);
+            this.getAllTiles().get(sourcePieceCoords).insertPiece(piece);
+            this.getTile(sourcePieceCoords).insertPiece(piece);
             return true;
-                }
+        }
         return false;
     }
 
@@ -88,29 +83,15 @@ public class Board {
      */
     protected boolean movePiece(final int sourcePieceCoords, final int targetPieceCoords) {
         // insert copy of source piece into target tile
-        if (this.getTile(targetPieceCoords).isTileEmpty()) {
+        if (this.getTile(sourcePieceCoords).isTileOccupied() &&
+            this.getTile(targetPieceCoords).isTileEmpty())
+        {
             final Piece sourcePieceCopy = this.getTile(sourcePieceCoords).getPiece().clone();
             sourcePieceCopy.setPieceCoords(targetPieceCoords);
             this.getTile(targetPieceCoords).insertPiece(sourcePieceCopy);
             // delete source piece
             this.getTile(sourcePieceCoords).removePiece();
 
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Inserts piece into an empty tile.
-     * @param sourcePieceCoords source piece coordinates.
-     * @param piece Piece instance to insert.
-     * @return boolean true if successful, else false.
-     */
-    protected boolean insertPiece(final int sourcePieceCoords, final Piece piece) {
-        if (this.getTile(sourcePieceCoords).isTileEmpty()) {
-            piece.setPieceCoords(sourcePieceCoords);
-            this.getAllTiles().get(sourcePieceCoords).insertPiece(piece);
-            this.getTile(sourcePieceCoords).insertPiece(piece);
             return true;
         }
         return false;
@@ -124,6 +105,30 @@ public class Board {
     protected boolean deletePiece(final int pieceCoords) {
         if (this.getTile(pieceCoords).isTileOccupied()) {
             this.getTile(pieceCoords).removePiece();
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Swaps two pieces and update piece coordinates.
+     * @param sourcePieceCoords source piece coordinates.
+     * @param targetPieceCoords target piece coordinates.
+     * @return boolean true if successful, else false.
+     */
+    protected boolean swapPiece(final int sourcePieceCoords, final int targetPieceCoords) {
+        if (this.getTile(sourcePieceCoords).isTileOccupied() &&
+                this.getTile(targetPieceCoords).isTileOccupied())
+        {
+            final Piece tmpSourcePiece = this.getTile(sourcePieceCoords).getPiece().clone();
+            final Piece tmpTargetPiece = this.getTile(targetPieceCoords).getPiece().clone();
+
+            tmpSourcePiece.setPieceCoords(targetPieceCoords);
+            tmpTargetPiece.setPieceCoords(sourcePieceCoords);
+
+            this.getAllTiles().get(sourcePieceCoords).replacePiece(tmpTargetPiece);
+            this.getAllTiles().get(targetPieceCoords).replacePiece(tmpSourcePiece);
 
             return true;
         }
@@ -153,7 +158,7 @@ public class Board {
      * Gets current board state.
      * @return List<Tile> gameBoard field.
      */
-    public List<Tile> getAllTiles() {
+    public LinkedList<Tile> getAllTiles() {
         return this.tiles;
     }
 

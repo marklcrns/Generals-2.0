@@ -187,7 +187,7 @@ public class BoardBuilder {
             return;
         }
 
-        this.board.emptyBoard();
+        this.board.discardPieces();
         List<Tile> tiles = this.board.getAllTiles();
 
         // Insert pieces to Board Tiles based on build config.
