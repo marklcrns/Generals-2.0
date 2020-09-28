@@ -10,18 +10,22 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-    private LinkedList<Tile> tiles;        // List of all Tiles containing data of each piece
+    private LinkedList<Tile> tiles;  // List of all Tiles containing data of each piece
     private Player playerBlack;      // Player instance that all contains all infos on black pieces
     private Player playerWhite;      // Player instance that all contains all infos on white pieces
-    private String playerBlackName;  // Black player's name assigned when game initialized
-    private String playerWhiteName;  // White player's name assigned when game initialized
     private int blackPiecesLeft = 0; // Black pieces counter
     private int whitePiecesLeft = 0; // White pieces counter
 
+    /**
+     * No argument constructor
+     */
     public Board() {
         this.init();
     }
 
+    /**
+     * Initializes Board instance
+     */
     private void init() {
         this.tiles = new LinkedList<Tile>();
     }

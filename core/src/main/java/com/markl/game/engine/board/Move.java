@@ -22,34 +22,35 @@ public class Move {
     private final Player player;        // Reference to the Player that owns the Piece to be moved.
     private final int sourceTileCoords; // Location of the occupied Tile in which the piece to be moved.
     private final int targetTileCoords; // Location of the Tile to where the source piece will potentially move into
-    private boolean isExecuted = false; // boolean that holds if the this Move instance has bee executed
     private String moveType;            // Move type to determine the behavior of piece relocation
     private Piece sourcePieceCopy;      // Deep copy of the source piece
     private Piece targetPieceCopy;      // Deep copy of the target piece if move type is aggressive or draw
     private Piece eliminatedPiece;      // Deep copy of the eliminated piece if move type is aggressive
+    private boolean isExecuted = false; // boolean that holds if the this Move instance has bee executed
 
     /**
-     * Constructor that takes in the player who will move the piece, board, source
-     * tile coordinates and target tile coordinates.
-     * @param player Player reference making the move.
-     * @param board Board reference.
-     * @param sourceTileCoords location of the Tile containing a piece to be moved.
-     * @param targetTileCoords location of the destination of the piece to be moved.
+     * Constructor that takes in the player who will move the piece, board,
+     * source tile coordinates and target tile coordinates.
+     *
+     * @param player            Player reference making the move.
+     * @param board             Board reference.
+     * @param sourceTileCoords  location of the Tile containing a piece to be moved.
+     * @param targetTileCoords  location of the destination of the piece to be moved.
      */
-    public Move(final Player player,
-            final Board board,
-            final int sourceTileCoords,
-            final int targetTileCoords) {
+    public Move(final Player player, final Board board,
+                final int sourceTileCoords, final int targetTileCoords)
+    {
+        this.turnId = -1;
         this.player = player;
         this.board = board;
         this.sourceTileCoords = sourceTileCoords;
         this.targetTileCoords = targetTileCoords;
-        this.turnId = -1;
     }
 
     /**
-     * Evaluates the move for this Move instance based on the target tile location
-     * and the source piece to be moved.
+     * Evaluate the move based on the target Tile coords and the source piece
+     * to be moved.
+     *
      * "aggressive" = if target Tile contains opposing piece Alliance.
      * "normal"     = if target Tile is empty.
      * "invalid"    = if target Tile contains friendly piece Alliance.
@@ -78,16 +79,15 @@ public class Move {
     }
 
     /**
-     * Executes this Move instance and actuate the Move to reflect the changes in
-     * the Board.
+     * Executes this Move instance and actuate the Move to reflect the changes
+     * in the Board.
+     *
      * @return boolean true if successful, else false.
      */
     public boolean execute() {
-        if (legalMoveCheck()) {
+        if (isLegalMove()) {
             // TODO: this.turnId = board.getCurrentTurn();
-
             switch (this.moveType) {
-
                 case "aggressive":
                     // Check if source or target piece is Flag rank, then conclude the game.
                     if (isTargetPieceFlag()) {
@@ -111,7 +111,6 @@ public class Move {
                     }
                     this.isExecuted = true;
                     break;
-
                 case "normal":
                     // Check if Flag has been maneuvered into the opposite end row of the board.
                     if (isFlagSucceeded()) {
@@ -124,13 +123,11 @@ public class Move {
                     board.movePiece(sourceTileCoords, targetTileCoords);
                     this.isExecuted = true;
                     break;
-
                 case "draw":
                     // Eliminates both pieces from the game.
                     board.getTile(sourceTileCoords).removePiece();
                     board.getTile(targetTileCoords).removePiece();
                     break;
-
                 case "invalid":
                     // Do nothing and return false.
                     System.out.println("E: Invalid move");
@@ -148,11 +145,12 @@ public class Move {
     }
 
     /**
-     * Check if this Move instance is one of the legal moves of the current state
-     * of the source piece. Depends on Piece evaluateMoves() method.
+     * Check if this Move instance is one of the legal moves of the current
+     * state of the source piece. Depends on Piece evaluateMoves() method.
+     *
      * @return boolean true of this Move is a candidate move for the source piece.
      */
-    private boolean legalMoveCheck() {
+    private boolean isLegalMove() {
         // Fetch all possible moves if any.
         final Map<String, Move> possiblePieceMoves =
             this.board.getTile(sourceTileCoords).getPiece().evaluateMoves(board);
@@ -186,8 +184,10 @@ public class Move {
      * ranking piece will eliminate lower ranking piece.
      * Spy piece will eliminated all pieces regardless of rank except the Private
      * piece.
+     *
      * If both pieces were are of Flag rank, the aggressor piece will win
      * the engagement.
+     *
      * @return boolean true if target piece is subordinate to the source piece,
      * else false.
      */
@@ -206,6 +206,7 @@ public class Move {
 
     /**
      * Checks if the target piece is ranked Flag.
+     *
      * @return boolean true if target piece is Flag, else false.
      */
     private boolean isTargetPieceFlag() {
@@ -217,6 +218,7 @@ public class Move {
 
     /**
      * Checks if the source piece is ranked Flag.
+     *
      * @return boolean true if source piece is Flag, else false.
      */
     private boolean isSourcePieceFlag() {
@@ -229,6 +231,7 @@ public class Move {
     /**
      * Checks if the Flag piece has succeeded maneuvering into opposite end row
      * of the Board without being eliminated.
+     *
      * @return boolean true if Flag has succeeded, else false.
      */
     private boolean isFlagSucceeded() {
@@ -246,6 +249,7 @@ public class Move {
 
     /**
      * Gets the player executing this Move.
+     *
      * @return Player player field.
      */
     public Player getPlayer() {
@@ -254,6 +258,7 @@ public class Move {
 
     /**
      * Gets the source Tile from Board.
+     *
      * @return Tile from the Board.
      */
     public Tile getSourceTile() {
@@ -262,6 +267,7 @@ public class Move {
 
     /**
      * Gets the source piece destination or target Tile coordinates.
+     *
      * @return int target Tile index or ID.
      */
     public int getDestinationCoords() {
@@ -270,6 +276,7 @@ public class Move {
 
     /**
      * Gets the source piece or Tile coordinates.
+     *
      * @return int source piece or Tile index or ID.
      */
     public int getOriginCoords() {
@@ -278,6 +285,7 @@ public class Move {
 
     /**
      * Gets the move type of this Move instance.
+     *
      * @return String moveType field. Null if uninitialized.
      */
     public String getMoveType() {
@@ -289,6 +297,7 @@ public class Move {
 
     /**
      * Gets the turn ID of this Move instance.
+     *
      * @return int turnId field. -1 if not set.
      */
     public int getTurnId() {
@@ -300,6 +309,7 @@ public class Move {
 
     /**
      * Gets the eliminated piece of the aggressive execution.
+     *
      * @return Piece the eliminated piece after aggressive engagement.
      */
     public Piece getEliminatedPiece() {
@@ -311,6 +321,7 @@ public class Move {
 
     /**
      * Gets the source piece of this Move instance.
+     *
      * @return Piece sourcePieceCopy field. Null if uninitialized.
      */
     public Piece getSourcePiece() {
@@ -322,6 +333,7 @@ public class Move {
 
     /**
      * Gets the target piece of this Move instance.
+     *
      * @return Piece targetPieceCopy field. Null if uninitialized.
      */
     public Piece getTargetPiece() {
@@ -333,6 +345,7 @@ public class Move {
 
     /**
      * Undo or set Move execution to false.
+     *
      * @return boolean true if successful, else false if already false.
      */
     public boolean undoExecution() {
@@ -345,6 +358,7 @@ public class Move {
 
     /**
      * Redo or set Move execution to true
+     *
      * @return boolean true if successful, else false if already true.
      */
     public boolean redoExecution() {
@@ -357,6 +371,7 @@ public class Move {
 
     /**
      * Checks if this Move instance has been executed already.
+     *
      * @return boolean true if is executed, else false.
      */
     public boolean isMoveExecuted() {
@@ -365,6 +380,7 @@ public class Move {
 
     /**
      * Sets the execution state to true or false.
+     *
      * @param isExecuted boolean
      */
     public void setExecutionState(final boolean isExecuted) {
@@ -373,6 +389,7 @@ public class Move {
 
     /**
      * Sets the move type of this Move instance.
+     *
      * @param moveType String move type to set.
      */
     public void setMoveType(final String moveType) {
@@ -381,6 +398,7 @@ public class Move {
 
     /**
      * Sets the turn ID of this move instance.
+     *
      * @param turnId int turn id
      */
     public void setTurnId(final int turnId) {
