@@ -1,14 +1,21 @@
 package com.markl.game.engine.board;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.markl.game.Game;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 class MoveTest {
 
-    @Test
-    void test() {
-        fail("Not yet implemented");
+    private Game game;
+    private Board board;
+
+    @BeforeEach
+    void setUp() {
+        this.game = new Game();
+        this.board = new Board(game);
+        BoardBuilder builder = new BoardBuilder(board);
+        builder.createDemoBoardBuild();
+        builder.build();
     }
 
 }

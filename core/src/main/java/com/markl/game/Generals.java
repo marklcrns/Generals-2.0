@@ -13,19 +13,29 @@ public class Generals extends ApplicationAdapter {
         BoardBuilder builder = new BoardBuilder(board);
         builder.createDemoBoardBuild();
         builder.build();
+        game.start();
         System.out.println(builder.toString());
         System.out.println(board.toString());
 
+        // First move
+        Move moveOne = new Move(null, board, 39, 30);
+        moveOne.evaluateMove();
+
         System.out.println();
 
-        Move move = new Move(null, board, 39, 30);
-        move.evaluateMove();
-
-        System.out.println(move.toString());
-        System.out.println();
-
-        move.execute();
+        moveOne.execute();
         System.out.println(board.toString());
+        System.out.println(moveOne.toString());
+
+        // First move
+        Move moveTwo = new Move(null, board, 28, 37);
+        moveTwo.evaluateMove();
+
+        System.out.println();
+
+        moveTwo.execute();
+        System.out.println(board.toString());
+        System.out.println(moveTwo.toString());
     }
 
     @Override

@@ -11,7 +11,6 @@ import com.markl.game.engine.board.pieces.Spy;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 class BoardTest {
@@ -26,7 +25,6 @@ class BoardTest {
     }
 
     @Test
-    @Order(1)
     @DisplayName("Test Board.getAllTiles()")
     void getAllTilesTest() {
         assertNotNull(this.board.getAllTiles());

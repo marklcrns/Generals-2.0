@@ -408,8 +408,8 @@ public class Move {
     @Override
     public String toString() {
         final Alliance sourcePieceAlliance = sourcePieceCopy == null ? null : sourcePieceCopy.getPieceAlliance();
-        final String sourcePiece = sourcePieceCopy == null ? "" : sourcePieceCopy.getRank();
-        final String targetPiece = targetPieceCopy == null ? "" : targetPieceCopy.getRank();
+        final String sourcePiece = sourcePieceCopy == null ? "blank" : sourcePieceCopy.getRank();
+        final String targetPiece = targetPieceCopy == null ? "blank" : targetPieceCopy.getRank();
 
         if (isExecuted) {
             String superiorPieceAlliance = "";
@@ -421,7 +421,8 @@ public class Move {
                 sourcePieceAlliance + " " +
                 sourcePiece + " " +
                 sourceTileCoords + " to " +
-                targetPiece + targetTileCoords + " " +
+                targetPiece + " " +
+                targetTileCoords + " " +
                 this.moveType + superiorPieceAlliance +
                 " EXECUTED";
         } else {
@@ -429,7 +430,8 @@ public class Move {
                 sourcePieceAlliance + " " +
                 sourcePiece + " " +
                 sourceTileCoords + " to " +
-                targetPiece + targetTileCoords + " ";
+                targetPiece + " " +
+                targetTileCoords;
         }
     }
 }
