@@ -18,13 +18,32 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Move {
 
+    /**
+     * Enum class for Move typification
+     *
+     * INVALID    = -1
+     * DRAW       =  0
+     * NORMAL     =  1
+     * AGGRESSIVE =  2
+     */
+    public enum MoveType {
+        INVALID(-1), DRAW(0), NORMAL(1), AGGRESSIVE(2);
+        private final int value;
+
+        MoveType(final int value) {
+            this.value = value;
+        }
+
+        public int getValue() { return this.value; }
+    }
+
     private int turnId;                 // Turn ID that serves as reference.
     private final Board board;          // Reference to the Board to execute the move in
     private final Game game;            // Reference to the Game
     private final Player player;        // Reference to the Player that owns the Piece to be moved.
     private final int sourceTileCoords; // Location of the occupied Tile in which the piece to be moved.
     private final int targetTileCoords; // Location of the Tile to where the source piece will potentially move into
-    private String moveType;            // Move type to determine the behavior of piece relocation
+    private MoveType moveType;          // Move type to determine the behavior of piece relocation
     private Piece sourcePieceCopy;      // Deep copy of the source piece
     private Piece targetPieceCopy;      // Deep copy of the target piece if move type is aggressive or draw
     private Piece eliminatedPiece;      // Deep copy of the eliminated piece if move type is aggressive
@@ -70,15 +89,15 @@ public class Move {
         if (board.getTile(targetTileCoords).isTileOccupied())
             if (targetPieceCopy.getPieceAlliance() != sourcePieceCopy.getPieceAlliance())
                 if (isSameRank() && isTargetPieceFlag())
-                    this.moveType = "aggressive";
+                    this.moveType = MoveType.AGGRESSIVE;
                 else if (isSameRank())
-                    this.moveType = "draw";
+                    this.moveType = MoveType.DRAW;
                 else
-                    this.moveType = "aggressive";
+                    this.moveType = MoveType.AGGRESSIVE;
             else
-                this.moveType = "invalid";
+                this.moveType = MoveType.INVALID;
         else
-            this.moveType = "normal";
+            this.moveType = MoveType.NORMAL;
     }
 
     /**
@@ -89,16 +108,46 @@ public class Move {
      */
     public boolean execute() {
         if (isLegalMove()) {
-            switch (this.moveType) {
-                case "aggressive":
+            switch (this.moveType.getValue()) {
+                case -1: // INVALID
+                    System.out.println("E: Invalid move");
+                    System.out.println(this.toString());
+                    return false;
+
+                case 0: // DRAW
+                    // Eliminates both pieces from the game.
+                    board.getTile(sourceTileCoords).removePiece();
+                    board.getTile(targetTileCoords).removePiece();
+                    break;
+
+                case 1: // NORMAL
+                    // Check if Flag has been maneuvered into the opposite end row of the board.
+                    if (isFlagSucceeded()) {
+                        System.out.println(
+                            "\n" + sourcePieceCopy.getPieceAlliance() +
+                            " player WON!\n");
+
+                        // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
+                    }
+
+                    // Move Tile normally
+                    board.movePiece(sourceTileCoords, targetTileCoords);
+                    this.isExecuted = true;
+                    break;
+
+                case 2: // AGGRESSIVE
                     // Check if source or target piece is Flag rank, then conclude the game.
                     if (isTargetPieceFlag()) {
-                        System.out.println("\n" + sourcePieceCopy.getPieceAlliance() +
-                                " player WON!\n");
+                        System.out.println(
+                            "\n" + sourcePieceCopy.getPieceAlliance() +
+                            " player WON!\n");
+
                         // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
                     } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
-                        System.out.println("\n" + targetPieceCopy.getPieceAlliance() +
-                                " player WON!\n");
+                        System.out.println(
+                            "\n" + targetPieceCopy.getPieceAlliance() +
+                            " player WON!\n");
+
                         // TODO: board.setEndGameWinner(targetPieceCopy.getPieceAlliance());
                     }
 
@@ -113,28 +162,7 @@ public class Move {
                     }
                     this.isExecuted = true;
                     break;
-                case "normal":
-                    // Check if Flag has been maneuvered into the opposite end row of the board.
-                    if (isFlagSucceeded()) {
-                        System.out.println("\n" + sourcePieceCopy.getPieceAlliance() +
-                                " player WON!\n");
-                        // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
-                    }
 
-                    // Move Tile normally
-                    board.movePiece(sourceTileCoords, targetTileCoords);
-                    this.isExecuted = true;
-                    break;
-                case "draw":
-                    // Eliminates both pieces from the game.
-                    board.getTile(sourceTileCoords).removePiece();
-                    board.getTile(targetTileCoords).removePiece();
-                    break;
-                case "invalid":
-                    // Do nothing and return false.
-                    System.out.println("E: Invalid move");
-                    System.out.println(this.toString());
-                    return false;
                 default:
                     return false;
             }
@@ -144,6 +172,7 @@ public class Move {
             this.game.nextTurn();
             return true;
         }
+        // Return false if illegal move
         return false;
     }
 
@@ -166,7 +195,7 @@ public class Move {
         };
 
         // set move type to "invalid" if not in possible moves.
-        moveType = "invalid";
+        this.moveType = MoveType.INVALID;
 
         return false;
     }
@@ -291,7 +320,7 @@ public class Move {
      *
      * @return String moveType field. Null if uninitialized.
      */
-    public String getMoveType() {
+    public MoveType getMoveType() {
         if (this.moveType != null)
             return this.moveType;
 
@@ -392,7 +421,7 @@ public class Move {
      *
      * @param moveType String move type to set.
      */
-    public void setMoveType(final String moveType) {
+    public void setMoveType(final MoveType moveType) {
         this.moveType = moveType;
     }
 
@@ -413,7 +442,7 @@ public class Move {
 
         if (isExecuted) {
             String superiorPieceAlliance = "";
-            if (this.moveType == "aggressive") {
+            if (this.moveType == MoveType.AGGRESSIVE) {
                 superiorPieceAlliance = eliminatedPiece.getPieceAlliance() == Alliance.BLACK ?
                     " " + Alliance.WHITE: " " + Alliance.BLACK;
             }
