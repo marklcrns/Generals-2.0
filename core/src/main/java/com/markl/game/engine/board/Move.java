@@ -2,6 +2,7 @@ package com.markl.game.engine.board;
 
 import java.util.Map;
 
+import com.markl.game.Game;
 import com.markl.game.engine.board.pieces.Piece;
 
 /**
@@ -19,6 +20,7 @@ public class Move {
 
     private int turnId;                 // Turn ID that serves as reference.
     private final Board board;          // Reference to the Board to execute the move in
+    private final Game game;            // Reference to the Game
     private final Player player;        // Reference to the Player that owns the Piece to be moved.
     private final int sourceTileCoords; // Location of the occupied Tile in which the piece to be moved.
     private final int targetTileCoords; // Location of the Tile to where the source piece will potentially move into
@@ -40,9 +42,10 @@ public class Move {
     public Move(final Player player, final Board board,
                 final int sourceTileCoords, final int targetTileCoords)
     {
-        this.turnId = -1;
-        this.player = player;
-        this.board = board;
+        this.player           = player;
+        this.board            = board;
+        this.game             = board.getGame();
+        this.turnId           = this.game.getTurnId();
         this.sourceTileCoords = sourceTileCoords;
         this.targetTileCoords = targetTileCoords;
     }
@@ -86,7 +89,6 @@ public class Move {
      */
     public boolean execute() {
         if (isLegalMove()) {
-            // TODO: this.turnId = board.getCurrentTurn();
             switch (this.moveType) {
                 case "aggressive":
                     // Check if source or target piece is Flag rank, then conclude the game.
@@ -139,6 +141,7 @@ public class Move {
 
             // If successful, change execution status and return true.
             this.isExecuted = true;
+            this.game.nextTurn();
             return true;
         }
         return false;
@@ -298,13 +301,10 @@ public class Move {
     /**
      * Gets the turn ID of this Move instance.
      *
-     * @return int turnId field. -1 if not set.
+     * @return int turnId field.
      */
     public int getTurnId() {
-        if (this.turnId != -1)
-            return this.turnId;
-
-        return -1;
+        return this.turnId;
     }
 
     /**

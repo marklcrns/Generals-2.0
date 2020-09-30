@@ -2,6 +2,7 @@ package com.markl.game.engine.board;
 
 import java.util.LinkedList;
 
+import com.markl.game.Game;
 import com.markl.game.engine.board.pieces.Piece;
 
 /**
@@ -10,6 +11,7 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
+    private Game game;               // Game instance reference
     private LinkedList<Tile> tiles;  // List of all Tiles containing data of each piece
     private Player playerBlack;      // Player instance that all contains all infos on black pieces
     private Player playerWhite;      // Player instance that all contains all infos on white pieces
@@ -20,14 +22,28 @@ public class Board {
      * No argument constructor
      */
     public Board() {
-        this.init();
+        this.initBoard();
+    }
+
+    /**
+     * Constructor function that takes in Game as a parameter
+     * @param game {@link Game} instance.
+     */
+    public Board(Game game) {
+        this.game = game;
+        this.initBoard();
+        this.initGame();
     }
 
     /**
      * Initializes Board instance
      */
-    private void init() {
+    private void initBoard() {
         this.tiles = new LinkedList<Tile>();
+    }
+
+    public void initGame() {
+        game.setBoard(this);
     }
 
     /**
@@ -186,6 +202,8 @@ public class Board {
     public void setWhitePiecesLeft(int whitePiecesLeft) {
         this.whitePiecesLeft = whitePiecesLeft;
     }
+
+    public Game getGame() { return this.game; }
 
     /**
      * @return String representation of all current Tiles for debugging

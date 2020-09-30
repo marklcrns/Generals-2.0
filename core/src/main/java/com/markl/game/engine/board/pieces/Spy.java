@@ -75,8 +75,7 @@ public class Spy extends Piece {
      */
     @Override
     public final Piece clone() {
-        final Spy copy = new Spy(
-                this.owner, this.alliance, this.coords);
+        final Spy copy = new Spy(this.owner, this.alliance, this.coords);
         return copy;
     }
 

@@ -18,6 +18,13 @@ public class Game {
     private String playerWhiteName;        // White player's name assigned when game initialized
 
     /**
+     * No-constructor function
+     */
+    public Game() {
+        this.turnId = 0;
+    }
+
+    /**
      * Constructor function for Game.
      *
      * @param board {@link Board} instance.
@@ -35,10 +42,17 @@ public class Game {
     }
 
     /**
+     * Set {@link Board}
+     */
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    /**
      * Start game.
      */
     public void start() {
-        this.turnId++;
+        this.turnId = 1;
     }
 
     /**
@@ -47,4 +61,8 @@ public class Game {
     public void restart() {
         // TODO: Implement <27-09-20, Mark Lucernas> //
     }
+
+    public void nextTurn() { this.turnId++; }
+    public void prevTurn() { if (this.turnId > 0) this.turnId--; }
+    public int getTurnId() { return this.turnId; }
 }
