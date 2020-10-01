@@ -31,7 +31,8 @@ public abstract class Piece {
      * HashMap that contains the Piece mobility according to the Board coordinates
      * system.
      */
-    public final Map<String, Integer> mobility = Collections.unmodifiableMap(
+    public final Map<String, Integer> mobility =
+        Collections.unmodifiableMap(
             new HashMap<String, Integer>() {
                 { put("u", -9); put("d", 9); put("l", -1); put("r", 1); }
             });
@@ -104,22 +105,22 @@ public abstract class Piece {
         final int upAdjacentPieceCoords = this.coords + mobility.get("u");
         if (coords >= BoardUtils.SECOND_ROW_INIT) {
             moveSet.put("up", new Move(owner, board, coords, upAdjacentPieceCoords));
-            moveSet.get("up").evaluateMove();
+            moveSet.get("up").evaluate();
         }
         final int downAdjacentPieceCoords = this.coords + mobility.get("d");
         if (coords < BoardUtils.LAST_ROW_INIT) {
             moveSet.put("down", new Move(owner, board, coords, downAdjacentPieceCoords));
-            moveSet.get("down").evaluateMove();
+            moveSet.get("down").evaluate();
         }
         final int leftAdjacentPieceCoords = this.coords + mobility.get("l");
         if (this.coords % 9 != 0) {
             moveSet.put("left", new Move(owner, board, coords, leftAdjacentPieceCoords));
-            moveSet.get("left").evaluateMove();
+            moveSet.get("left").evaluate();
         }
         final int rightAdjacentPieceCoords = this.coords + mobility.get("r");
         if (rightAdjacentPieceCoords % 9 != 0) {
             moveSet.put("right", new Move(owner, board, coords, rightAdjacentPieceCoords));
-            moveSet.get("right").evaluateMove();
+            moveSet.get("right").evaluate();
         }
 
         return moveSet;

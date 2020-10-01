@@ -19,7 +19,7 @@ public class Generals extends ApplicationAdapter {
 
         // First move
         Move moveOne = new Move(null, board, 39, 30);
-        moveOne.evaluateMove();
+        moveOne.evaluate();
 
         System.out.println();
 
@@ -27,15 +27,25 @@ public class Generals extends ApplicationAdapter {
         System.out.println(board.toString());
         System.out.println(moveOne.toString());
 
-        // First move
+        // Second move
         Move moveTwo = new Move(null, board, 28, 37);
-        moveTwo.evaluateMove();
+        moveTwo.evaluate();
 
         System.out.println();
 
         moveTwo.execute();
         System.out.println(board.toString());
         System.out.println(moveTwo.toString());
+
+        // Third move
+        Move moveThree = new Move(null, board, 38, 29);
+        moveThree.evaluate();
+
+        System.out.println();
+
+        moveThree.execute();
+        System.out.println(board.toString());
+        System.out.println(moveThree.toString());
     }
 
     @Override

@@ -91,6 +91,7 @@ public class BoardBuilder {
 
         // row 0
         setPiece(new GeneralFive(playerWhite, white, boardOffset + row[0] + 1));
+        setPiece(new Colonel(playerWhite, white, boardOffset + row[0] + 2));
         setPiece(new GeneralOne(playerWhite, white, boardOffset + row[0] + 3));
         // row 1
         setPiece(new GeneralFour(playerWhite, white, boardOffset + row[1] + 5));
@@ -99,7 +100,6 @@ public class BoardBuilder {
         // row 2
         setPiece(new LtCol(playerWhite, white, boardOffset + row[2] + 1));
         setPiece(new Private(playerWhite, white, boardOffset + row[2] + 2));
-        setPiece(new Colonel(playerWhite, white, boardOffset + row[2] + 3));
         setPiece(new Spy(playerWhite, white, boardOffset + row[2] + 4));
         setPiece(new Captain(playerWhite, white, boardOffset + row[2] + 5));
         setPiece(new Private(playerWhite, white, boardOffset + row[2] + 7));

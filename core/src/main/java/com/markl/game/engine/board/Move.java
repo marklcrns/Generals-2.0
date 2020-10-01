@@ -73,31 +73,45 @@ public class Move {
      * Evaluate the move based on the target Tile coords and the source piece
      * to be moved.
      *
-     * "aggressive" = if target Tile contains opposing piece Alliance.
-     * "normal"     = if target Tile is empty.
-     * "invalid"    = if target Tile contains friendly piece Alliance.
-     * "draw"       = if target Tile contains opposing piece Alliance and has the
-     *                same rank, with the exception of Flag rank.
+     * INVALID    = if target Tile contains friendly piece Alliance.
+     * DRAW       = if target Tile contains opposing piece Alliance and has the
+     *              same rank, with the exception of Flag rank.
+     * NORMAL     = if target Tile is empty.
+     * AGGRESSIVE = if target Tile contains opposing piece Alliance.
      */
-    public void evaluateMove() {
+    public void evaluate() {
+
+        if (isOutOfBounds()) {
+            this.moveType = MoveType.INVALID;
+            return;
+        }
+
+        // Make source piece copy
         this.sourcePieceCopy = this.board.getTile(sourceTileCoords).getPiece().clone();
-        if (this.board.getTile(targetTileCoords).isTileOccupied())
+        // Make target piece copy if exist
+        if (isTargetOccupied())
             this.targetPieceCopy = this.board.getTile(targetTileCoords).getPiece().clone();
         else
             this.targetPieceCopy = null;
 
-        if (board.getTile(targetTileCoords).isTileOccupied())
-            if (targetPieceCopy.getPieceAlliance() != sourcePieceCopy.getPieceAlliance())
-                if (isSameRank() && isTargetPieceFlag())
-                    this.moveType = MoveType.AGGRESSIVE;
-                else if (isSameRank())
-                    this.moveType = MoveType.DRAW;
+        if (isMoveLegal()) {
+            if (isTargetOccupied())
+                if (isFriendlyFire())
+                    this.moveType = MoveType.INVALID;
                 else
-                    this.moveType = MoveType.AGGRESSIVE;
+                    if (isSameRank() && isTargetPieceFlag())
+                        this.moveType = MoveType.AGGRESSIVE;
+                    else if (isSameRank())
+                        this.moveType = MoveType.DRAW;
+                    else
+                        this.moveType = MoveType.AGGRESSIVE;
             else
-                this.moveType = MoveType.INVALID;
-        else
-            this.moveType = MoveType.NORMAL;
+                this.moveType = MoveType.NORMAL;
+
+            return;
+        }
+
+        this.moveType = MoveType.INVALID;
     }
 
     /**
@@ -107,107 +121,136 @@ public class Move {
      * @return boolean true if successful, else false.
      */
     public boolean execute() {
-        if (isLegalMove()) {
-            switch (this.moveType.getValue()) {
-                case -1: // INVALID
-                    System.out.println("E: Invalid move");
-                    System.out.println(this.toString());
-                    return false;
+        switch (this.moveType.getValue()) {
+            case -1: // INVALID
+                System.out.println("E: Invalid move");
+                System.out.println(this.toString());
+                return false;
 
-                case 0: // DRAW
-                    // Eliminates both pieces from the game.
+            case 0: // DRAW
+                // Eliminates both pieces from the game.
+                board.getTile(sourceTileCoords).removePiece();
+                board.getTile(targetTileCoords).removePiece();
+                break;
+
+            case 1: // NORMAL
+                // Check if Flag has been maneuvered into the opposite end row of the board.
+                if (isFlagSucceeded()) {
+                    System.out.println(
+                        "\n" + sourcePieceCopy.getPieceAlliance() +
+                        " player WON!\n");
+
+                    // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
+                }
+
+                // Move Tile normally
+                board.movePiece(sourceTileCoords, targetTileCoords);
+                this.isExecuted = true;
+                break;
+
+            case 2: // AGGRESSIVE
+                // Check if source or target piece is Flag rank, then conclude the game.
+                if (isTargetPieceFlag()) {
+                    System.out.println(
+                        "\n" + sourcePieceCopy.getPieceAlliance() +
+                        " player WON!\n");
+
+                    // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
+                } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
+                    System.out.println(
+                        "\n" + targetPieceCopy.getPieceAlliance() +
+                        " player WON!\n");
+
+                    // TODO: board.setEndGameWinner(targetPieceCopy.getPieceAlliance());
+                }
+
+                // Eliminate low ranking piece from the aggressive engagement.
+                if (isTargetPieceEliminated()) {
+                    board.replacePiece(targetTileCoords, sourcePieceCopy);
                     board.getTile(sourceTileCoords).removePiece();
-                    board.getTile(targetTileCoords).removePiece();
-                    break;
+                    eliminatedPiece = targetPieceCopy;
+                } else {
+                    board.getTile(sourceTileCoords).removePiece();
+                    eliminatedPiece = sourcePieceCopy;
+                }
+                this.isExecuted = true;
+                break;
 
-                case 1: // NORMAL
-                    // Check if Flag has been maneuvered into the opposite end row of the board.
-                    if (isFlagSucceeded()) {
-                        System.out.println(
-                            "\n" + sourcePieceCopy.getPieceAlliance() +
-                            " player WON!\n");
-
-                        // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
-                    }
-
-                    // Move Tile normally
-                    board.movePiece(sourceTileCoords, targetTileCoords);
-                    this.isExecuted = true;
-                    break;
-
-                case 2: // AGGRESSIVE
-                    // Check if source or target piece is Flag rank, then conclude the game.
-                    if (isTargetPieceFlag()) {
-                        System.out.println(
-                            "\n" + sourcePieceCopy.getPieceAlliance() +
-                            " player WON!\n");
-
-                        // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
-                    } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
-                        System.out.println(
-                            "\n" + targetPieceCopy.getPieceAlliance() +
-                            " player WON!\n");
-
-                        // TODO: board.setEndGameWinner(targetPieceCopy.getPieceAlliance());
-                    }
-
-                    // Eliminate low ranking piece from the aggressive engagement.
-                    if (isTargetPieceEliminated()) {
-                        board.replacePiece(targetTileCoords, sourcePieceCopy);
-                        board.getTile(sourceTileCoords).removePiece();
-                        eliminatedPiece = targetPieceCopy;
-                    } else {
-                        board.getTile(sourceTileCoords).removePiece();
-                        eliminatedPiece = sourcePieceCopy;
-                    }
-                    this.isExecuted = true;
-                    break;
-
-                default:
-                    return false;
-            }
-
-            // If successful, change execution status and return true.
-            this.isExecuted = true;
-            this.game.nextTurn();
-            return true;
+            default:
+                return false;
         }
-        // Return false if illegal move
-        return false;
+
+        // If successful, change execution status and return true.
+        this.isExecuted = true;
+        this.game.nextTurn();
+        return true;
     }
 
     /**
-     * Check if this Move instance is one of the legal moves of the current
-     * state of the source piece. Depends on Piece evaluateMoves() method.
+     * Checks if source tile coords will move a step horizontally or vertically.
      *
-     * @return boolean true of this Move is a candidate move for the source piece.
+     * @return boolean true of this Move is a candidate move for the source
+     * piece.
      */
-    private boolean isLegalMove() {
-        // Fetch all possible moves if any.
-        final Map<String, Move> possiblePieceMoves =
-            this.board.getTile(sourceTileCoords).getPiece().evaluateMoves(board);
-
-        // Check if one of possible piece moves
-        for (final Map.Entry<String, Move> entry : possiblePieceMoves.entrySet()) {
-            if (entry.getValue().getDestinationCoords() == targetTileCoords) {
-                return true;
-            }
-        };
-
-        // set move type to "invalid" if not in possible moves.
-        this.moveType = MoveType.INVALID;
+    private boolean isMoveLegal() {
+        int sourceTargetDifference = this.targetTileCoords - this.sourceTileCoords;
+        if (sourceTargetDifference ==  1 ||
+            sourceTargetDifference == -1 ||
+            sourceTargetDifference ==  9 ||
+            sourceTargetDifference == -9)
+            return true;
 
         return false;
     }
 
     /**
-     * Checks if source and target piece has the same rank.
+     * Check if source and target tile coords are out of bounds.
+     *
+     * @return boolean true if either or both the source or target tile coords
+     * is/are out of bounds.
+     */
+    private boolean isOutOfBounds() {
+        if (this.sourceTileCoords < 0 || this.sourceTileCoords > 71 ||
+            this.targetTileCoords < 0 || this.targetTileCoords > 71)
+            return true;
+
+        return false;
+    }
+
+    /**
+     * Checks if targetTileCoords is occupied.
+     *
+     * @return boolean true if targetTileCoords is occupied, else false.
+     */
+    private boolean isTargetOccupied() {
+        if (board.getTile(targetTileCoords).isTileOccupied())
+            return true;
+
+        return false;
+    }
+
+    /**
+     * Checks if sourcePiece and targetPiece has the same {@link Alliance}.
+     *
+     * @return boolean true if sourcePiece and targetPiece has the same
+     * Alliance, else false.
+     */
+    private boolean isFriendlyFire() {
+        if (targetPieceCopy.getPieceAlliance() == sourcePieceCopy.getPieceAlliance())
+            return true;
+
+        return false;
+    }
+
+    /**
+     * Checks if sourcePiece and targetPiece has the same rank.
+     *
      * @return boolean true if same rank, else false.
      */
     private boolean isSameRank() {
-        if (sourcePieceCopy.getRank() == targetPieceCopy.getRank()) {
+        if (sourcePieceCopy.getRank() == targetPieceCopy.getRank())
             return true;
-        }
+
         return false;
     }
 
