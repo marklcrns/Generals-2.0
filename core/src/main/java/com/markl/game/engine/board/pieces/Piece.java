@@ -20,6 +20,7 @@ import com.markl.game.engine.board.Tile;
 public abstract class Piece {
 
     public String rank;                 // Rank of the piece
+    public Board board;                 // Reference to game's Board
     public int powerLevel;              // Power level of the piece to compare ranks
     public int coords;                  // Coordinates of this Piece instance
     public int legalPieceInstanceCount; // Allowed amount of piece instance owned by a Player in a single game
@@ -41,7 +42,8 @@ public abstract class Piece {
      * Constructor that takes in the owner Player, and Alliance of this piece.
      * Sets pieceCoords to -1 temporarily.
      */
-    public Piece(final Player owner, final Alliance alliance) {
+    public Piece(final Board board, final Player owner, final Alliance alliance) {
+        this.board = board;
         this.owner = owner;
         this.alliance = alliance;
         this.coords = -1;
@@ -51,8 +53,10 @@ public abstract class Piece {
      * Constructor that takes in the owner Player, Alliance and coordinates of this
      * Piece.
      */
-    public Piece(final Player owner, final Alliance alliance,
-            final int coords) {
+    public Piece(final Board board, final Player owner,
+                 final Alliance alliance, final int coords)
+    {
+        this.board = board;
         this.owner = owner;
         this.alliance = alliance;
         this.coords = coords;
@@ -87,39 +91,41 @@ public abstract class Piece {
      * @param board Board to get the Tile from.
      * @return Tile from the Board.
      */
-    // TODO: Improve to a no argument method.
-    public Tile getTile(final Board board) {
-        return board.getTile(coords);
+    public Tile getTile() {
+        return this.board.getTile(coords);
     }
 
     /**
-     * Evaluate this Piece current possible moves.
-     * Depends on Move.evaluateMove() method.
-     * @param board Board to evaluate the move from.
+     * Evaluate this Piece current possible moves. Depends on
+     * Move.evaluateMove() method.
+     *
      * @return Map<String, Move> HashMap of possible moves.
      */
-    // TODO: Improve to a no argument method.
-    public Map<String, Move> evaluateMoves(final Board board) {
+    public Map<String, Move> evaluateMoves() {
         moveSet = new HashMap<String, Move>();
 
         final int upAdjacentPieceCoords = this.coords + mobility.get("u");
-        if (coords >= BoardUtils.SECOND_ROW_INIT) {
-            moveSet.put("up", new Move(owner, board, coords, upAdjacentPieceCoords));
+        if (this.coords >= BoardUtils.SECOND_ROW_INIT) {
+            moveSet.put("up", new Move(this.owner, this.board, this.coords,
+                                       upAdjacentPieceCoords));
             moveSet.get("up").evaluate();
         }
         final int downAdjacentPieceCoords = this.coords + mobility.get("d");
-        if (coords < BoardUtils.LAST_ROW_INIT) {
-            moveSet.put("down", new Move(owner, board, coords, downAdjacentPieceCoords));
+        if (this.coords < BoardUtils.LAST_ROW_INIT) {
+            moveSet.put("down", new Move(this.owner, this.board, this.coords,
+                                         downAdjacentPieceCoords));
             moveSet.get("down").evaluate();
         }
         final int leftAdjacentPieceCoords = this.coords + mobility.get("l");
         if (this.coords % 9 != 0) {
-            moveSet.put("left", new Move(owner, board, coords, leftAdjacentPieceCoords));
+            moveSet.put("left", new Move(this.owner, this.board, this.coords,
+                                         leftAdjacentPieceCoords));
             moveSet.get("left").evaluate();
         }
         final int rightAdjacentPieceCoords = this.coords + mobility.get("r");
         if (rightAdjacentPieceCoords % 9 != 0) {
-            moveSet.put("right", new Move(owner, board, coords, rightAdjacentPieceCoords));
+            moveSet.put("right", new Move(this.owner, this.board, this.coords,
+                                          rightAdjacentPieceCoords));
             moveSet.get("right").evaluate();
         }
 

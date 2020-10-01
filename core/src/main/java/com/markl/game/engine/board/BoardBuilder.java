@@ -59,61 +59,61 @@ public class BoardBuilder {
         int boardOffset = 0;              // Black territory
 
         // row 0
-        setPiece(new Private(playerBlack, black, boardOffset + row[0] + 0));
-        setPiece(new LtTwo(playerBlack, black, boardOffset + row[0] + 1));
-        setPiece(new Flag(playerBlack, black, boardOffset + row[0] + 2));
-        setPiece(new Private(playerBlack, black, boardOffset + row[0] + 3));
-        setPiece(new LtOne(playerBlack, black, boardOffset + row[0] + 4));
-        setPiece(new Sergeant(playerBlack, black, boardOffset + row[0] + 5));
-        setPiece(new Private(playerBlack, black, boardOffset + row[0] + 6));
-        setPiece(new Major(playerBlack, black, boardOffset + row[0] + 7));
-        setPiece(new GeneralTwo(playerBlack, black, boardOffset + row[0] + 8));
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 0));
+        setPiece(new LtTwo(this.board, playerBlack, black, boardOffset + row[0] + 1));
+        setPiece(new Flag(this.board, playerBlack, black, boardOffset + row[0] + 2));
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 3));
+        setPiece(new LtOne(this.board, playerBlack, black, boardOffset + row[0] + 4));
+        setPiece(new Sergeant(this.board, playerBlack, black, boardOffset + row[0] + 5));
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 6));
+        setPiece(new Major(this.board, playerBlack, black, boardOffset + row[0] + 7));
+        setPiece(new GeneralTwo(this.board, playerBlack, black, boardOffset + row[0] + 8));
 
         // row 1
-        setPiece(new LtCol(playerBlack, black, boardOffset + row[1] + 1));
-        setPiece(new Private(playerBlack, black, boardOffset + row[1] + 2));
-        setPiece(new Colonel(playerBlack, black, boardOffset + row[1] + 3));
-        setPiece(new Spy(playerBlack, black, boardOffset + row[1] + 4));
-        setPiece(new Captain(playerBlack, black, boardOffset + row[1] + 5));
-        setPiece(new Private(playerBlack, black, boardOffset + row[1] + 7));
-        setPiece(new Spy(playerBlack, black, boardOffset + row[1] + 8));
+        setPiece(new LtCol(this.board, playerBlack, black, boardOffset + row[1] + 1));
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 2));
+        setPiece(new Colonel(this.board, playerBlack, black, boardOffset + row[1] + 3));
+        setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 4));
+        setPiece(new Captain(this.board, playerBlack, black, boardOffset + row[1] + 5));
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 7));
+        setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 8));
 
         // row 2
-        setPiece(new GeneralThree(playerBlack, black, boardOffset + row[2] + 9));
-        setPiece(new Private(playerBlack, black, boardOffset + row[2] + 6));
-        setPiece(new GeneralFour(playerBlack, black, boardOffset + row[2] + 5));
+        setPiece(new GeneralThree(this.board, playerBlack, black, boardOffset + row[2] + 9));
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[2] + 6));
+        setPiece(new GeneralFour(this.board, playerBlack, black, boardOffset + row[2] + 5));
         // row 3
-        setPiece(new GeneralOne(playerBlack, black, boardOffset + row[3] + 3));
-        setPiece(new GeneralFive(playerBlack, black, boardOffset + row[3] + 2));
+        setPiece(new GeneralOne(this.board, playerBlack, black, boardOffset + row[3] + 3));
+        setPiece(new GeneralFive(this.board, playerBlack, black, boardOffset + row[3] + 2));
 
         // White territory
         boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
 
         // row 0
-        setPiece(new GeneralFive(playerWhite, white, boardOffset + row[0] + 1));
-        setPiece(new Colonel(playerWhite, white, boardOffset + row[0] + 2));
-        setPiece(new GeneralOne(playerWhite, white, boardOffset + row[0] + 3));
+        setPiece(new GeneralFive(this.board, playerWhite, white, boardOffset + row[0] + 1));
+        setPiece(new Colonel(this.board, playerWhite, white, boardOffset + row[0] + 2));
+        setPiece(new GeneralOne(this.board, playerWhite, white, boardOffset + row[0] + 3));
         // row 1
-        setPiece(new GeneralFour(playerWhite, white, boardOffset + row[1] + 5));
-        setPiece(new Private(playerWhite, white, boardOffset + row[1] + 6));
-        setPiece(new GeneralThree(playerWhite, white, boardOffset + row[1] + 9));
+        setPiece(new GeneralFour(this.board, playerWhite, white, boardOffset + row[1] + 5));
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[1] + 6));
+        setPiece(new GeneralThree(this.board, playerWhite, white, boardOffset + row[1] + 9));
         // row 2
-        setPiece(new LtCol(playerWhite, white, boardOffset + row[2] + 1));
-        setPiece(new Private(playerWhite, white, boardOffset + row[2] + 2));
-        setPiece(new Spy(playerWhite, white, boardOffset + row[2] + 4));
-        setPiece(new Captain(playerWhite, white, boardOffset + row[2] + 5));
-        setPiece(new Private(playerWhite, white, boardOffset + row[2] + 7));
-        setPiece(new Spy(playerWhite, white, boardOffset + row[2] + 8));
+        setPiece(new LtCol(this.board, playerWhite, white, boardOffset + row[2] + 1));
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 2));
+        setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[2] + 4));
+        setPiece(new Captain(this.board, playerWhite, white, boardOffset + row[2] + 5));
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 7));
+        setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[2] + 8));
         // row 3
-        setPiece(new Private(playerWhite, white, boardOffset + row[3] + 1));
-        setPiece(new LtTwo(playerWhite, white, boardOffset + row[3] + 2));
-        setPiece(new Flag(playerWhite, white, boardOffset + row[3] + 3));
-        setPiece(new Private(playerWhite, white, boardOffset + row[3] + 4));
-        setPiece(new LtOne(playerWhite, white, boardOffset + row[3] + 5));
-        setPiece(new Sergeant(playerWhite, white, boardOffset + row[3] + 6));
-        setPiece(new Private(playerWhite, white, boardOffset + row[3] + 7));
-        setPiece(new Major(playerWhite, white, boardOffset + row[3] + 8));
-        setPiece(new GeneralTwo(playerWhite, white, boardOffset + row[3] + 9));
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 1));
+        setPiece(new LtTwo(this.board, playerWhite, white, boardOffset + row[3] + 2));
+        setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[3] + 3));
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 4));
+        setPiece(new LtOne(this.board, playerWhite, white, boardOffset + row[3] + 5));
+        setPiece(new Sergeant(this.board, playerWhite, white, boardOffset + row[3] + 6));
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 7));
+        setPiece(new Major(this.board, playerWhite, white, boardOffset + row[3] + 8));
+        setPiece(new GeneralTwo(this.board, playerWhite, white, boardOffset + row[3] + 9));
     }
 
     /**
@@ -127,21 +127,21 @@ public class BoardBuilder {
         final int[] blackTerritoryBounds = {0, (BoardUtils.TOTAL_BOARD_TILES / 2) - 1};
         final List<Piece> tmpBlackPiecesList = new ArrayList<>();
 
-        tmpBlackPiecesList.add(new GeneralFive(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new GeneralFour(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new GeneralThree(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new GeneralTwo(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new GeneralOne(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new Colonel(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new LtCol(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new Major(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new Captain(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new LtOne(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new LtTwo(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new Sergeant(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new Private(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new Flag(playerBlack, Alliance.BLACK));
-        tmpBlackPiecesList.add(new Spy(playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new GeneralFive(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new GeneralFour(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new GeneralThree(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new GeneralTwo(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new GeneralOne(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new Colonel(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new LtCol(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new Major(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new Captain(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new LtOne(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new LtTwo(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new Sergeant(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new Private(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new Flag(this.board, playerBlack, Alliance.BLACK));
+        tmpBlackPiecesList.add(new Spy(this.board, playerBlack, Alliance.BLACK));
 
         // Sets black pieces randomly excluding already occupied tiles.
         for (final Piece piece : tmpBlackPiecesList) {
@@ -154,21 +154,21 @@ public class BoardBuilder {
             (BoardUtils.TOTAL_BOARD_TILES) - 1};
         final List<Piece> tmpWhitePiecesList = new ArrayList<>();
 
-        tmpWhitePiecesList.add(new GeneralFive(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new GeneralFour(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new GeneralThree(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new GeneralTwo(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new GeneralOne(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new Colonel(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new LtCol(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new Major(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new Captain(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new LtOne(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new LtTwo(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new Sergeant(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new Private(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new Flag(playerWhite, Alliance.WHITE));
-        tmpWhitePiecesList.add(new Spy(playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new GeneralFive(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new GeneralFour(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new GeneralThree(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new GeneralTwo(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new GeneralOne(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new Colonel(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new LtCol(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new Major(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new Captain(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new LtOne(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new LtTwo(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new Sergeant(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new Private(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new Flag(this.board, playerWhite, Alliance.WHITE));
+        tmpWhitePiecesList.add(new Spy(this.board, playerWhite, Alliance.WHITE));
 
         // Sets white pieces randomly excluding already occupied tiles.
         for (final Piece piece : tmpWhitePiecesList) {

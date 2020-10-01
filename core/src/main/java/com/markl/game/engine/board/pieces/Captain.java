@@ -1,6 +1,7 @@
 package com.markl.game.engine.board.pieces;
 
 import com.markl.game.engine.board.Alliance;
+import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardUtils;
 import com.markl.game.engine.board.Player;
 
@@ -20,17 +21,17 @@ public class Captain extends Piece {
      * Constructor that takes in the owner Player, and Alliance of this piece.
      * Sets coords to -1 temporarily.
      */
-    public Captain(final Player owner, final Alliance alliance) {
-        super(owner, alliance);
+    public Captain(final Board board, final Player owner, final Alliance alliance) {
+        super(board, owner, alliance);
     }
 
     /**
      * Constructor that takes in the owner Player, Alliance and coordinates of
      * this Piece.
      */
-    public Captain(final Player owner, final Alliance alliance,
-            final int coords) {
-        super(owner, alliance, coords);
+    public Captain(final Board board, final Player owner,
+                   final Alliance alliance, final int coords) {
+        super(board, owner, alliance, coords);
     }
 
     /**
@@ -76,7 +77,7 @@ public class Captain extends Piece {
     @Override
     public final Piece clone() {
         final Captain copy = new Captain(
-                this.owner, this.alliance, this.coords);
+                this.board, this.owner, this.alliance, this.coords);
         return copy;
     }
 

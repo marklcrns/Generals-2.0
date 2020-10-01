@@ -45,7 +45,7 @@ class BoardTest {
     @DisplayName("Test Board.insertPiece()")
     void insertPieceTest() {
         this.board.addTile(0, null);
-        Piece flag = new Flag(null, null);
+        Piece flag = new Flag(this.board, null, null);
 
         assertTrue(this.board.insertPiece(0, flag));
         assertFalse(this.board.insertPiece(0, flag));
@@ -56,7 +56,7 @@ class BoardTest {
     @DisplayName("Test Board.deletePiece()")
     void deletePieceTest() {
         this.board.addTile(0, null);
-        Piece flag = new Flag(null, null);
+        Piece flag = new Flag(this.board, null, null);
         this.board.insertPiece(0, flag);
 
         assertTrue(this.board.deletePiece(0));
@@ -69,8 +69,8 @@ class BoardTest {
     void replacePieceTest() {
         this.board.addTile(0, null);
         this.board.addTile(1, null);
-        Piece flag = new Flag(null, null);
-        Piece spy = new Spy(null, null);
+        Piece flag = new Flag(this.board, null, null);
+        Piece spy = new Spy(this.board, null, null);
         this.board.insertPiece(0, flag);
 
         // Valid piece replacement
@@ -87,7 +87,7 @@ class BoardTest {
     void movePieceTest() {
         this.board.addTile(0, null);
         this.board.addTile(1, null);
-        Piece flag = new Flag(null, null);
+        Piece flag = new Flag(this.board, null, null);
         this.board.insertPiece(0, flag);
 
         // Valid move piece
@@ -107,8 +107,8 @@ class BoardTest {
         this.board.addTile(0, null);
         this.board.addTile(1, null);
         this.board.addTile(2, null);
-        Piece flag = new Flag(null, null);
-        Piece spy = new Spy(null, null);
+        Piece flag = new Flag(this.board, null, null);
+        Piece spy = new Spy(this.board, null, null);
         this.board.insertPiece(0, flag);
         this.board.insertPiece(1, spy);
 

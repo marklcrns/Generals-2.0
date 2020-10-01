@@ -84,40 +84,41 @@ public class BoardUtils {
      * @param alliance        Alliance of the piece.
      * @return the Piece created. Null unsuccessful.
      */
-    public static Piece pieceInstanceCreator(String pieceRankName, Player owner,
-            Alliance alliance) {
+    public static Piece pieceInstanceCreator(final Board board, final String pieceRankName,
+                                             final Player owner, final Alliance alliance)
+    {
         Piece piece = null;
 
         if (pieceRankName.contains(GENERAL_FIVE_RANK))
-            piece = new GeneralFive(owner, alliance);
+            piece = new GeneralFive(board, owner, alliance);
         else if (pieceRankName.contains(GENERAL_FOUR_RANK))
-            piece = new GeneralFour(owner, alliance);
+            piece = new GeneralFour(board, owner, alliance);
         else if (pieceRankName.contains(GENERAL_THREE_RANK))
-            piece = new GeneralThree(owner, alliance);
+            piece = new GeneralThree(board, owner, alliance);
         else if (pieceRankName.contains(GENERAL_TWO_RANK))
-            piece = new GeneralTwo(owner, alliance);
+            piece = new GeneralTwo(board, owner, alliance);
         else if (pieceRankName.contains(GENERAL_ONE_RANK))
-            piece = new GeneralOne(owner, alliance);
+            piece = new GeneralOne(board, owner, alliance);
         else if (pieceRankName.contains(COLONEL_RANK))
-            piece = new Colonel(owner, alliance);
+            piece = new Colonel(board, owner, alliance);
         else if (pieceRankName.contains(LT_COLONEL_RANK))
-            piece = new LtCol(owner, alliance);
+            piece = new LtCol(board, owner, alliance);
         else if (pieceRankName.contains(MAJOR_RANK))
-            piece = new Major(owner, alliance);
+            piece = new Major(board, owner, alliance);
         else if (pieceRankName.contains(CAPTAIN_RANK))
-            piece = new Captain(owner, alliance);
+            piece = new Captain(board, owner, alliance);
         else if (pieceRankName.contains(LT_ONE_RANK))
-            piece = new LtOne(owner, alliance);
+            piece = new LtOne(board, owner, alliance);
         else if (pieceRankName.contains(LT_TWO_RANK))
-            piece = new LtTwo(owner, alliance);
+            piece = new LtTwo(board, owner, alliance);
         else if (pieceRankName.contains(SERGEANT_RANK))
-            piece = new Sergeant(owner, alliance);
+            piece = new Sergeant(board, owner, alliance);
         else if (pieceRankName.contains(PRIVATE_RANK))
-            piece = new Private(owner, alliance);
+            piece = new Private(board, owner, alliance);
         else if (pieceRankName.contains(FLAG_RANK))
-            piece = new Flag(owner, alliance);
+            piece = new Flag(board, owner, alliance);
         else if (pieceRankName.contains(SPY_RANK))
-            piece = new Spy(owner, alliance);
+            piece = new Spy(board, owner, alliance);
 
         return piece;
     }
