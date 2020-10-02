@@ -1,7 +1,5 @@
 package com.markl.game.engine.board;
 
-import java.util.Map;
-
 import com.markl.game.Game;
 import com.markl.game.engine.board.pieces.Piece;
 
