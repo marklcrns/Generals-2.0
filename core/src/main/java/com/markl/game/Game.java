@@ -48,8 +48,10 @@ public class Game {
      * Start game.
      */
     public void start() {
-        if (!this.hasGameStarted)
+        if (!this.hasGameStarted) {
+            this.hasGameStarted = true;
             this.turnId = 1;
+        }
         // TODO: Continue implementation <02-10-20, Mark Lucernas> //
     }
 
@@ -77,9 +79,15 @@ public class Game {
 
     /** Accessor methods */
     public int getCurrTurn()           { return this.turnId; }
-    public Player getGameWinner()      { if (this.hasGameEnded) return this.gameWinner; else return null; }
+    public Player getPlayerWinner()    { if (this.hasGameEnded) return this.gameWinner; else return null; }
     public String getBlackPlayerName() { return this.blackPlayerName; }
     public String getWhitePlayerName() { return this.whitePlayerName; }
+    public boolean isRunning() {
+        if (this.hasGameStarted && !this.hasGameEnded)
+            return true;
+
+        return false;
+    }
 
     /** Modifier methods */
     public void setBoard(Board board)  { this.board = board; }

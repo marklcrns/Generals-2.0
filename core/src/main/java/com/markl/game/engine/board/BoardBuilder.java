@@ -59,61 +59,65 @@ public class BoardBuilder {
         int boardOffset = 0;              // Black territory
 
         // row 0
-        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 0));
-        setPiece(new LtTwo(this.board, playerBlack, black, boardOffset + row[0] + 1));
-        setPiece(new Flag(this.board, playerBlack, black, boardOffset + row[0] + 2));
-        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 3));
-        setPiece(new LtOne(this.board, playerBlack, black, boardOffset + row[0] + 4));
-        setPiece(new Sergeant(this.board, playerBlack, black, boardOffset + row[0] + 5));
-        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 6));
-        setPiece(new Major(this.board, playerBlack, black, boardOffset + row[0] + 7));
-        setPiece(new GeneralTwo(this.board, playerBlack, black, boardOffset + row[0] + 8));
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 0), false);
+        setPiece(new LtTwo(this.board, playerBlack, black, boardOffset + row[0] + 1), false);
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 3), false);
+        setPiece(new LtOne(this.board, playerBlack, black, boardOffset + row[0] + 4), false);
+        setPiece(new Sergeant(this.board, playerBlack, black, boardOffset + row[0] + 5), false);
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 6), false);
+        setPiece(new Major(this.board, playerBlack, black, boardOffset + row[0] + 7), false);
+        setPiece(new GeneralTwo(this.board, playerBlack, black, boardOffset + row[0] + 8), false);
 
         // row 1
-        setPiece(new LtCol(this.board, playerBlack, black, boardOffset + row[1] + 1));
-        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 2));
-        setPiece(new Colonel(this.board, playerBlack, black, boardOffset + row[1] + 3));
-        setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 4));
-        setPiece(new Captain(this.board, playerBlack, black, boardOffset + row[1] + 5));
-        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 7));
-        setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 8));
+        setPiece(new LtCol(this.board, playerBlack, black, boardOffset + row[1] + 1), false);
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 2), false);
+        setPiece(new Colonel(this.board, playerBlack, black, boardOffset + row[1] + 3), false);
+        setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 4), false);
+        setPiece(new Captain(this.board, playerBlack, black, boardOffset + row[1] + 5), false);
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 7), false);
+        setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 8), false);
 
         // row 2
-        setPiece(new GeneralThree(this.board, playerBlack, black, boardOffset + row[2] + 9));
-        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[2] + 6));
-        setPiece(new GeneralFour(this.board, playerBlack, black, boardOffset + row[2] + 5));
+        setPiece(new GeneralThree(this.board, playerBlack, black, boardOffset + row[2] + 9), false);
+
         // row 3
-        setPiece(new GeneralOne(this.board, playerBlack, black, boardOffset + row[3] + 3));
-        setPiece(new GeneralFive(this.board, playerBlack, black, boardOffset + row[3] + 2));
+        setPiece(new GeneralFive(this.board, playerBlack, black, boardOffset + row[3] + 2), false);
+        setPiece(new GeneralOne(this.board, playerBlack, black, boardOffset + row[3] + 3), false);
+        setPiece(new GeneralFour(this.board, playerBlack, black, boardOffset + row[3] + 4), false);
+        setPiece(new Private(this.board, playerBlack, black, boardOffset + row[3] + 5), false);
 
         // White territory
         boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
 
         // row 0
-        setPiece(new GeneralFive(this.board, playerWhite, white, boardOffset + row[0] + 1));
-        setPiece(new Colonel(this.board, playerWhite, white, boardOffset + row[0] + 2));
-        setPiece(new GeneralOne(this.board, playerWhite, white, boardOffset + row[0] + 3));
+        setPiece(new GeneralFive(this.board, playerWhite, white, boardOffset + row[0] + 1), false);
+        setPiece(new Colonel(this.board, playerWhite, white, boardOffset + row[0] + 2), false);
+        setPiece(new GeneralOne(this.board, playerWhite, white, boardOffset + row[0] + 3), false);
+        setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[0] + 4), false);
+        setPiece(new GeneralTwo(this.board, playerWhite, white, boardOffset + row[0] + 7), false);
+
         // row 1
-        setPiece(new GeneralFour(this.board, playerWhite, white, boardOffset + row[1] + 5));
-        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[1] + 6));
-        setPiece(new GeneralThree(this.board, playerWhite, white, boardOffset + row[1] + 9));
+        setPiece(new GeneralFour(this.board, playerWhite, white, boardOffset + row[1] + 5), false);
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[1] + 6), false);
+        setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[1] + 7), false);
+        setPiece(new GeneralThree(this.board, playerWhite, white, boardOffset + row[1] + 8), false);
+
         // row 2
-        setPiece(new LtCol(this.board, playerWhite, white, boardOffset + row[2] + 1));
-        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 2));
-        setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[2] + 4));
-        setPiece(new Captain(this.board, playerWhite, white, boardOffset + row[2] + 5));
-        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 7));
-        setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[2] + 8));
+        setPiece(new LtCol(this.board, playerWhite, white, boardOffset + row[2] + 1), false);
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 2), false);
+        setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[2] + 4), false);
+        setPiece(new Captain(this.board, playerWhite, white, boardOffset + row[2] + 5), false);
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 7), false);
+        setPiece(new Flag(this.board, playerBlack, black, boardOffset + row[2] + 9), true);
+
         // row 3
-        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 1));
-        setPiece(new LtTwo(this.board, playerWhite, white, boardOffset + row[3] + 2));
-        setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[3] + 3));
-        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 4));
-        setPiece(new LtOne(this.board, playerWhite, white, boardOffset + row[3] + 5));
-        setPiece(new Sergeant(this.board, playerWhite, white, boardOffset + row[3] + 6));
-        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 7));
-        setPiece(new Major(this.board, playerWhite, white, boardOffset + row[3] + 8));
-        setPiece(new GeneralTwo(this.board, playerWhite, white, boardOffset + row[3] + 9));
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 1), false);
+        setPiece(new LtTwo(this.board, playerWhite, white, boardOffset + row[3] + 2), false);
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 4), false);
+        setPiece(new LtOne(this.board, playerWhite, white, boardOffset + row[3] + 5), false);
+        setPiece(new Sergeant(this.board, playerWhite, white, boardOffset + row[3] + 6), false);
+        setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 7), false);
+        setPiece(new Major(this.board, playerWhite, white, boardOffset + row[3] + 8), false);
     }
 
     /**
@@ -206,28 +210,28 @@ public class BoardBuilder {
      * @param piece Piece instance to insert into specific Tile.
      * @return boolean true if successful, else false.
      */
-    public boolean setPiece(final Piece piece) {
+    public boolean setPiece(final Piece piece, boolean isSkipTerritoryCheck) {
         if (!isPieceWithinBounds(piece)) {
-            System.out.println("setPiece() FAILED: " + piece.getPieceAlliance() +
+            System.out.println("setPiece() FAILED: " + piece.getAlliance() +
                                " " + piece.getRank() +
                                " at " + piece.getPieceCoords() +
                                ". Piece out of bounds.");
             return false;
-        } else if (!isPieceInCorrectTerritory(piece)) {
-            System.out.println("setPiece() FAILED: " + piece.getPieceAlliance() +
+        } else if (!isPieceInCorrectTerritory(piece) && !isSkipTerritoryCheck) {
+            System.out.println("setPiece() FAILED: " + piece.getAlliance() +
                                " " + piece.getRank() +
                                " at " + piece.getPieceCoords() +
                                ". Piece not in correct territory.");
             return false;
         } else if (!isLegalPieceInstanceChecker(piece)) {
-            System.out.println("setPiece() FAILED: " + piece.getPieceAlliance() +
+            System.out.println("setPiece() FAILED: " + piece.getAlliance() +
                                " " + piece.getRank() +
                                " at " + piece.getPieceCoords() +
                                ". Piece instance over limit " +
                                piece.getLegalPieceInstanceCount() + ".");
             return false;
         } else if (!isTileEmpty(piece.getPieceCoords())) {
-            System.out.println("setPiece() FAILED: " + piece.getPieceAlliance() +
+            System.out.println("setPiece() FAILED: " + piece.getAlliance() +
                                " " + piece.getRank() +
                                " at " + piece.getPieceCoords() +
                                ". Tile not empty.");
@@ -236,7 +240,7 @@ public class BoardBuilder {
 
         boardConfig.put(piece.getPieceCoords(), piece);
 
-        if (piece.getPieceAlliance() == Alliance.BLACK)
+        if (piece.getAlliance() == Alliance.BLACK)
             this.blackPiecesCount++;
         else
             this.whitePiecesCount++;
@@ -260,14 +264,14 @@ public class BoardBuilder {
     {
         Piece pieceCopy = piece.clone();
         int pieceInstanceCounter = countPieceInstances(
-                piece.getRank(), piece.getPieceAlliance());
+                piece.getRank(), piece.getAlliance());
         int randomEmptyTile;
 
         while (pieceInstanceCounter < piece.getLegalPieceInstanceCount()) {
             randomEmptyTile = Utils.getRandomWithExclusion(from, to, occupiedTiles);
             pieceCopy.setPieceCoords(randomEmptyTile);
             // TODO: Fix to check if randomEmptyTile is empty
-            if (setPiece(pieceCopy)) {
+            if (setPiece(pieceCopy, false)) {
                 pieceCopy = piece.clone();
                 Utils.appendToIntArray(occupiedTiles, randomEmptyTile);
                 pieceInstanceCounter++;
@@ -288,7 +292,7 @@ public class BoardBuilder {
         // Count all pieces from boardConfig HashMap field.
         for (final Map.Entry<Integer, Piece> entry : boardConfig.entrySet()) {
             if (entry.getValue().getRank() == rank &&
-                entry.getValue().getPieceAlliance() == alliance)
+                entry.getValue().getAlliance() == alliance)
             {
                 pieceInstanceCounter++;
             }
@@ -320,9 +324,9 @@ public class BoardBuilder {
      * false.
      */
     public boolean isPieceInCorrectTerritory(final Piece piece) {
-        if ((piece.getPieceAlliance() == Alliance.BLACK &&
+        if ((piece.getAlliance() == Alliance.BLACK &&
              piece.getPieceCoords() < BoardUtils.TOTAL_BOARD_TILES / 2) ||
-            (piece.getPieceAlliance() == Alliance.WHITE &&
+            (piece.getAlliance() == Alliance.WHITE &&
              piece.getPieceCoords() > BoardUtils.TOTAL_BOARD_TILES / 2))
         {
             return true;
@@ -342,7 +346,7 @@ public class BoardBuilder {
         // Increment counter if instance detected within the same alliance
         for (final Map.Entry<Integer, Piece> entry : this.boardConfig.entrySet()) {
             if (piece.getRank().equals(entry.getValue().getRank()) &&
-                piece.getPieceAlliance() == entry.getValue().getPieceAlliance())
+                piece.getAlliance() == entry.getValue().getAlliance())
             {
                 pieceInstanceCounter++;
             }
@@ -388,7 +392,7 @@ public class BoardBuilder {
         for (final Map.Entry<Integer, Piece> entry : boardConfig.entrySet()) {
             boardConfigStatus += "tileId=" + entry.getKey() +
                 ";piece=" + entry.getValue().getRank() +
-                ";pieceAlliance=" + entry.getValue().getPieceAlliance() + "\n";
+                ";pieceAlliance=" + entry.getValue().getAlliance() + "\n";
         }
 
         return boardConfigStatus;

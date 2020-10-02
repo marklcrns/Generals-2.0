@@ -124,6 +124,21 @@ public class BoardUtils {
     }
 
     /**
+     * Compares two {@link Piece} equality.
+     *
+     * @return boolean true if both pieces are equal, else false.
+     */
+    public static boolean areTwoPiecesEqual(Piece pieceOne, Piece pieceTwo) {
+        if (pieceOne.getRank().equals(pieceTwo.getRank()) &&
+            pieceOne.getAlliance() == pieceTwo.getAlliance() &&
+            pieceOne.getPowerLevel() == pieceTwo.getPowerLevel() &&
+            pieceOne.getPieceOwner() == pieceTwo.getPieceOwner())
+            return true;
+
+        return false;
+    }
+
+    /**
      * Constructor method that ensures this {@link BoardUtils} class cannot be
      * instantiated.
      */

@@ -132,7 +132,7 @@ public class Tile {
     public String toString() {
         if (this.occupied)
             return "Tile " + this.tileId + " contains " +
-                this.piece.getPieceAlliance() + " " + this.piece.getRank();
+                this.piece.getAlliance() + " " + this.piece.getRank();
         else
             return "Tile " + this.tileId + " is empty";
     }

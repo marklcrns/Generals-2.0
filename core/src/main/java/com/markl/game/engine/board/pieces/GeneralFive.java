@@ -66,7 +66,7 @@ public class GeneralFive extends Piece {
      * @return piece alliance.
      */
     @Override
-    public final Alliance getPieceAlliance() {
+    public final Alliance getAlliance() {
         return this.alliance;
     }
 

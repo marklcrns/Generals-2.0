@@ -32,7 +32,6 @@ public class Board {
     public Board(Game game) {
         this.game = game;
         this.initBoard();
-        this.initGame();
     }
 
     /**
@@ -43,7 +42,7 @@ public class Board {
     }
 
     public void initGame() {
-        game.setBoard(this);
+        this.game.setBoard(this);
     }
 
     /**
