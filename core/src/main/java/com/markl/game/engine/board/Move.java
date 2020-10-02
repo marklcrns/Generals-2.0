@@ -41,11 +41,11 @@ public class Move {
     private final Board board;          // Reference to the Board to execute the move in
     private final Game game;            // Reference to the Game
     private final Player player;        // Reference to the Player that owns the Piece to be moved.
-    private final int sourceTileCoords; // Location of the occupied Tile in which the piece to be moved.
-    private final int targetTileCoords; // Location of the Tile to where the source piece will potentially move into
+    private final int srcTileCoords;    // Location of the occupied Tile in which the piece to be moved.
+    private final int tgtTileCoords;    // Location of the Tile to where the source piece will potentially move into
     private MoveType moveType;          // Move type to determine the behavior of piece relocation
-    private Piece sourcePieceCopy;      // Deep copy of the source piece
-    private Piece targetPieceCopy;      // Deep copy of the target piece if move type is aggressive or draw
+    private Piece srcPieceCopy;         // Deep copy of the source piece
+    private Piece tgtPieceCopy;         // Deep copy of the target piece if move type is aggressive or draw
     private Piece eliminatedPiece;      // Deep copy of the eliminated piece if move type is aggressive
     private boolean isExecuted = false; // boolean that holds if the this Move instance has bee executed
 
@@ -55,18 +55,18 @@ public class Move {
      *
      * @param player            Player reference making the move.
      * @param board             Board reference.
-     * @param sourceTileCoords  location of the Tile containing a piece to be moved.
-     * @param targetTileCoords  location of the destination of the piece to be moved.
+     * @param srcTileCoords  location of the Tile containing a piece to be moved.
+     * @param tgtTileCoords  location of the destination of the piece to be moved.
      */
     public Move(final Player player, final Board board,
-                final int sourceTileCoords, final int targetTileCoords)
+                final int srcTileCoords, final int tgtTileCoords)
     {
-        this.player           = player;
-        this.board            = board;
-        this.game             = board.getGame();
-        this.turnId           = this.game.getTurnId();
-        this.sourceTileCoords = sourceTileCoords;
-        this.targetTileCoords = targetTileCoords;
+        this.player        = player;
+        this.board         = board;
+        this.game          = board.getGame();
+        this.turnId        = this.game.getCurrTurn();
+        this.srcTileCoords = srcTileCoords;
+        this.tgtTileCoords = tgtTileCoords;
     }
 
     /**
@@ -87,19 +87,19 @@ public class Move {
         }
 
         // Make source piece copy
-        this.sourcePieceCopy = this.board.getTile(sourceTileCoords).getPiece().clone();
+        this.srcPieceCopy = this.board.getTile(srcTileCoords).getPiece().clone();
         // Make target piece copy if exist
-        if (isTargetOccupied())
-            this.targetPieceCopy = this.board.getTile(targetTileCoords).getPiece().clone();
+        if (isTgtTileOccupied())
+            this.tgtPieceCopy = this.board.getTile(tgtTileCoords).getPiece().clone();
         else
-            this.targetPieceCopy = null;
+            this.tgtPieceCopy = null;
 
         if (isMoveLegal()) {
-            if (isTargetOccupied())
+            if (isTgtTileOccupied())
                 if (isFriendlyFire())
                     this.moveType = MoveType.INVALID;
                 else
-                    if (isSameRank() && isTargetPieceFlag())
+                    if (isSameRank() && isTgtPieceFlag())
                         this.moveType = MoveType.AGGRESSIVE;
                     else if (isSameRank())
                         this.moveType = MoveType.DRAW;
@@ -129,49 +129,49 @@ public class Move {
 
             case 0: // DRAW
                 // Eliminates both pieces from the game.
-                board.getTile(sourceTileCoords).removePiece();
-                board.getTile(targetTileCoords).removePiece();
+                board.getTile(srcTileCoords).removePiece();
+                board.getTile(tgtTileCoords).removePiece();
                 break;
 
             case 1: // NORMAL
                 // Check if Flag has been maneuvered into the opposite end row of the board.
                 if (isFlagSucceeded()) {
                     System.out.println(
-                        "\n" + sourcePieceCopy.getPieceAlliance() +
+                        "\n" + srcPieceCopy.getPieceAlliance() +
                         " player WON!\n");
 
                     // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
                 }
 
                 // Move Tile normally
-                board.movePiece(sourceTileCoords, targetTileCoords);
+                board.movePiece(srcTileCoords, tgtTileCoords);
                 this.isExecuted = true;
                 break;
 
             case 2: // AGGRESSIVE
                 // Check if source or target piece is Flag rank, then conclude the game.
-                if (isTargetPieceFlag()) {
+                if (isTgtPieceFlag()) {
                     System.out.println(
-                        "\n" + sourcePieceCopy.getPieceAlliance() +
+                        "\n" + srcPieceCopy.getPieceAlliance() +
                         " player WON!\n");
 
                     // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
-                } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
+                } else if (isSrcPieceFlag() && !isTgtPieceFlag()){
                     System.out.println(
-                        "\n" + targetPieceCopy.getPieceAlliance() +
+                        "\n" + tgtPieceCopy.getPieceAlliance() +
                         " player WON!\n");
 
                     // TODO: board.setEndGameWinner(targetPieceCopy.getPieceAlliance());
                 }
 
                 // Eliminate low ranking piece from the aggressive engagement.
-                if (isTargetPieceEliminated()) {
-                    board.replacePiece(targetTileCoords, sourcePieceCopy);
-                    board.getTile(sourceTileCoords).removePiece();
-                    eliminatedPiece = targetPieceCopy;
+                if (isTgtPieceEliminated()) {
+                    board.replacePiece(tgtTileCoords, srcPieceCopy);
+                    board.getTile(srcTileCoords).removePiece();
+                    eliminatedPiece = tgtPieceCopy;
                 } else {
-                    board.getTile(sourceTileCoords).removePiece();
-                    eliminatedPiece = sourcePieceCopy;
+                    board.getTile(srcTileCoords).removePiece();
+                    eliminatedPiece = srcPieceCopy;
                 }
                 this.isExecuted = true;
                 break;
@@ -193,11 +193,11 @@ public class Move {
      * piece.
      */
     private boolean isMoveLegal() {
-        int sourceTargetDifference = this.targetTileCoords - this.sourceTileCoords;
-        if (sourceTargetDifference ==  1 ||
-            sourceTargetDifference == -1 ||
-            sourceTargetDifference ==  9 ||
-            sourceTargetDifference == -9)
+        int srcTgtDiff = this.tgtTileCoords - this.srcTileCoords;
+        if (srcTgtDiff ==  1 ||
+            srcTgtDiff == -1 ||
+            srcTgtDiff ==  9 ||
+            srcTgtDiff == -9)
             return true;
 
         return false;
@@ -210,8 +210,8 @@ public class Move {
      * is/are out of bounds.
      */
     private boolean isOutOfBounds() {
-        if (this.sourceTileCoords < 0 || this.sourceTileCoords > 71 ||
-            this.targetTileCoords < 0 || this.targetTileCoords > 71)
+        if (this.srcTileCoords < 0 || this.srcTileCoords > 71 ||
+            this.tgtTileCoords < 0 || this.tgtTileCoords > 71)
             return true;
 
         return false;
@@ -222,8 +222,8 @@ public class Move {
      *
      * @return boolean true if targetTileCoords is occupied, else false.
      */
-    private boolean isTargetOccupied() {
-        if (board.getTile(targetTileCoords).isTileOccupied())
+    private boolean isTgtTileOccupied() {
+        if (board.getTile(tgtTileCoords).isTileOccupied())
             return true;
 
         return false;
@@ -236,7 +236,7 @@ public class Move {
      * Alliance, else false.
      */
     private boolean isFriendlyFire() {
-        if (targetPieceCopy.getPieceAlliance() == sourcePieceCopy.getPieceAlliance())
+        if (tgtPieceCopy.getPieceAlliance() == srcPieceCopy.getPieceAlliance())
             return true;
 
         return false;
@@ -248,7 +248,7 @@ public class Move {
      * @return boolean true if same rank, else false.
      */
     private boolean isSameRank() {
-        if (sourcePieceCopy.getRank() == targetPieceCopy.getRank())
+        if (srcPieceCopy.getRank() == tgtPieceCopy.getRank())
             return true;
 
         return false;
@@ -266,14 +266,14 @@ public class Move {
      * @return boolean true if target piece is subordinate to the source piece,
      * else false.
      */
-    private boolean isTargetPieceEliminated() {
-        if (isSourcePieceFlag() && isTargetPieceFlag())
+    private boolean isTgtPieceEliminated() {
+        if (isSrcPieceFlag() && isTgtPieceFlag())
             return true;
-        else if (sourcePieceCopy.getRank() == "Private" && targetPieceCopy.getRank() == "Spy")
+        else if (srcPieceCopy.getRank() == "Private" && tgtPieceCopy.getRank() == "Spy")
             return true;
-        else if (sourcePieceCopy.getRank() == "Spy" && targetPieceCopy.getRank() == "Private")
+        else if (srcPieceCopy.getRank() == "Spy" && tgtPieceCopy.getRank() == "Private")
             return false;
-        else if (sourcePieceCopy.getPowerLevel() > targetPieceCopy.getPowerLevel())
+        else if (srcPieceCopy.getPowerLevel() > tgtPieceCopy.getPowerLevel())
             return true;
         else
             return false;
@@ -284,8 +284,8 @@ public class Move {
      *
      * @return boolean true if target piece is Flag, else false.
      */
-    private boolean isTargetPieceFlag() {
-        if (targetPieceCopy.getRank() == "Flag")
+    private boolean isTgtPieceFlag() {
+        if (tgtPieceCopy.getRank() == "Flag")
             return true;
         else
             return false;
@@ -296,8 +296,8 @@ public class Move {
      *
      * @return boolean true if source piece is Flag, else false.
      */
-    private boolean isSourcePieceFlag() {
-        if (sourcePieceCopy.getRank() == "Flag")
+    private boolean isSrcPieceFlag() {
+        if (srcPieceCopy.getRank() == "Flag")
             return true;
         else
             return false;
@@ -310,13 +310,13 @@ public class Move {
      * @return boolean true if Flag has succeeded, else false.
      */
     private boolean isFlagSucceeded() {
-        if (sourcePieceCopy.getRank() == "Flag" &&
-                board.getTile(targetTileCoords).isTileEmpty())
+        if (srcPieceCopy.getRank() == "Flag" &&
+                board.getTile(tgtTileCoords).isTileEmpty())
             // Check if Flag piece is in the respective opposite end row of the board.
-            if ((sourcePieceCopy.getPieceAlliance() == Alliance.BLACK &&
-                        targetTileCoords >= BoardUtils.LAST_ROW_INIT) ||
-                    (sourcePieceCopy.getPieceAlliance() == Alliance.WHITE &&
-                     targetTileCoords < BoardUtils.SECOND_ROW_INIT))
+            if ((srcPieceCopy.getPieceAlliance() == Alliance.BLACK &&
+                        tgtTileCoords >= BoardUtils.LAST_ROW_INIT) ||
+                    (srcPieceCopy.getPieceAlliance() == Alliance.WHITE &&
+                     tgtTileCoords < BoardUtils.SECOND_ROW_INIT))
                 return true;
 
         return false;
@@ -336,17 +336,26 @@ public class Move {
      *
      * @return Tile from the Board.
      */
-    public Tile getSourceTile() {
-        return board.getTile(sourceTileCoords);
+    public Tile getSrcTile() {
+        return board.getTile(srcTileCoords);
     }
 
     /**
-     * Gets the source piece destination or target Tile coordinates.
+     * Gets the target Tile from Board.
+     *
+     * @return Tile from the Board.
+     */
+    public Tile getTgtTile() {
+        return board.getTile(tgtTileCoords);
+    }
+
+    /**
+     * Gets the target piece destination or target Tile coordinates.
      *
      * @return int target Tile index or ID.
      */
-    public int getDestinationCoords() {
-        return this.targetTileCoords;
+    public int getTgtTileCoords() {
+        return this.tgtTileCoords;
     }
 
     /**
@@ -354,8 +363,8 @@ public class Move {
      *
      * @return int source piece or Tile index or ID.
      */
-    public int getOriginCoords() {
-        return this.sourceTileCoords;
+    public int getSrcTileCoords() {
+        return this.srcTileCoords;
     }
 
     /**
@@ -396,9 +405,9 @@ public class Move {
      *
      * @return Piece sourcePieceCopy field. Null if uninitialized.
      */
-    public Piece getSourcePiece() {
-        if (this.sourcePieceCopy != null)
-            return this.sourcePieceCopy;
+    public Piece getSrcPiece() {
+        if (this.srcPieceCopy != null)
+            return this.srcPieceCopy;
 
         return null;
     }
@@ -408,9 +417,9 @@ public class Move {
      *
      * @return Piece targetPieceCopy field. Null if uninitialized.
      */
-    public Piece getTargetPiece() {
-        if (this.targetPieceCopy != null)
-            return this.targetPieceCopy;
+    public Piece getTgtPiece() {
+        if (this.tgtPieceCopy != null)
+            return this.tgtPieceCopy;
 
         return null;
     }
@@ -479,9 +488,9 @@ public class Move {
 
     @Override
     public String toString() {
-        final Alliance sourcePieceAlliance = sourcePieceCopy == null ? null : sourcePieceCopy.getPieceAlliance();
-        final String sourcePiece = sourcePieceCopy == null ? "blank" : sourcePieceCopy.getRank();
-        final String targetPiece = targetPieceCopy == null ? "blank" : targetPieceCopy.getRank();
+        final Alliance srcPieceAlliance = srcPieceCopy == null ? null : srcPieceCopy.getPieceAlliance();
+        final String srcPiece = srcPieceCopy == null ? "blank" : srcPieceCopy.getRank();
+        final String tgtPiece = tgtPieceCopy == null ? "blank" : tgtPieceCopy.getRank();
 
         if (isExecuted) {
             String superiorPieceAlliance = "";
@@ -490,20 +499,20 @@ public class Move {
                     " " + Alliance.WHITE: " " + Alliance.BLACK;
             }
             return "Turn " + this.turnId + ": " +
-                sourcePieceAlliance + " " +
-                sourcePiece + " " +
-                sourceTileCoords + " to " +
-                targetPiece + " " +
-                targetTileCoords + " " +
+                srcPieceAlliance + " " +
+                srcPiece + " " +
+                srcTileCoords + " to " +
+                tgtPiece + " " +
+                tgtTileCoords + " " +
                 this.moveType + superiorPieceAlliance +
                 " EXECUTED";
         } else {
             return "Turn " + this.turnId + ": " +
-                sourcePieceAlliance + " " +
-                sourcePiece + " " +
-                sourceTileCoords + " to " +
-                targetPiece + " " +
-                targetTileCoords;
+                srcPieceAlliance + " " +
+                srcPiece + " " +
+                srcTileCoords + " to " +
+                tgtPiece + " " +
+                tgtTileCoords;
         }
     }
 }

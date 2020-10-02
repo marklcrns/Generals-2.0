@@ -64,5 +64,5 @@ public class Game {
 
     public void nextTurn() { this.turnId++; }
     public void prevTurn() { if (this.turnId > 0) this.turnId--; }
-    public int getTurnId() { return this.turnId; }
+    public int getCurrTurn() { return this.turnId; }
 }
