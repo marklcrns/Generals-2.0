@@ -89,17 +89,17 @@ public class Move {
         // Make source piece copy
         this.srcPieceCopy = this.board.getTile(srcTileCoords).getPiece().clone();
         // Make target piece copy if exist
-        if (isTgtTileOccupied())
+        if (isTargetTileOccupied())
             this.tgtPieceCopy = this.board.getTile(tgtTileCoords).getPiece().clone();
         else
             this.tgtPieceCopy = null;
 
         if (isMoveLegal()) {
-            if (isTgtTileOccupied())
+            if (isTargetTileOccupied())
                 if (isFriendlyFire())
                     this.moveType = MoveType.INVALID;
                 else
-                    if (isSameRank() && isTgtPieceFlag())
+                    if (isSameRank() && isTargetPieceFlag())
                         this.moveType = MoveType.AGGRESSIVE;
                     else if (isSameRank())
                         this.moveType = MoveType.DRAW;
@@ -150,13 +150,13 @@ public class Move {
 
             case 2: // AGGRESSIVE
                 // Check if source or target piece is Flag rank, then conclude the game.
-                if (isTgtPieceFlag()) {
+                if (isTargetPieceFlag()) {
                     System.out.println(
                         "\n" + srcPieceCopy.getPieceAlliance() +
                         " player WON!\n");
 
                     // TODO: board.setEndGameWinner(sourcePieceCopy.getPieceAlliance());
-                } else if (isSrcPieceFlag() && !isTgtPieceFlag()){
+                } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
                     System.out.println(
                         "\n" + tgtPieceCopy.getPieceAlliance() +
                         " player WON!\n");
@@ -165,7 +165,7 @@ public class Move {
                 }
 
                 // Eliminate low ranking piece from the aggressive engagement.
-                if (isTgtPieceEliminated()) {
+                if (isTargetPieceEliminated()) {
                     board.replacePiece(tgtTileCoords, srcPieceCopy);
                     board.getTile(srcTileCoords).removePiece();
                     eliminatedPiece = tgtPieceCopy;
@@ -222,7 +222,7 @@ public class Move {
      *
      * @return boolean true if targetTileCoords is occupied, else false.
      */
-    private boolean isTgtTileOccupied() {
+    private boolean isTargetTileOccupied() {
         if (board.getTile(tgtTileCoords).isTileOccupied())
             return true;
 
@@ -266,8 +266,8 @@ public class Move {
      * @return boolean true if target piece is subordinate to the source piece,
      * else false.
      */
-    private boolean isTgtPieceEliminated() {
-        if (isSrcPieceFlag() && isTgtPieceFlag())
+    private boolean isTargetPieceEliminated() {
+        if (isSourcePieceFlag() && isTargetPieceFlag())
             return true;
         else if (srcPieceCopy.getRank() == "Private" && tgtPieceCopy.getRank() == "Spy")
             return true;
@@ -284,7 +284,7 @@ public class Move {
      *
      * @return boolean true if target piece is Flag, else false.
      */
-    private boolean isTgtPieceFlag() {
+    private boolean isTargetPieceFlag() {
         if (tgtPieceCopy.getRank() == "Flag")
             return true;
         else
@@ -296,7 +296,7 @@ public class Move {
      *
      * @return boolean true if source piece is Flag, else false.
      */
-    private boolean isSrcPieceFlag() {
+    private boolean isSourcePieceFlag() {
         if (srcPieceCopy.getRank() == "Flag")
             return true;
         else
