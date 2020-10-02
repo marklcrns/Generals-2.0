@@ -162,7 +162,6 @@ class MoveTest {
                    this.aggressiveWinMove.getEliminatedPiece()),
                    "test if target piece eliminated");
         assertEquals(this.game.getCurrTurn(), 2);
-
     }
 
     @Test
