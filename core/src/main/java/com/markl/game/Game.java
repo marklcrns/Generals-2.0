@@ -15,8 +15,8 @@ public class Game {
     private int turnId;                     // Current turn of the game
     private Board board;                    // Board instance
     private Player gameWinner;              // Game winner
-    private String blackPlayerName = "";         // Black player's name assigned when game initialized
-    private String whitePlayerName = "";         // White player's name assigned when game initialized
+    private String blackPlayerName = "";    // Black player's name assigned when game initialized
+    private String whitePlayerName = "";    // White player's name assigned when game initialized
     private boolean hasGameStarted = false; // Turns true when game started
     private boolean hasGameEnded = false;   // Turns true when game started
 

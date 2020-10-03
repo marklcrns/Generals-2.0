@@ -21,7 +21,7 @@ import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.engine.board.pieces.Private;
 import com.markl.game.engine.board.pieces.Sergeant;
 import com.markl.game.engine.board.pieces.Spy;
-import com.markl.game.utils.Utils;
+import com.markl.game.util.Utils;
 
 /**
  * Builds board for the {@link Board} class.

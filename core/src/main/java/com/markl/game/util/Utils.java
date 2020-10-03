@@ -1,4 +1,4 @@
-package com.markl.game.utils;
+package com.markl.game.util;
 
 import java.util.Random;
 
