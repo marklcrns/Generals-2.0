@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.markl.game.Game;
+import com.markl.game.GameState;
 import com.markl.game.engine.board.Move.MoveType;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 class MoveTest {
 
-    private Game game;
+    private GameState game;
     private Board board;
     private Move invalidFriendlyFireMove;
     private Move invalidDiagonalMove;
@@ -27,7 +27,7 @@ class MoveTest {
 
     @BeforeEach
     void setUp() {
-        this.game = new Game();
+        this.game = new GameState();
         this.board = new Board(game);
         this.game.start();
         BoardBuilder builder = new BoardBuilder(board);

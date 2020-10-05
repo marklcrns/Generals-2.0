@@ -10,7 +10,7 @@ import com.markl.game.engine.board.Player;
  * @author Mark Lucernas
  * Date: Sep 27, 2020
  */
-public class Game {
+public class GameState {
 
     private int turnId;                     // Current turn of the game
     private Board board;                    // Board instance
@@ -23,7 +23,7 @@ public class Game {
     /**
      * No-constructor function
      */
-    public Game() {
+    public GameState() {
         this.turnId = 0;
     }
 
@@ -32,7 +32,7 @@ public class Game {
      *
      * @param board {@link Board} instance.
      */
-    public Game(Board board) {
+    public GameState(Board board) {
         this.turnId = 0;
         this.board = board;
     }
