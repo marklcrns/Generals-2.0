@@ -166,7 +166,7 @@ public class Board {
 
     /**
      * Gets specific tile from gameBoard field.
-     * @param tileId tile number.
+     * @param id tile number.
      * @return Tile from gameBoard field List.
      */
     public Tile getTile(int tileNum) {

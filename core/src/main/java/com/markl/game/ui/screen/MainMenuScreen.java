@@ -1,8 +1,9 @@
-package com.markl.game.screen;
+package com.markl.game.ui.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.markl.game.ui.GoG;
 
 /**
  * TODO Class Description.

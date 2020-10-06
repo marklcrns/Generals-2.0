@@ -1,4 +1,4 @@
-package com.markl.game.screen;
+package com.markl.game.ui;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -8,23 +8,28 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.markl.game.ui.screen.GameScreen;
+import com.markl.game.ui.screen.LoadingScreen;
+import com.markl.game.ui.screen.MainMenuScreen;
+import com.markl.game.ui.screen.SplashScreen;
 
 public class GoG extends Game {
 
   public static final String TITLE = "Game of The Generals";
   public static final float VERSION = 0.1f;
-  public static final int V_WIDTH = 480;
-  public static final int V_HEIGHT = 420;
+  public static final int V_WIDTH = 800;
+  public static final int V_HEIGHT = 480;
 
-  protected SpriteBatch batch;
-  protected BitmapFont font;
-  protected OrthographicCamera camera;
-  protected AssetManager assets;
+  public SpriteBatch batch;
+  public BitmapFont font;
+  public OrthographicCamera camera;
+  public AssetManager assets;
 
-  protected LoadingScreen loadingScreen;
-  protected SplashScreen splashScreen;
-  protected MainMenuScreen mainMenuScreen;
-  protected GameScreen gameScreen;
+  // Screens
+  public LoadingScreen loadingScreen;
+  public SplashScreen splashScreen;
+  public MainMenuScreen mainMenuScreen;
+  public GameScreen gameScreen;
 
   @Override
   public void create() {
@@ -61,14 +66,4 @@ public class GoG extends Game {
     splashScreen.dispose();
     mainMenuScreen.dispose();
   }
-
-  // public static void main(String[] args) {
-  //     Game game = new Game();
-  //     Board board = new Board(game);
-  //     BoardBuilder builder = new BoardBuilder(board);
-  //     builder.createDemoBoardBuild();
-  //     builder.build();
-  //     game.start();
-  //     System.out.println(builder.toString());
-  //     System.out.println(board.toString());
 }

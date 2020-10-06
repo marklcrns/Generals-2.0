@@ -28,7 +28,7 @@ public class BoardUtils {
     /** Board tiles measurements */
     public static final int BOARD_TILES_COL_COUNT = 9;                        // Number of columns in the game board
     public static final int BOARD_TILES_ROW_COUNT = 8;                        // Number of row in the game board
-    public static final int TILE_SIZE = 80;                                   // Board square tile display size
+    public static final int TILE_SIZE = 60;                                   // Board square tile display size
     public static final int BOARD_WIDTH = TILE_SIZE * BOARD_TILES_COL_COUNT;  // Board pixel width
     public static final int BOARD_HEIGHT = TILE_SIZE * BOARD_TILES_ROW_COUNT; // Board pixel height
     public static final int TOTAL_BOARD_TILES =
