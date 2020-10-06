@@ -18,7 +18,7 @@ public class GoG extends Game {
   public static final String TITLE = "Game of The Generals";
   public static final float VERSION = 0.1f;
   public static final int V_WIDTH = 800;
-  public static final int V_HEIGHT = 480;
+  public static final int V_HEIGHT = 600;
 
   public SpriteBatch batch;
   public BitmapFont font;

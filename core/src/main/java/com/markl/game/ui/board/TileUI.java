@@ -1,6 +1,7 @@
 package com.markl.game.ui.board;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.markl.game.engine.board.Tile;
 
 /**
  * TODO Class Description.
@@ -11,7 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class TileUI extends Rectangle {
 
   public int id;
-  public boolean isOccupied = false;
+  public Tile tile;
 
   /**
    * No-argument constructor
@@ -29,22 +30,15 @@ public class TileUI extends Rectangle {
     this.id = tileId;
   }
 
-  /**
-   * Constructor function that takes in tileId, Rectangle, and isOccupied
-   * params.
-   *
-   * @param tileId
-   * @param isOccupied
-   */
-  public TileUI (int tileId, float x, float y, float width, float height, boolean isOccupied) {
-    super(x, y, width, height);
-    this.id = tileId;
-    this.isOccupied = isOccupied;
-  }
-
   @Override
   public String toString() {
     return "id=" + id + ";x=" + this.x + ";y=" + this.y +
       ";width=" + this.width + ";height=" + this.height;
   }
+
+  public void setTile(Tile tile)              { this.tile = tile; }
+  public void setTileId(int id)               { this.tile.setTileId(id); }
+
+  public Tile getTile()                       { return this.tile; }
+  public int getTileId()                      { return this.id; }
 }

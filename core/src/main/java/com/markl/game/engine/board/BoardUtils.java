@@ -138,6 +138,14 @@ public class BoardUtils {
         return false;
     }
 
+    public static String getPieceImagePath(String alliance, String pieceRank) {
+      return "pieces/original/" + alliance + "/" + pieceRank + ".png";
+    }
+
+    public static String getPieceImagePath(Alliance alliance, String pieceRank) {
+      return "pieces/original/" + alliance.toString().toLowerCase() + "/" + pieceRank + ".png";
+    }
+
     /**
      * Constructor method that ensures this {@link BoardUtils} class cannot be
      * instantiated.

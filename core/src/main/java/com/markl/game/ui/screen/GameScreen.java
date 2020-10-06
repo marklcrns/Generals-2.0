@@ -1,5 +1,7 @@
 package com.markl.game.ui.screen;
 
+import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -8,10 +10,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.markl.game.GameState;
+import com.markl.game.engine.board.Alliance;
+import com.markl.game.engine.board.Board;
+import com.markl.game.engine.board.BoardBuilder;
 import com.markl.game.engine.board.BoardUtils;
+import com.markl.game.engine.board.Move;
 import com.markl.game.ui.GoG;
 import com.markl.game.ui.board.TileUI;
 
@@ -21,42 +27,43 @@ import com.markl.game.ui.board.TileUI;
  */
 public class GameScreen implements Screen {
 
-  private final GoG game;
+  private final GoG gameUI;
 
   private Stage stage;
   private Texture pieceImg;
-  private Rectangle piece;
   private ShapeRenderer shapeRend;
 
+  public GameState game;
+  public Board board;
+  public BoardBuilder builder;
   public TileUI[][] tiles;
 
-  public GameScreen(final GoG game) {
-    this.game = game;
+  public GameScreen(final GoG gameUI) {
+    this.gameUI = gameUI;
     this.shapeRend = new ShapeRenderer();
-    this.stage = new Stage(new StretchViewport(GoG.V_WIDTH, GoG.V_HEIGHT, game.camera));
+    this.stage = new Stage(new StretchViewport(GoG.V_WIDTH, GoG.V_HEIGHT, gameUI.camera));
     Gdx.input.setInputProcessor(stage);
 
-    // Load image as Texture
-    pieceImg = new Texture(Gdx.files.internal("pieces/original/black/BLACK_Flag.png"));
+    // Initialize GoG game engine
+    game = new GameState();
+    board = new Board(this.game);
 
-    piece = new Rectangle();
-    piece.x = GoG.V_WIDTH / 2 - 64 / 2; // center the piece horizontally
-    piece.y = 20; // bottom left corner
-    piece.width = 64;
-    piece.height = 64;
-
+    // Initialize TileUI 2D array
     tiles = new TileUI[BoardUtils.BOARD_TILES_COL_COUNT][BoardUtils.BOARD_TILES_ROW_COUNT];
   }
 
   public void populateTiles() {
     // TODO: Clean up <05-10-20, Mark Lucernas> //
     int tileCount = 0;
+    // Fill tiles top to bottom, left to right
     for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
       for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
 
-        int tileId = BoardUtils.BOARD_TILES_ROW_COUNT * i + j;
+        int tileId = (BoardUtils.BOARD_TILES_COL_COUNT * j) + i;
+
+        // Invert Y to have tiles arranged left to right, top to bottom
         float tileX = 0 + (i * BoardUtils.TILE_SIZE);
-        float tileY = 0 + (j * BoardUtils.TILE_SIZE);
+        float tileY = (BoardUtils.TILE_SIZE * (BoardUtils.BOARD_TILES_ROW_COUNT - 1)) - (j * BoardUtils.TILE_SIZE);
         float tileWidth = BoardUtils.TILE_SIZE;
         float tileHeight = BoardUtils.TILE_SIZE;
 
@@ -68,9 +75,20 @@ public class GameScreen implements Screen {
     System.out.println(tileCount);
   }
 
+  private void getAssetImages() {
+    pieceImg = gameUI.assets.get(getPieceImagePath("black", "GeneralOne"), Texture.class);
+  }
+
   @Override
   public void show() {
     System.out.println("GameScreen show");
+    getAssetImages();
+
+    BoardBuilder builder = new BoardBuilder(board);
+    builder.createDemoBoardBuild();
+    builder.build();
+    game.start();
+
     populateTiles();
   }
 
@@ -83,22 +101,25 @@ public class GameScreen implements Screen {
     shapeRend.setProjectionMatrix(batch.getProjectionMatrix());
     shapeRend.setTransformMatrix(batch.getTransformMatrix());
 
+    // Draw board background
     shapeRend.begin(ShapeType.Filled);
     for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
       for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
+        TileUI tile = tiles[i][j];
+
+        // Split board into two territory
         if (j < BoardUtils.BOARD_TILES_ROW_COUNT / 2)
           shapeRend.setColor(Color.ORANGE);
         else
           shapeRend.setColor(Color.RED);
 
-        TileUI tile = tiles[i][j];
-
-        tiles[i][j] = new TileUI(tile.id, tile.x, tile.y, tile.width, tile.height, false);
+        tiles[i][j] = new TileUI(tile.id, tile.x, tile.y, tile.width, tile.height);
         shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
       }
     }
     shapeRend.end();
 
+    // Draw board tiles border
     shapeRend.begin(ShapeType.Line);
     for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
       for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
@@ -113,12 +134,18 @@ public class GameScreen implements Screen {
     batch.end();
   }
 
-  public void drawPieces(Batch batch) {
+  public void updatePiecesImgs(Batch batch) {
     batch.begin();
     for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
       for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
         TileUI tile = tiles[i][j];
-        batch.draw(pieceImg, tile.x, tile.y, tile.width, tile.height);
+        // Draw piece in tile if occupied
+        if (board.getTile(tile.id).isTileOccupied()) {
+          Alliance territory = board.getTile(tile.id).getTerritory();
+          String pieceRank = board.getTile(tile.id).getPiece().getRank();
+          batch.draw(gameUI.assets.get(getPieceImagePath(territory, pieceRank), Texture.class),
+              tile.x, tile.y, tile.width, tile.height);
+        }
       }
     }
     batch.end();
@@ -128,24 +155,23 @@ public class GameScreen implements Screen {
   public void render(float delta) {
     Gdx.gl.glClearColor(0, 0, 0.2f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
-    game.camera.update();
-    game.batch.setProjectionMatrix(game.camera.combined);
+    gameUI.camera.update();
+    gameUI.batch.setProjectionMatrix(gameUI.camera.combined);
     update(delta);
-
     stage.draw();
 
-    drawBoard(game.batch, shapeRend);
-    drawPieces(game.batch);
+    drawBoard(gameUI.batch, shapeRend);
+    updatePiecesImgs(gameUI.batch);
 
-    game.batch.begin();
-    game.font.draw(game.batch, "Generals", 0, GoG.V_HEIGHT);
-    game.batch.end();
+    gameUI.batch.begin();
+    gameUI.font.draw(gameUI.batch, "Generals", 0, GoG.V_HEIGHT);
+    gameUI.batch.end();
 
     // // process user input
     // if(Gdx.input.isTouched()) {
     //   Vector3 touchPos = new Vector3();
     //   touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-    //   game.camera.unproject(touchPos);
+    //   gameUI.camera.unproject(touchPos);
     //   piece.x = touchPos.x - 64 / 2;
     //   piece.y = touchPos.y - 64 / 2;
     // }
@@ -186,6 +212,7 @@ public class GameScreen implements Screen {
     System.out.println("GameScreen dispose");
     pieceImg.dispose();
     stage.dispose();
+    shapeRend.dispose();
   }
 }
 
