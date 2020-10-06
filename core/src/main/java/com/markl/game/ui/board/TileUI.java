@@ -25,7 +25,7 @@ public class TileUI extends Rectangle {
    *
    * @param tileId
    */
-	public TileUI (int tileId, float x, float y, float width, float height) {
+  public TileUI (int tileId, float x, float y, float width, float height) {
     super(x, y, width, height);
     this.id = tileId;
   }

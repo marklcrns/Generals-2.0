@@ -12,83 +12,83 @@ import com.markl.game.engine.board.Player;
  */
 public class GameState {
 
-    private int turnId;                     // Current turn of the game
-    private Board board;                    // Board instance
-    private Player gameWinner;              // Game winner
-    private String blackPlayerName = "";    // Black player's name assigned when game initialized
-    private String whitePlayerName = "";    // White player's name assigned when game initialized
-    private boolean hasGameStarted = false; // Turns true when game started
-    private boolean hasGameEnded = false;   // Turns true when game started
+  private int turnId;                     // Current turn of the game
+  private Board board;                    // Board instance
+  private Player gameWinner;              // Game winner
+  private String blackPlayerName = "";    // Black player's name assigned when game initialized
+  private String whitePlayerName = "";    // White player's name assigned when game initialized
+  private boolean hasGameStarted = false; // Turns true when game started
+  private boolean hasGameEnded = false;   // Turns true when game started
 
-    /**
-     * No-constructor function
-     */
-    public GameState() {
-        this.turnId = 0;
+  /**
+   * No-constructor function
+   */
+  public GameState() {
+    this.turnId = 0;
+  }
+
+  /**
+   * Constructor function for Game.
+   *
+   * @param board {@link Board} instance.
+   */
+  public GameState(Board board) {
+    this.turnId = 0;
+    this.board = board;
+  }
+
+  /**
+   * Initialize game.
+   */
+  public void init() {
+    // TODO: Implement <27-09-20, Mark Lucernas> //
+  }
+
+  /**
+   * Start game.
+   */
+  public void start() {
+    if (!this.hasGameStarted) {
+      this.hasGameStarted = true;
+      this.turnId = 1;
     }
+    // TODO: Continue implementation <02-10-20, Mark Lucernas> //
+  }
 
-    /**
-     * Constructor function for Game.
-     *
-     * @param board {@link Board} instance.
-     */
-    public GameState(Board board) {
-        this.turnId = 0;
-        this.board = board;
-    }
+  /**
+   * Restart game.
+   */
+  public void restart() {
+    // TODO: Implement <27-09-20, Mark Lucernas> //
+  }
 
-    /**
-     * Initialize game.
-     */
-    public void init() {
-        // TODO: Implement <27-09-20, Mark Lucernas> //
-    }
+  /**
+   * End game and declare winner.
+   */
+  public void endGame(Player winner) {
+    if (winner == null)
+      this.gameWinner = null;
+    else
+      this.gameWinner = winner;
 
-    /**
-     * Start game.
-     */
-    public void start() {
-        if (!this.hasGameStarted) {
-            this.hasGameStarted = true;
-            this.turnId = 1;
-        }
-        // TODO: Continue implementation <02-10-20, Mark Lucernas> //
-    }
+    this.hasGameEnded = true;
+  }
 
-    /**
-     * Restart game.
-     */
-    public void restart() {
-        // TODO: Implement <27-09-20, Mark Lucernas> //
-    }
+  public void nextTurn()             { this.turnId++; }
+  public void prevTurn()             { if (this.turnId > 0) this.turnId--; }
 
-    /**
-     * End game and declare winner.
-     */
-    public void endGame(Player winner) {
-        if (winner == null)
-            this.gameWinner = null;
-        else
-            this.gameWinner = winner;
+  /** Accessor methods */
+  public int getCurrTurn()           { return this.turnId; }
+  public Player getPlayerWinner()    { if (this.hasGameEnded) return this.gameWinner; else return null; }
+  public String getBlackPlayerName() { return this.blackPlayerName; }
+  public String getWhitePlayerName() { return this.whitePlayerName; }
+  public boolean isRunning() {
+    if (this.hasGameStarted && !this.hasGameEnded)
+      return true;
 
-        this.hasGameEnded = true;
-    }
+    return false;
+  }
 
-    public void nextTurn()             { this.turnId++; }
-    public void prevTurn()             { if (this.turnId > 0) this.turnId--; }
-
-    /** Accessor methods */
-    public int getCurrTurn()           { return this.turnId; }
-    public Player getPlayerWinner()    { if (this.hasGameEnded) return this.gameWinner; else return null; }
-    public String getBlackPlayerName() { return this.blackPlayerName; }
-    public String getWhitePlayerName() { return this.whitePlayerName; }
-    public boolean isRunning() {
-        if (this.hasGameStarted && !this.hasGameEnded)
-            return true;
-
-        return false;
-    }
-
-    /** Modifier methods */
-    public void setBoard(Board board)  { this.board = board; }
+  /** Modifier methods */
+  public void setBoard(Board board)  { this.board = board; }
 }

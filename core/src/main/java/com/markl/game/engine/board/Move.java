@@ -16,498 +16,498 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Move {
 
-    /**
-     * Enum class for Move typification
-     *
-     * INVALID    = -1
-     * DRAW       =  0
-     * NORMAL     =  1
-     * AGGRESSIVE =  2
-     */
-    public enum MoveType {
-        INVALID(-1), DRAW(0), NORMAL(1), AGGRESSIVE(2);
-        private final int value;
+  /**
+   * Enum class for Move typification
+   *
+   * INVALID    = -1
+   * DRAW       =  0
+   * NORMAL     =  1
+   * AGGRESSIVE =  2
+   */
+  public enum MoveType {
+    INVALID(-1), DRAW(0), NORMAL(1), AGGRESSIVE(2);
+    private final int value;
 
-        MoveType(final int value) {
-            this.value = value;
-        }
-
-        public int getValue() { return this.value; }
+    MoveType(final int value) {
+      this.value = value;
     }
 
-    private int turnId;                 // Turn ID that serves as reference.
-    private final Board board;          // Reference to the Board to execute the move in
-    private final GameState game;            // Reference to the Game
-    private final Player player;        // Reference to the Player that owns the Piece to be moved.
-    private final int srcTileCoords;    // Location of the occupied Tile in which the piece to be moved.
-    private final int tgtTileCoords;    // Location of the Tile to where the source piece will potentially move into
-    private MoveType moveType;          // Move type to determine the behavior of piece relocation
-    private Piece srcPieceOrigin;       // Copy of the source piece
-    private Piece tgtPieceOrigin;       // Copy of the target piece if move type is aggressive or draw
-    private Piece eliminatedPiece;      // Copy of the eliminated piece if move type is aggressive
-    private boolean isExecuted = false; // boolean that holds if the this Move instance has bee executed
+    public int getValue() { return this.value; }
+  }
 
-    /**
-     * Constructor that takes in the player who will move the piece, board,
-     * source tile coordinates and target tile coordinates.
-     *
-     * @param player            Player reference making the move.
-     * @param board             Board reference.
-     * @param srcTileCoords  location of the Tile containing a piece to be moved.
-     * @param tgtTileCoords  location of the destination of the piece to be moved.
-     */
-    public Move(final Player player, final Board board,
-                final int srcTileCoords, final int tgtTileCoords)
-    {
-        this.player        = player;
-        this.board         = board;
-        this.game          = board.getGame();
-        this.turnId        = this.game.getCurrTurn();
-        this.srcTileCoords = srcTileCoords;
-        this.tgtTileCoords = tgtTileCoords;
+  private int turnId;                 // Turn ID that serves as reference.
+  private final Board board;          // Reference to the Board to execute the move in
+  private final GameState game;            // Reference to the Game
+  private final Player player;        // Reference to the Player that owns the Piece to be moved.
+  private final int srcTileCoords;    // Location of the occupied Tile in which the piece to be moved.
+  private final int tgtTileCoords;    // Location of the Tile to where the source piece will potentially move into
+  private MoveType moveType;          // Move type to determine the behavior of piece relocation
+  private Piece srcPieceOrigin;       // Copy of the source piece
+  private Piece tgtPieceOrigin;       // Copy of the target piece if move type is aggressive or draw
+  private Piece eliminatedPiece;      // Copy of the eliminated piece if move type is aggressive
+  private boolean isExecuted = false; // boolean that holds if the this Move instance has bee executed
+
+  /**
+   * Constructor that takes in the player who will move the piece, board,
+   * source tile coordinates and target tile coordinates.
+   *
+   * @param player            Player reference making the move.
+   * @param board             Board reference.
+   * @param srcTileCoords  location of the Tile containing a piece to be moved.
+   * @param tgtTileCoords  location of the destination of the piece to be moved.
+   */
+  public Move(final Player player, final Board board,
+      final int srcTileCoords, final int tgtTileCoords)
+  {
+    this.player        = player;
+    this.board         = board;
+    this.game          = board.getGame();
+    this.turnId        = this.game.getCurrTurn();
+    this.srcTileCoords = srcTileCoords;
+    this.tgtTileCoords = tgtTileCoords;
+  }
+
+  /**
+   * Evaluate the move based on the target Tile coords and the source piece
+   * to be moved.
+   *
+   * INVALID    = if target Tile contains friendly piece Alliance.
+   * DRAW       = if target Tile contains opposing piece Alliance and has the
+   *              same rank, with the exception of Flag rank.
+   * NORMAL     = if target Tile is empty.
+   * AGGRESSIVE = if target Tile contains opposing piece Alliance.
+   */
+  public void evaluate() {
+
+    if (isOutOfBounds()) {
+      this.moveType = MoveType.INVALID;
+      return;
     }
 
-    /**
-     * Evaluate the move based on the target Tile coords and the source piece
-     * to be moved.
-     *
-     * INVALID    = if target Tile contains friendly piece Alliance.
-     * DRAW       = if target Tile contains opposing piece Alliance and has the
-     *              same rank, with the exception of Flag rank.
-     * NORMAL     = if target Tile is empty.
-     * AGGRESSIVE = if target Tile contains opposing piece Alliance.
-     */
-    public void evaluate() {
+    // Make source piece origin copy
+    this.srcPieceOrigin = this.board.getTile(srcTileCoords).getPiece().clone();
+    // Make target piece origin copy if exist
+    if (isTargetTileOccupied())
+      this.tgtPieceOrigin = this.board.getTile(tgtTileCoords).getPiece().clone();
+    else
+      this.tgtPieceOrigin = null;
 
-        if (isOutOfBounds()) {
-            this.moveType = MoveType.INVALID;
-            return;
-        }
-
-        // Make source piece origin copy
-        this.srcPieceOrigin = this.board.getTile(srcTileCoords).getPiece().clone();
-        // Make target piece origin copy if exist
-        if (isTargetTileOccupied())
-            this.tgtPieceOrigin = this.board.getTile(tgtTileCoords).getPiece().clone();
+    if (isMoveLegal()) {
+      if (isTargetTileOccupied())
+        if (isFriendlyFire())
+          this.moveType = MoveType.INVALID;
         else
-            this.tgtPieceOrigin = null;
+          if (isSameRank() && isTargetPieceFlag())
+            this.moveType = MoveType.AGGRESSIVE;
+          else if (isSameRank())
+            this.moveType = MoveType.DRAW;
+          else
+            this.moveType = MoveType.AGGRESSIVE;
+      else
+        this.moveType = MoveType.NORMAL;
 
-        if (isMoveLegal()) {
-            if (isTargetTileOccupied())
-                if (isFriendlyFire())
-                    this.moveType = MoveType.INVALID;
-                else
-                    if (isSameRank() && isTargetPieceFlag())
-                        this.moveType = MoveType.AGGRESSIVE;
-                    else if (isSameRank())
-                        this.moveType = MoveType.DRAW;
-                    else
-                        this.moveType = MoveType.AGGRESSIVE;
-            else
-                this.moveType = MoveType.NORMAL;
-
-            return;
-        }
-
-        this.moveType = MoveType.INVALID;
+      return;
     }
 
-    /**
-     * Executes this Move instance and actuate the Move to reflect the changes
-     * in the Board.
-     *
-     * @return boolean true if successful, else false.
-     */
-    public boolean execute() {
-        switch (this.moveType.getValue()) {
-            case -1: // INVALID
-                System.out.println("execute() E: Invalid move");
-                System.out.println(this.toString());
-                return false;
+    this.moveType = MoveType.INVALID;
+  }
 
-            case 0: // DRAW
-                // Eliminates both pieces from the game.
-                this.board.getTile(this.srcTileCoords).removePiece();
-                this.board.getTile(this.tgtTileCoords).removePiece();
-                break;
+  /**
+   * Executes this Move instance and actuate the Move to reflect the changes
+   * in the Board.
+   *
+   * @return boolean true if successful, else false.
+   */
+  public boolean execute() {
+    switch (this.moveType.getValue()) {
+      case -1: // INVALID
+        System.out.println("execute() E: Invalid move");
+        System.out.println(this.toString());
+        return false;
 
-            case 1: // NORMAL
-                // Check if Flag has been maneuvered into the opposite end row of the board.
-                if (isFlagSucceeded()) {
-                    System.out.println(
-                        "\n" + this.srcPieceOrigin.getAlliance() +
-                        " player WON!\n");
+      case 0: // DRAW
+        // Eliminates both pieces from the game.
+        this.board.getTile(this.srcTileCoords).removePiece();
+        this.board.getTile(this.tgtTileCoords).removePiece();
+        break;
 
-                    this.game.endGame(srcPieceOrigin.getPieceOwner());
-                }
+      case 1: // NORMAL
+        // Check if Flag has been maneuvered into the opposite end row of the board.
+        if (isFlagSucceeded()) {
+          System.out.println(
+              "\n" + this.srcPieceOrigin.getAlliance() +
+              " player WON!\n");
 
-                // Move Tile normally
-                this.board.movePiece(this.srcTileCoords, this.tgtTileCoords);
-                this.isExecuted = true;
-                break;
-
-            case 2: // AGGRESSIVE
-                // Eliminate low ranking piece from the aggressive engagement.
-                if (isTargetPieceEliminated()) {
-                    this.board.replacePiece(this.tgtTileCoords, this.srcPieceOrigin);
-                    this.board.getTile(this.srcTileCoords).removePiece();
-                    this.eliminatedPiece = this.tgtPieceOrigin;
-                } else {
-                    this.board.getTile(this.srcTileCoords).removePiece();
-                    this.eliminatedPiece = this.srcPieceOrigin;
-                }
-
-                // Check if source or target piece is Flag rank, then conclude the game.
-                if (isTargetPieceFlag()) {
-                    this.game.endGame(srcPieceOrigin.getPieceOwner());
-                    System.out.println(
-                            "\n" + this.srcPieceOrigin.getAlliance() +
-                            " player WON!\n");
-                } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
-                    this.game.endGame(tgtPieceOrigin.getPieceOwner());
-                    System.out.println(
-                            "\n" + this.tgtPieceOrigin.getAlliance() +
-                            " player WON!\n");
-                }
-                break;
-
-            default:
-                return false;
+          this.game.endGame(srcPieceOrigin.getPieceOwner());
         }
 
-        // If successful, change execution status and return true.
+        // Move Tile normally
+        this.board.movePiece(this.srcTileCoords, this.tgtTileCoords);
         this.isExecuted = true;
-        this.game.nextTurn();
-        return true;
-    }
+        break;
 
-    /**
-     * Checks if source tile coords will move a step horizontally or vertically.
-     *
-     * @return boolean true of this Move is a candidate move for the source
-     * piece.
-     */
-    private boolean isMoveLegal() {
-        int srcTgtDiff = this.tgtTileCoords - this.srcTileCoords;
-        if (srcTgtDiff ==  1 ||
-            srcTgtDiff == -1 ||
-            srcTgtDiff ==  9 ||
-            srcTgtDiff == -9)
-            return true;
-
-        return false;
-    }
-
-    /**
-     * Check if source and target tile coords are out of bounds.
-     *
-     * @return boolean true if either or both the source or target tile coords
-     * is/are out of bounds.
-     */
-    private boolean isOutOfBounds() {
-        if (this.srcTileCoords < 0 || this.srcTileCoords > 71 ||
-            this.tgtTileCoords < 0 || this.tgtTileCoords > 71)
-            return true;
-
-        return false;
-    }
-
-    /**
-     * Checks if targetTileCoords is occupied.
-     *
-     * @return boolean true if targetTileCoords is occupied, else false.
-     */
-    private boolean isTargetTileOccupied() {
-        if (board.getTile(tgtTileCoords).isTileOccupied())
-            return true;
-
-        return false;
-    }
-
-    /**
-     * Checks if sourcePiece and targetPiece has the same {@link Alliance}.
-     *
-     * @return boolean true if sourcePiece and targetPiece has the same
-     * Alliance, else false.
-     */
-    private boolean isFriendlyFire() {
-        if (tgtPieceOrigin.getAlliance() == srcPieceOrigin.getAlliance())
-            return true;
-
-        return false;
-    }
-
-    /**
-     * Checks if sourcePiece and targetPiece has the same rank.
-     *
-     * @return boolean true if same rank, else false.
-     */
-    private boolean isSameRank() {
-        if (srcPieceOrigin.getRank() == tgtPieceOrigin.getRank())
-            return true;
-
-        return false;
-    }
-
-    /**
-     * Checks if target piece has been eliminated by the source piece. Higher
-     * ranking piece will eliminate lower ranking piece.
-     * Spy piece will eliminated all pieces regardless of rank except the Private
-     * piece.
-     *
-     * If both pieces were are of Flag rank, the aggressor piece will win
-     * the engagement.
-     *
-     * @return boolean true if target piece is subordinate to the source piece,
-     * else false.
-     */
-    private boolean isTargetPieceEliminated() {
-        if (isSourcePieceFlag() && isTargetPieceFlag())
-            return true;
-        else if (srcPieceOrigin.getRank() == "Private" && tgtPieceOrigin.getRank() == "Spy")
-            return true;
-        else if (srcPieceOrigin.getRank() == "Spy" && tgtPieceOrigin.getRank() == "Private")
-            return false;
-        else if (srcPieceOrigin.getPowerLevel() > tgtPieceOrigin.getPowerLevel())
-            return true;
-        else
-            return false;
-    }
-
-    /**
-     * Checks if the target piece is ranked Flag.
-     *
-     * @return boolean true if target piece is Flag, else false.
-     */
-    private boolean isTargetPieceFlag() {
-        if (tgtPieceOrigin.getRank() == "Flag")
-            return true;
-        else
-            return false;
-    }
-
-    /**
-     * Checks if the source piece is ranked Flag.
-     *
-     * @return boolean true if source piece is Flag, else false.
-     */
-    private boolean isSourcePieceFlag() {
-        if (srcPieceOrigin.getRank() == "Flag")
-            return true;
-        else
-            return false;
-    }
-
-    /**
-     * Checks if the Flag piece has succeeded maneuvering into opposite end row
-     * of the Board without being eliminated.
-     *
-     * @return boolean true if Flag has succeeded, else false.
-     */
-    private boolean isFlagSucceeded() {
-        if (srcPieceOrigin.getRank() == "Flag" &&
-                board.getTile(tgtTileCoords).isTileEmpty())
-            // Check if Flag piece is in the respective opposite end row of the board.
-            if ((srcPieceOrigin.getAlliance() == Alliance.BLACK &&
-                        tgtTileCoords >= BoardUtils.LAST_ROW_INIT) ||
-                    (srcPieceOrigin.getAlliance() == Alliance.WHITE &&
-                     tgtTileCoords < BoardUtils.SECOND_ROW_INIT))
-                return true;
-
-        return false;
-    }
-
-    /**
-     * Gets the player executing this Move.
-     *
-     * @return Player player field.
-     */
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    /**
-     * Gets the source Tile from Board.
-     *
-     * @return Tile from the Board.
-     */
-    public Tile getSrcTile() {
-        return board.getTile(srcTileCoords);
-    }
-
-    /**
-     * Gets the target Tile from Board.
-     *
-     * @return Tile from the Board.
-     */
-    public Tile getTgtTile() {
-        return board.getTile(tgtTileCoords);
-    }
-
-    /**
-     * Gets the source piece or Tile coordinates.
-     *
-     * @return int source piece or Tile index or ID.
-     */
-    public int getSrcTileCoords() {
-        return this.srcTileCoords;
-    }
-
-    /**
-     * Gets the target piece destination or target Tile coordinates.
-     *
-     * @return int target Tile index or ID.
-     */
-    public int getTgtTileCoords() {
-        return this.tgtTileCoords;
-    }
-
-    /**
-     * Gets the move type of this Move instance.
-     *
-     * @return String moveType field. Null if uninitialized.
-     */
-    public MoveType getMoveType() {
-        if (this.moveType != null)
-            return this.moveType;
-
-        return null;
-    }
-
-    /**
-     * Gets the turn ID of this Move instance.
-     *
-     * @return int turnId field.
-     */
-    public int getTurnId() {
-        return this.turnId;
-    }
-
-    /**
-     * Gets the eliminated piece of the aggressive execution.
-     *
-     * @return Piece the eliminated piece after aggressive engagement.
-     */
-    public Piece getEliminatedPiece() {
-        if (eliminatedPiece != null)
-            return this.eliminatedPiece;
-
-        return null;
-    }
-
-    /**
-     * Gets the source piece of this Move instance.
-     *
-     * @return Piece sourcePieceCopy field. Null if uninitialized.
-     */
-    public Piece getSrcPieceOrigin() {
-        if (this.srcPieceOrigin != null)
-            return this.srcPieceOrigin;
-
-        return null;
-    }
-
-    /**
-     * Gets the target piece of this Move instance.
-     *
-     * @return Piece targetPieceCopy field. Null if uninitialized.
-     */
-    public Piece getTgtPieceOrigin() {
-        if (this.tgtPieceOrigin != null)
-            return this.tgtPieceOrigin;
-
-        return null;
-    }
-
-    /**
-     * Undo or set Move execution to false.
-     *
-     * @return boolean true if successful, else false if already false.
-     */
-    public boolean undoExecution() {
-        if (!this.isExecuted)
-            return false;
-
-        this.isExecuted = false;
-        return true;
-    }
-
-    /**
-     * Redo or set Move execution to true
-     *
-     * @return boolean true if successful, else false if already true.
-     */
-    public boolean redoExecution() {
-        if (this.isExecuted)
-            return false;
-
-        this.isExecuted = true;
-        return true;
-    }
-
-    /**
-     * Checks if this Move instance has been executed already.
-     *
-     * @return boolean true if is executed, else false.
-     */
-    public boolean isMoveExecuted() {
-        return this.isExecuted;
-    }
-
-    /**
-     * Sets the execution state to true or false.
-     *
-     * @param isExecuted boolean
-     */
-    public void setExecutionState(final boolean isExecuted) {
-        this.isExecuted = isExecuted;
-    }
-
-    /**
-     * Sets the move type of this Move instance.
-     *
-     * @param moveType String move type to set.
-     */
-    public void setMoveType(final MoveType moveType) {
-        this.moveType = moveType;
-    }
-
-    /**
-     * Sets the turn ID of this move instance.
-     *
-     * @param turnId int turn id
-     */
-    public void setTurnId(final int turnId) {
-        this.turnId = turnId;
-    }
-
-    @Override
-    public String toString() {
-        final Alliance srcPieceAlliance = srcPieceOrigin == null ? null : srcPieceOrigin.getAlliance();
-        final String srcPiece = srcPieceOrigin == null ? "blank" : srcPieceOrigin.getRank();
-        final String tgtPiece = tgtPieceOrigin == null ? "blank" : tgtPieceOrigin.getRank();
-
-        if (isExecuted) {
-            String superiorPieceAlliance = "";
-            if (this.moveType == MoveType.AGGRESSIVE) {
-                superiorPieceAlliance = eliminatedPiece.getAlliance() == Alliance.BLACK ?
-                    " " + Alliance.WHITE: " " + Alliance.BLACK;
-            }
-            return "Turn " + this.turnId + ": " +
-                srcPieceAlliance + " " +
-                srcPiece + " " +
-                srcTileCoords + " to " +
-                tgtPiece + " " +
-                tgtTileCoords + " " +
-                this.moveType + superiorPieceAlliance +
-                " EXECUTED";
+      case 2: // AGGRESSIVE
+        // Eliminate low ranking piece from the aggressive engagement.
+        if (isTargetPieceEliminated()) {
+          this.board.replacePiece(this.tgtTileCoords, this.srcPieceOrigin);
+          this.board.getTile(this.srcTileCoords).removePiece();
+          this.eliminatedPiece = this.tgtPieceOrigin;
         } else {
-            return "Turn " + this.turnId + ": " +
-                srcPieceAlliance + " " +
-                srcPiece + " " +
-                srcTileCoords + " to " +
-                tgtPiece + " " +
-                tgtTileCoords;
+          this.board.getTile(this.srcTileCoords).removePiece();
+          this.eliminatedPiece = this.srcPieceOrigin;
         }
+
+        // Check if source or target piece is Flag rank, then conclude the game.
+        if (isTargetPieceFlag()) {
+          this.game.endGame(srcPieceOrigin.getPieceOwner());
+          System.out.println(
+              "\n" + this.srcPieceOrigin.getAlliance() +
+              " player WON!\n");
+        } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
+          this.game.endGame(tgtPieceOrigin.getPieceOwner());
+          System.out.println(
+              "\n" + this.tgtPieceOrigin.getAlliance() +
+              " player WON!\n");
+        }
+        break;
+
+      default:
+        return false;
     }
+
+    // If successful, change execution status and return true.
+    this.isExecuted = true;
+    this.game.nextTurn();
+    return true;
+  }
+
+  /**
+   * Checks if source tile coords will move a step horizontally or vertically.
+   *
+   * @return boolean true of this Move is a candidate move for the source
+   * piece.
+   */
+  private boolean isMoveLegal() {
+    int srcTgtDiff = this.tgtTileCoords - this.srcTileCoords;
+    if (srcTgtDiff ==  1 ||
+        srcTgtDiff == -1 ||
+        srcTgtDiff ==  9 ||
+        srcTgtDiff == -9)
+      return true;
+
+    return false;
+  }
+
+  /**
+   * Check if source and target tile coords are out of bounds.
+   *
+   * @return boolean true if either or both the source or target tile coords
+   * is/are out of bounds.
+   */
+  private boolean isOutOfBounds() {
+    if (this.srcTileCoords < 0 || this.srcTileCoords > 71 ||
+        this.tgtTileCoords < 0 || this.tgtTileCoords > 71)
+      return true;
+
+    return false;
+  }
+
+  /**
+   * Checks if targetTileCoords is occupied.
+   *
+   * @return boolean true if targetTileCoords is occupied, else false.
+   */
+  private boolean isTargetTileOccupied() {
+    if (board.getTile(tgtTileCoords).isTileOccupied())
+      return true;
+
+    return false;
+  }
+
+  /**
+   * Checks if sourcePiece and targetPiece has the same {@link Alliance}.
+   *
+   * @return boolean true if sourcePiece and targetPiece has the same
+   * Alliance, else false.
+   */
+  private boolean isFriendlyFire() {
+    if (tgtPieceOrigin.getAlliance() == srcPieceOrigin.getAlliance())
+      return true;
+
+    return false;
+  }
+
+  /**
+   * Checks if sourcePiece and targetPiece has the same rank.
+   *
+   * @return boolean true if same rank, else false.
+   */
+  private boolean isSameRank() {
+    if (srcPieceOrigin.getRank() == tgtPieceOrigin.getRank())
+      return true;
+
+    return false;
+  }
+
+  /**
+   * Checks if target piece has been eliminated by the source piece. Higher
+   * ranking piece will eliminate lower ranking piece.
+   * Spy piece will eliminated all pieces regardless of rank except the Private
+   * piece.
+   *
+   * If both pieces were are of Flag rank, the aggressor piece will win
+   * the engagement.
+   *
+   * @return boolean true if target piece is subordinate to the source piece,
+   * else false.
+   */
+  private boolean isTargetPieceEliminated() {
+    if (isSourcePieceFlag() && isTargetPieceFlag())
+      return true;
+    else if (srcPieceOrigin.getRank() == "Private" && tgtPieceOrigin.getRank() == "Spy")
+      return true;
+    else if (srcPieceOrigin.getRank() == "Spy" && tgtPieceOrigin.getRank() == "Private")
+      return false;
+    else if (srcPieceOrigin.getPowerLevel() > tgtPieceOrigin.getPowerLevel())
+      return true;
+    else
+      return false;
+  }
+
+  /**
+   * Checks if the target piece is ranked Flag.
+   *
+   * @return boolean true if target piece is Flag, else false.
+   */
+  private boolean isTargetPieceFlag() {
+    if (tgtPieceOrigin.getRank() == "Flag")
+      return true;
+    else
+      return false;
+  }
+
+  /**
+   * Checks if the source piece is ranked Flag.
+   *
+   * @return boolean true if source piece is Flag, else false.
+   */
+  private boolean isSourcePieceFlag() {
+    if (srcPieceOrigin.getRank() == "Flag")
+      return true;
+    else
+      return false;
+  }
+
+  /**
+   * Checks if the Flag piece has succeeded maneuvering into opposite end row
+   * of the Board without being eliminated.
+   *
+   * @return boolean true if Flag has succeeded, else false.
+   */
+  private boolean isFlagSucceeded() {
+    if (srcPieceOrigin.getRank() == "Flag" &&
+        board.getTile(tgtTileCoords).isTileEmpty())
+      // Check if Flag piece is in the respective opposite end row of the board.
+      if ((srcPieceOrigin.getAlliance() == Alliance.BLACK &&
+            tgtTileCoords >= BoardUtils.LAST_ROW_INIT) ||
+          (srcPieceOrigin.getAlliance() == Alliance.WHITE &&
+           tgtTileCoords < BoardUtils.SECOND_ROW_INIT))
+        return true;
+
+    return false;
+  }
+
+  /**
+   * Gets the player executing this Move.
+   *
+   * @return Player player field.
+   */
+  public Player getPlayer() {
+    return this.player;
+  }
+
+  /**
+   * Gets the source Tile from Board.
+   *
+   * @return Tile from the Board.
+   */
+  public Tile getSrcTile() {
+    return board.getTile(srcTileCoords);
+  }
+
+  /**
+   * Gets the target Tile from Board.
+   *
+   * @return Tile from the Board.
+   */
+  public Tile getTgtTile() {
+    return board.getTile(tgtTileCoords);
+  }
+
+  /**
+   * Gets the source piece or Tile coordinates.
+   *
+   * @return int source piece or Tile index or ID.
+   */
+  public int getSrcTileCoords() {
+    return this.srcTileCoords;
+  }
+
+  /**
+   * Gets the target piece destination or target Tile coordinates.
+   *
+   * @return int target Tile index or ID.
+   */
+  public int getTgtTileCoords() {
+    return this.tgtTileCoords;
+  }
+
+  /**
+   * Gets the move type of this Move instance.
+   *
+   * @return String moveType field. Null if uninitialized.
+   */
+  public MoveType getMoveType() {
+    if (this.moveType != null)
+      return this.moveType;
+
+    return null;
+  }
+
+  /**
+   * Gets the turn ID of this Move instance.
+   *
+   * @return int turnId field.
+   */
+  public int getTurnId() {
+    return this.turnId;
+  }
+
+  /**
+   * Gets the eliminated piece of the aggressive execution.
+   *
+   * @return Piece the eliminated piece after aggressive engagement.
+   */
+  public Piece getEliminatedPiece() {
+    if (eliminatedPiece != null)
+      return this.eliminatedPiece;
+
+    return null;
+  }
+
+  /**
+   * Gets the source piece of this Move instance.
+   *
+   * @return Piece sourcePieceCopy field. Null if uninitialized.
+   */
+  public Piece getSrcPieceOrigin() {
+    if (this.srcPieceOrigin != null)
+      return this.srcPieceOrigin;
+
+    return null;
+  }
+
+  /**
+   * Gets the target piece of this Move instance.
+   *
+   * @return Piece targetPieceCopy field. Null if uninitialized.
+   */
+  public Piece getTgtPieceOrigin() {
+    if (this.tgtPieceOrigin != null)
+      return this.tgtPieceOrigin;
+
+    return null;
+  }
+
+  /**
+   * Undo or set Move execution to false.
+   *
+   * @return boolean true if successful, else false if already false.
+   */
+  public boolean undoExecution() {
+    if (!this.isExecuted)
+      return false;
+
+    this.isExecuted = false;
+    return true;
+  }
+
+  /**
+   * Redo or set Move execution to true
+   *
+   * @return boolean true if successful, else false if already true.
+   */
+  public boolean redoExecution() {
+    if (this.isExecuted)
+      return false;
+
+    this.isExecuted = true;
+    return true;
+  }
+
+  /**
+   * Checks if this Move instance has been executed already.
+   *
+   * @return boolean true if is executed, else false.
+   */
+  public boolean isMoveExecuted() {
+    return this.isExecuted;
+  }
+
+  /**
+   * Sets the execution state to true or false.
+   *
+   * @param isExecuted boolean
+   */
+  public void setExecutionState(final boolean isExecuted) {
+    this.isExecuted = isExecuted;
+  }
+
+  /**
+   * Sets the move type of this Move instance.
+   *
+   * @param moveType String move type to set.
+   */
+  public void setMoveType(final MoveType moveType) {
+    this.moveType = moveType;
+  }
+
+  /**
+   * Sets the turn ID of this move instance.
+   *
+   * @param turnId int turn id
+   */
+  public void setTurnId(final int turnId) {
+    this.turnId = turnId;
+  }
+
+  @Override
+  public String toString() {
+    final Alliance srcPieceAlliance = srcPieceOrigin == null ? null : srcPieceOrigin.getAlliance();
+    final String srcPiece = srcPieceOrigin == null ? "blank" : srcPieceOrigin.getRank();
+    final String tgtPiece = tgtPieceOrigin == null ? "blank" : tgtPieceOrigin.getRank();
+
+    if (isExecuted) {
+      String superiorPieceAlliance = "";
+      if (this.moveType == MoveType.AGGRESSIVE) {
+        superiorPieceAlliance = eliminatedPiece.getAlliance() == Alliance.BLACK ?
+          " " + Alliance.WHITE: " " + Alliance.BLACK;
+      }
+      return "Turn " + this.turnId + ": " +
+        srcPieceAlliance + " " +
+        srcPiece + " " +
+        srcTileCoords + " to " +
+        tgtPiece + " " +
+        tgtTileCoords + " " +
+        this.moveType + superiorPieceAlliance +
+        " EXECUTED";
+    } else {
+      return "Turn " + this.turnId + ": " +
+        srcPieceAlliance + " " +
+        srcPiece + " " +
+        srcTileCoords + " to " +
+        tgtPiece + " " +
+        tgtTileCoords;
+    }
+  }
 }

@@ -17,7 +17,6 @@ import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
 import com.markl.game.engine.board.BoardUtils;
-import com.markl.game.engine.board.Move;
 import com.markl.game.ui.GoG;
 import com.markl.game.ui.board.TileUI;
 

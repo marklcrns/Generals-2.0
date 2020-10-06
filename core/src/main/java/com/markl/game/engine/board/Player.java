@@ -6,16 +6,16 @@ package com.markl.game.engine.board;
  */
 public class Player {
 
-    private Alliance alliance;
+  private Alliance alliance;
 
-    public Player() {}
+  public Player() {}
 
-    public Player(Alliance alliance) {
-        this.alliance = alliance;
-    }
+  public Player(Alliance alliance) {
+    this.alliance = alliance;
+  }
 
-    public Alliance getAlliance() {
-        return this.alliance;
-    }
+  public Alliance getAlliance() {
+    return this.alliance;
+  }
 
 }
