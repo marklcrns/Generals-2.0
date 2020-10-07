@@ -79,20 +79,20 @@ public class GameScreen implements Screen {
   private void getAssetImages() {
     // Get black pieces
     blackPiecesTex.put("GeneralFive", gameUI.assets.get(getPieceImagePath("black", "GeneralFive"), Texture.class));
-    blackPiecesTex.put( "GeneralFour", gameUI.assets.get(getPieceImagePath("black", "GeneralFour"), Texture.class));
-    blackPiecesTex.put( "GeneralThree", gameUI.assets.get(getPieceImagePath("black", "GeneralThree"), Texture.class));
-    blackPiecesTex.put( "GeneralTwo", gameUI.assets.get(getPieceImagePath("black", "GeneralTwo"), Texture.class));
-    blackPiecesTex.put( "GeneralOne", gameUI.assets.get(getPieceImagePath("black", "GeneralOne"), Texture.class));
-    blackPiecesTex.put( "Colonel", gameUI.assets.get(getPieceImagePath("black", "Colonel"), Texture.class));
-    blackPiecesTex.put( "LtCol", gameUI.assets.get(getPieceImagePath("black", "LtCol"), Texture.class));
-    blackPiecesTex.put( "Major", gameUI.assets.get(getPieceImagePath("black", "Major"), Texture.class));
-    blackPiecesTex.put( "Captain", gameUI.assets.get(getPieceImagePath("black", "Captain"), Texture.class));
-    blackPiecesTex.put( "LtOne", gameUI.assets.get(getPieceImagePath("black", "LtOne"), Texture.class));
-    blackPiecesTex.put( "LtTwo", gameUI.assets.get(getPieceImagePath("black", "LtTwo"), Texture.class));
-    blackPiecesTex.put( "Sergeant", gameUI.assets.get(getPieceImagePath("black", "Sergeant"), Texture.class));
-    blackPiecesTex.put( "Private", gameUI.assets.get(getPieceImagePath("black", "Private"), Texture.class));
-    blackPiecesTex.put( "Spy", gameUI.assets.get(getPieceImagePath("black", "Spy"), Texture.class));
-    blackPiecesTex.put( "Flag", gameUI.assets.get(getPieceImagePath("black", "Flag"), Texture.class));
+    blackPiecesTex.put("GeneralFour", gameUI.assets.get(getPieceImagePath("black", "GeneralFour"), Texture.class));
+    blackPiecesTex.put("GeneralThree", gameUI.assets.get(getPieceImagePath("black", "GeneralThree"), Texture.class));
+    blackPiecesTex.put("GeneralTwo", gameUI.assets.get(getPieceImagePath("black", "GeneralTwo"), Texture.class));
+    blackPiecesTex.put("GeneralOne", gameUI.assets.get(getPieceImagePath("black", "GeneralOne"), Texture.class));
+    blackPiecesTex.put("Colonel", gameUI.assets.get(getPieceImagePath("black", "Colonel"), Texture.class));
+    blackPiecesTex.put("LtCol", gameUI.assets.get(getPieceImagePath("black", "LtCol"), Texture.class));
+    blackPiecesTex.put("Major", gameUI.assets.get(getPieceImagePath("black", "Major"), Texture.class));
+    blackPiecesTex.put("Captain", gameUI.assets.get(getPieceImagePath("black", "Captain"), Texture.class));
+    blackPiecesTex.put("LtOne", gameUI.assets.get(getPieceImagePath("black", "LtOne"), Texture.class));
+    blackPiecesTex.put("LtTwo", gameUI.assets.get(getPieceImagePath("black", "LtTwo"), Texture.class));
+    blackPiecesTex.put("Sergeant", gameUI.assets.get(getPieceImagePath("black", "Sergeant"), Texture.class));
+    blackPiecesTex.put("Private", gameUI.assets.get(getPieceImagePath("black", "Private"), Texture.class));
+    blackPiecesTex.put("Spy", gameUI.assets.get(getPieceImagePath("black", "Spy"), Texture.class));
+    blackPiecesTex.put("Flag", gameUI.assets.get(getPieceImagePath("black", "Flag"), Texture.class));
 
     // Get white pieces
     whitePiecesTex.put("GeneralFive", gameUI.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class));
