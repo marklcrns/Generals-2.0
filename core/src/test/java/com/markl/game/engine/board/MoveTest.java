@@ -32,7 +32,7 @@ class MoveTest {
     this.game.start();
     BoardBuilder builder = new BoardBuilder(board);
     builder.createDemoBoardBuild();
-    builder.build();
+    builder.build(false);
   }
 
   @Test

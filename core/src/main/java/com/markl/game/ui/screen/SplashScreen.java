@@ -65,10 +65,6 @@ public class SplashScreen implements Screen {
 
     update(delta);
     stage.draw();
-
-    game.batch.begin();
-    game.font.draw(game.batch, "Splashscreen", 50, 50);
-    game.batch.end();
   }
 
   public void update(float delta) {

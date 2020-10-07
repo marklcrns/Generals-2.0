@@ -32,7 +32,6 @@ public class MainMenuScreen implements Screen {
     this.gameUI.camera.update();
     this.gameUI.batch.setProjectionMatrix(this.gameUI.camera.combined);
 
-
     this.gameUI.batch.begin();
     this.gameUI.font.draw(gameUI.batch, "Welcome to Game of Generals!!!", 100, 150);
     this.gameUI.font.draw(gameUI.batch, "Tap anywhere to begin!", 100, 100);

@@ -26,13 +26,10 @@ import com.markl.game.engine.board.pieces.Spy;
 public class BoardUtils {
 
   /** Board tiles measurements */
-  public static final int BOARD_TILES_COL_COUNT = 9;                        // Number of columns in the game board
-  public static final int BOARD_TILES_ROW_COUNT = 8;                        // Number of row in the game board
-  public static final int TILE_SIZE = 60;                                   // Board square tile display size
-  public static final int BOARD_WIDTH = TILE_SIZE * BOARD_TILES_COL_COUNT;  // Board pixel width
-  public static final int BOARD_HEIGHT = TILE_SIZE * BOARD_TILES_ROW_COUNT; // Board pixel height
+  public static final int BOARD_TILES_COL_COUNT = 9; // Number of columns in the game board
+  public static final int BOARD_TILES_ROW_COUNT = 8; // Number of row in the game board
   public static final int TOTAL_BOARD_TILES =
-    BOARD_TILES_COL_COUNT * BOARD_TILES_ROW_COUNT;                        // Count of all tiles in the game board
+    BOARD_TILES_COL_COUNT * BOARD_TILES_ROW_COUNT;   // Count of all tiles in the game board
 
   /** Board anchors */
   public static final int FIRST_ROW_INIT = 0;              // First tile index of the first board row

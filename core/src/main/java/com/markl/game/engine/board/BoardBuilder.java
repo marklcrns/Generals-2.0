@@ -56,8 +56,9 @@ public class BoardBuilder {
     final Alliance black = Alliance.BLACK;
     final Alliance white = Alliance.WHITE;
     final int[] row = {0, 8, 17, 26}; // Start Tile row index.
-    int boardOffset = 0;              // Black territory
 
+    // Black territory
+    int boardOffset = 0;
     // row 0
     setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 0), false);
     setPiece(new LtTwo(this.board, playerBlack, black, boardOffset + row[0] + 1), false);
@@ -67,7 +68,6 @@ public class BoardBuilder {
     setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 6), false);
     setPiece(new Major(this.board, playerBlack, black, boardOffset + row[0] + 7), false);
     setPiece(new GeneralTwo(this.board, playerBlack, black, boardOffset + row[0] + 8), false);
-
     // row 1
     setPiece(new LtCol(this.board, playerBlack, black, boardOffset + row[1] + 1), false);
     setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 2), false);
@@ -76,10 +76,8 @@ public class BoardBuilder {
     setPiece(new Captain(this.board, playerBlack, black, boardOffset + row[1] + 5), false);
     setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 7), false);
     setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 8), false);
-
     // row 2
     setPiece(new GeneralThree(this.board, playerBlack, black, boardOffset + row[2] + 9), false);
-
     // row 3
     setPiece(new GeneralFive(this.board, playerBlack, black, boardOffset + row[3] + 2), false);
     setPiece(new GeneralOne(this.board, playerBlack, black, boardOffset + row[3] + 3), false);
@@ -88,20 +86,17 @@ public class BoardBuilder {
 
     // White territory
     boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
-
     // row 0
     setPiece(new GeneralFive(this.board, playerWhite, white, boardOffset + row[0] + 1), false);
     setPiece(new Colonel(this.board, playerWhite, white, boardOffset + row[0] + 2), false);
     setPiece(new GeneralOne(this.board, playerWhite, white, boardOffset + row[0] + 3), false);
     setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[0] + 4), false);
     setPiece(new GeneralTwo(this.board, playerWhite, white, boardOffset + row[0] + 7), false);
-
     // row 1
     setPiece(new GeneralFour(this.board, playerWhite, white, boardOffset + row[1] + 5), false);
     setPiece(new Private(this.board, playerWhite, white, boardOffset + row[1] + 6), false);
     setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[1] + 7), false);
     setPiece(new GeneralThree(this.board, playerWhite, white, boardOffset + row[1] + 8), false);
-
     // row 2
     setPiece(new LtCol(this.board, playerWhite, white, boardOffset + row[2] + 1), false);
     setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 2), false);
@@ -109,7 +104,6 @@ public class BoardBuilder {
     setPiece(new Captain(this.board, playerWhite, white, boardOffset + row[2] + 5), false);
     setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 7), false);
     setPiece(new Flag(this.board, playerBlack, black, boardOffset + row[2] + 9), true);
-
     // row 3
     setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 1), false);
     setPiece(new LtTwo(this.board, playerWhite, white, boardOffset + row[3] + 2), false);
@@ -118,6 +112,21 @@ public class BoardBuilder {
     setPiece(new Sergeant(this.board, playerWhite, white, boardOffset + row[3] + 6), false);
     setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 7), false);
     setPiece(new Major(this.board, playerWhite, white, boardOffset + row[3] + 8), false);
+  }
+
+  // TODO: For debugging ONLY. Removed later  <07-10-20, yourname> //
+  public void createTestBuild() {
+    final Alliance black = Alliance.BLACK;
+    final Alliance white = Alliance.WHITE;
+    final int[] row = {0, 8, 17, 26}; // Start Tile row index.
+
+    // Black territory
+    int boardOffset = 0;
+    setPiece(new GeneralFour(this.board, playerBlack, black, boardOffset + row[3] + 4), false);
+
+    // White territory
+    boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
+    setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[0] + 4), false);
   }
 
   /**
@@ -182,11 +191,14 @@ public class BoardBuilder {
   }
 
   /**
-   * Method that builds board pieces initial arrangement.
-   * Depends on BoardBuilder inner class.
+   * Builds board pieces initial arrangement.
+   * Debug mode skips board configuration size check.
+   *
+   * @param isDebug toggles debug mode
    */
-  public void build() {
-    if (this.boardConfig.size() < 42) {
+  public void build(boolean isDebugMode) {
+    // Checks if all pieces has been set
+    if (this.boardConfig.size() < 42 && !isDebugMode) {
       System.out.println("build() FAILED: Missing piece(s).");
       return;
     }

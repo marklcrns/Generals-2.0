@@ -79,7 +79,7 @@ public class LoadingScreen implements Screen {
     // Linear interpolation a + (b - 1) * lerp
     progress = MathUtils.lerp(progress, gameUI.assets.getProgress(), .1f);
     if (gameUI.assets.update() && progress >= gameUI.assets.getProgress() - 0.001f) {
-      gameUI.setScreen(gameUI.splashScreen);
+      gameUI.setScreen(gameUI.mainMenuScreen);
     }
   }
 
@@ -97,10 +97,6 @@ public class LoadingScreen implements Screen {
     shapeRend.setColor(Color.BLUE);
     shapeRend.rect(32, gameUI.camera.viewportHeight / 2 - 8, progress * (gameUI.camera.viewportWidth - 64), 16);
     shapeRend.end();
-
-    gameUI.batch.begin();
-    gameUI.font.draw(gameUI.batch, "Screen: Loading", 20, 20);
-    gameUI.batch.end();
   }
 
   @Override
