@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.markl.game.ui.GoG;
 
+import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
+
 /**
  * TODO Class Description.
  *
@@ -18,33 +20,66 @@ import com.markl.game.ui.GoG;
  */
 public class LoadingScreen implements Screen {
 
-  private final GoG game;
+  private final GoG gameUI;
 
   private ShapeRenderer shapeRend;
   private float progress;
 
   public LoadingScreen(final GoG game) {
-    this.game = game;
+    this.gameUI = game;
     this.shapeRend = new ShapeRenderer();
   }
 
   private void queueAssets() {
-    game.assets.load("pieces/original/white/WHITE_Flag.png", Texture.class);
+    // Load black pieces
+    gameUI.assets.load(getPieceImagePath("black", "GeneralFive"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "GeneralFour"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "GeneralThree"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "GeneralTwo"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "GeneralOne"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "Colonel"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "LtCol"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "Major"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "Captain"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "LtOne"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "LtTwo"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "Sergeant"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "Private"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "Spy"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("black", "Flag"), Texture.class);
+
+    // Load white pieces
+    gameUI.assets.load(getPieceImagePath("white", "GeneralFive"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "GeneralFour"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "GeneralThree"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "GeneralTwo"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "GeneralOne"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "Colonel"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "LtCol"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "Major"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "Captain"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "LtOne"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "LtTwo"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "Sergeant"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "Private"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "Spy"), Texture.class);
+    gameUI.assets.load(getPieceImagePath("white", "Flag"), Texture.class);
+    gameUI.assets.finishLoading();
   }
 
   @Override
   public void show() {
     System.out.println("LoadingScreen Show");
-    shapeRend.setProjectionMatrix(game.camera.combined);
+    shapeRend.setProjectionMatrix(gameUI.camera.combined);
     this.progress = 0f;
     queueAssets();
   }
 
   public void update(float delta) {
     // Linear interpolation a + (b - 1) * lerp
-    progress = MathUtils.lerp(progress, game.assets.getProgress(), .1f);
-    if (game.assets.update() && progress >= game.assets.getProgress() - 0.001f) {
-      game.setScreen(game.splashScreen);
+    progress = MathUtils.lerp(progress, gameUI.assets.getProgress(), .1f);
+    if (gameUI.assets.update() && progress >= gameUI.assets.getProgress() - 0.001f) {
+      gameUI.setScreen(gameUI.splashScreen);
     }
   }
 
@@ -57,15 +92,15 @@ public class LoadingScreen implements Screen {
 
     shapeRend.begin(ShapeType.Filled);
     shapeRend.setColor(Color.BLACK);
-    shapeRend.rect(32, game.camera.viewportHeight / 2 - 8, game.camera.viewportWidth - 64, 16);
+    shapeRend.rect(32, gameUI.camera.viewportHeight / 2 - 8, gameUI.camera.viewportWidth - 64, 16);
 
     shapeRend.setColor(Color.BLUE);
-    shapeRend.rect(32, game.camera.viewportHeight / 2 - 8, progress * (game.camera.viewportWidth - 64), 16);
+    shapeRend.rect(32, gameUI.camera.viewportHeight / 2 - 8, progress * (gameUI.camera.viewportWidth - 64), 16);
     shapeRend.end();
 
-    game.batch.begin();
-    game.font.draw(game.batch, "Screen: Loading", 20, 20);
-    game.batch.end();
+    gameUI.batch.begin();
+    gameUI.font.draw(gameUI.batch, "Screen: Loading", 20, 20);
+    gameUI.batch.end();
   }
 
   @Override

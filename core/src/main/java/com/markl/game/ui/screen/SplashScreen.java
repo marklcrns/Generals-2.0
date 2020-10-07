@@ -8,6 +8,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -42,7 +43,7 @@ public class SplashScreen implements Screen {
     System.out.println("SplashScreen Show");
     Gdx.input.setInputProcessor(stage);
 
-    Texture pieceTex = game.assets.get("pieces/original/white/WHITE_Flag.png", Texture.class);
+    Texture pieceTex = game.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class);
     pieceImg = new Image(pieceTex);
     pieceImg.setWidth(64f);
     pieceImg.setHeight(64f);
@@ -72,6 +73,9 @@ public class SplashScreen implements Screen {
 
   public void update(float delta) {
     stage.act(delta);
+
+    if (pieceImg.getActions().size == 0)
+      game.setScreen(game.mainMenuScreen);
   }
 
   @Override

@@ -45,7 +45,7 @@ public class GoG extends Game {
     mainMenuScreen = new MainMenuScreen(this);
     gameScreen = new GameScreen(this);
 
-    this.setScreen(mainMenuScreen);
+    this.setScreen(loadingScreen);
   }
 
   @Override
@@ -65,5 +65,6 @@ public class GoG extends Game {
     loadingScreen.dispose();
     splashScreen.dispose();
     mainMenuScreen.dispose();
+    gameScreen.dispose();
   }
 }

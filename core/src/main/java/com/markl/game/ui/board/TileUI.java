@@ -1,5 +1,6 @@
 package com.markl.game.ui.board;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.markl.game.engine.board.Tile;
 
@@ -13,7 +14,7 @@ public class TileUI extends Rectangle {
 
   public int id;
   public Tile tile;
-
+  public Texture pieceTex;
   /**
    * No-argument constructor
    */
@@ -36,9 +37,23 @@ public class TileUI extends Rectangle {
       ";width=" + this.width + ";height=" + this.height;
   }
 
+  public void setTileId(int id)               { this.id = id; }
   public void setTile(Tile tile)              { this.tile = tile; }
-  public void setTileId(int id)               { this.tile.setTileId(id); }
+  public void setPieceTex(Texture pieceTex)   { this.pieceTex = pieceTex; }
 
-  public Tile getTile()                       { return this.tile; }
   public int getTileId()                      { return this.id; }
+  public Tile getTile()                       { return this.tile; }
+  public Texture getPieceTex()                { return this.pieceTex; }
+
+  public void emptyPieceTex() {
+    if (pieceTex != null)
+      this.pieceTex = null;
+  }
+
+  public boolean isPieceTexEmpty() {
+    if (pieceTex == null)
+      return true;
+
+    return false;
+  }
 }

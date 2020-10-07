@@ -1,6 +1,12 @@
 package com.markl.game.ui.screen;
 
+import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_COL_COUNT;
+import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_ROW_COUNT;
+import static com.markl.game.engine.board.BoardUtils.TILE_SIZE;
 import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -16,7 +22,6 @@ import com.markl.game.GameState;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
-import com.markl.game.engine.board.BoardUtils;
 import com.markl.game.ui.GoG;
 import com.markl.game.ui.board.TileUI;
 
@@ -36,6 +41,8 @@ public class GameScreen implements Screen {
   public Board board;
   public BoardBuilder builder;
   public TileUI[][] tiles;
+  public Map<String, Texture> blackPiecesTex = new HashMap<>();
+  public Map<String, Texture> whitePiecesTex = new HashMap<>();
 
   public GameScreen(final GoG gameUI) {
     this.gameUI = gameUI;
@@ -48,34 +55,61 @@ public class GameScreen implements Screen {
     board = new Board(this.game);
 
     // Initialize TileUI 2D array
-    tiles = new TileUI[BoardUtils.BOARD_TILES_COL_COUNT][BoardUtils.BOARD_TILES_ROW_COUNT];
+    tiles = new TileUI[BOARD_TILES_COL_COUNT][BOARD_TILES_ROW_COUNT];
   }
 
   public void populateTiles() {
-    // TODO: Clean up <05-10-20, Mark Lucernas> //
-    int tileCount = 0;
     // Fill tiles top to bottom, left to right
-    for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
-      for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
+    for (int i = 0; i < BOARD_TILES_COL_COUNT; i++) {
+      for (int j = 0; j < BOARD_TILES_ROW_COUNT; j++) {
 
-        int tileId = (BoardUtils.BOARD_TILES_COL_COUNT * j) + i;
+        int tileId = (BOARD_TILES_COL_COUNT * j) + i;
 
         // Invert Y to have tiles arranged left to right, top to bottom
-        float tileX = 0 + (i * BoardUtils.TILE_SIZE);
-        float tileY = (BoardUtils.TILE_SIZE * (BoardUtils.BOARD_TILES_ROW_COUNT - 1)) - (j * BoardUtils.TILE_SIZE);
-        float tileWidth = BoardUtils.TILE_SIZE;
-        float tileHeight = BoardUtils.TILE_SIZE;
+        float tileX = 0 + (i * TILE_SIZE);
+        float tileY = (TILE_SIZE * (BOARD_TILES_ROW_COUNT - 1)) - (j * TILE_SIZE);
+        float tileWidth = TILE_SIZE;
+        float tileHeight = TILE_SIZE;
 
         tiles[i][j] = new TileUI(tileId, tileX, tileY, tileWidth, tileHeight);
-        System.out.println(tiles[i][j].toString());
-        tileCount++;
       }
     }
-    System.out.println(tileCount);
   }
 
   private void getAssetImages() {
-    pieceImg = gameUI.assets.get(getPieceImagePath("black", "GeneralOne"), Texture.class);
+    // Get black pieces
+    blackPiecesTex.put("GeneralFive", gameUI.assets.get(getPieceImagePath("black", "GeneralFive"), Texture.class));
+    blackPiecesTex.put( "GeneralFour", gameUI.assets.get(getPieceImagePath("black", "GeneralFour"), Texture.class));
+    blackPiecesTex.put( "GeneralThree", gameUI.assets.get(getPieceImagePath("black", "GeneralThree"), Texture.class));
+    blackPiecesTex.put( "GeneralTwo", gameUI.assets.get(getPieceImagePath("black", "GeneralTwo"), Texture.class));
+    blackPiecesTex.put( "GeneralOne", gameUI.assets.get(getPieceImagePath("black", "GeneralOne"), Texture.class));
+    blackPiecesTex.put( "Colonel", gameUI.assets.get(getPieceImagePath("black", "Colonel"), Texture.class));
+    blackPiecesTex.put( "LtCol", gameUI.assets.get(getPieceImagePath("black", "LtCol"), Texture.class));
+    blackPiecesTex.put( "Major", gameUI.assets.get(getPieceImagePath("black", "Major"), Texture.class));
+    blackPiecesTex.put( "Captain", gameUI.assets.get(getPieceImagePath("black", "Captain"), Texture.class));
+    blackPiecesTex.put( "LtOne", gameUI.assets.get(getPieceImagePath("black", "LtOne"), Texture.class));
+    blackPiecesTex.put( "LtTwo", gameUI.assets.get(getPieceImagePath("black", "LtTwo"), Texture.class));
+    blackPiecesTex.put( "Sergeant", gameUI.assets.get(getPieceImagePath("black", "Sergeant"), Texture.class));
+    blackPiecesTex.put( "Private", gameUI.assets.get(getPieceImagePath("black", "Private"), Texture.class));
+    blackPiecesTex.put( "Spy", gameUI.assets.get(getPieceImagePath("black", "Spy"), Texture.class));
+    blackPiecesTex.put( "Flag", gameUI.assets.get(getPieceImagePath("black", "Flag"), Texture.class));
+
+    // Get white pieces
+    whitePiecesTex.put("GeneralFive", gameUI.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class));
+    whitePiecesTex.put("GeneralFour", gameUI.assets.get(getPieceImagePath("white", "GeneralFour"), Texture.class));
+    whitePiecesTex.put("GeneralThree", gameUI.assets.get(getPieceImagePath("white", "GeneralThree"), Texture.class));
+    whitePiecesTex.put("GeneralTwo", gameUI.assets.get(getPieceImagePath("white", "GeneralTwo"), Texture.class));
+    whitePiecesTex.put("GeneralOne", gameUI.assets.get(getPieceImagePath("white", "GeneralOne"), Texture.class));
+    whitePiecesTex.put("Colonel", gameUI.assets.get(getPieceImagePath("white", "Colonel"), Texture.class));
+    whitePiecesTex.put("LtCol", gameUI.assets.get(getPieceImagePath("white", "LtCol"), Texture.class));
+    whitePiecesTex.put("Major", gameUI.assets.get(getPieceImagePath("white", "Major"), Texture.class));
+    whitePiecesTex.put("Captain", gameUI.assets.get(getPieceImagePath("white", "Captain"), Texture.class));
+    whitePiecesTex.put("LtOne", gameUI.assets.get(getPieceImagePath("white", "LtOne"), Texture.class));
+    whitePiecesTex.put("LtTwo", gameUI.assets.get(getPieceImagePath("white", "LtTwo"), Texture.class));
+    whitePiecesTex.put("Sergeant", gameUI.assets.get(getPieceImagePath("white", "Sergeant"), Texture.class));
+    whitePiecesTex.put("Private", gameUI.assets.get(getPieceImagePath("white", "Private"), Texture.class));
+    whitePiecesTex.put("Spy", gameUI.assets.get(getPieceImagePath("white", "Spy"), Texture.class));
+    whitePiecesTex.put("Flag", gameUI.assets.get(getPieceImagePath("white", "Flag"), Texture.class));
   }
 
   @Override
@@ -102,12 +136,12 @@ public class GameScreen implements Screen {
 
     // Draw board background
     shapeRend.begin(ShapeType.Filled);
-    for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
-      for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
+    for (int i = 0; i < BOARD_TILES_COL_COUNT; i++) {
+      for (int j = 0; j < BOARD_TILES_ROW_COUNT; j++) {
         TileUI tile = tiles[i][j];
 
         // Split board into two territory
-        if (j < BoardUtils.BOARD_TILES_ROW_COUNT / 2)
+        if (j < BOARD_TILES_ROW_COUNT / 2)
           shapeRend.setColor(Color.ORANGE);
         else
           shapeRend.setColor(Color.RED);
@@ -120,8 +154,8 @@ public class GameScreen implements Screen {
 
     // Draw board tiles border
     shapeRend.begin(ShapeType.Line);
-    for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
-      for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
+    for (int i = 0; i < BOARD_TILES_COL_COUNT; i++) {
+      for (int j = 0; j < BOARD_TILES_ROW_COUNT; j++) {
         shapeRend.setColor(Color.BLACK);
 
         TileUI tile = tiles[i][j];
@@ -133,17 +167,20 @@ public class GameScreen implements Screen {
     batch.end();
   }
 
-  public void updatePiecesImgs(Batch batch) {
+  public void updatePiecesImages(Batch batch) {
     batch.begin();
-    for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
-      for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
+    for (int i = 0; i < BOARD_TILES_COL_COUNT; i++) {
+      for (int j = 0; j < BOARD_TILES_ROW_COUNT; j++) {
         TileUI tile = tiles[i][j];
+
         // Draw piece in tile if occupied
         if (board.getTile(tile.id).isTileOccupied()) {
-          Alliance territory = board.getTile(tile.id).getTerritory();
+          Alliance alliance = board.getTile(tile.id).getPiece().getAlliance();
           String pieceRank = board.getTile(tile.id).getPiece().getRank();
-          batch.draw(gameUI.assets.get(getPieceImagePath(territory, pieceRank), Texture.class),
-              tile.x, tile.y, tile.width, tile.height);
+          if (alliance == Alliance.BLACK)
+            batch.draw(blackPiecesTex.get(pieceRank), tile.x, tile.y, tile.width, tile.height);
+          else
+            batch.draw(whitePiecesTex.get(pieceRank), tile.x, tile.y, tile.width, tile.height);
         }
       }
     }
@@ -160,7 +197,7 @@ public class GameScreen implements Screen {
     stage.draw();
 
     drawBoard(gameUI.batch, shapeRend);
-    updatePiecesImgs(gameUI.batch);
+    updatePiecesImages(gameUI.batch);
 
     gameUI.batch.begin();
     gameUI.font.draw(gameUI.batch, "Generals", 0, GoG.V_HEIGHT);
@@ -209,7 +246,6 @@ public class GameScreen implements Screen {
   @Override
   public void dispose() {
     System.out.println("GameScreen dispose");
-    pieceImg.dispose();
     stage.dispose();
     shapeRend.dispose();
   }
