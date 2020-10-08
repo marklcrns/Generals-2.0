@@ -32,9 +32,9 @@ import com.markl.game.ui.board.TileUI;
  */
 public class GameScreen implements Screen {
 
-  private static final float TILE_SIZE = 70f;
-  private static final float BOARD_WIDTH = TILE_SIZE * BOARD_TILES_COL_COUNT;
-  private static final float BOARD_HEIGHT = TILE_SIZE * BOARD_TILES_ROW_COUNT;
+  public static final float TILE_SIZE = 70f;
+  public static final float BOARD_WIDTH = TILE_SIZE * BOARD_TILES_COL_COUNT;
+  public static final float BOARD_HEIGHT = TILE_SIZE * BOARD_TILES_ROW_COUNT;
 
   private final GoG gameUI;
 
@@ -93,7 +93,7 @@ public class GameScreen implements Screen {
           piece.setHeight(tileHeight);
           piece.setPosition(tileX, tileY);
 
-          piece.addListener(new PieceUIListener(piece));
+          piece.addListener(new PieceUIListener(gameUI.camera, piece));
 
           stage.addActor(piece);
 
