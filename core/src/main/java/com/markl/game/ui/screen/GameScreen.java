@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.markl.game.GameState;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
@@ -49,10 +49,16 @@ public class GameScreen implements Screen {
   public Map<String, Texture> whitePiecesTex = new HashMap<>();
   public Map<Integer, PieceUI> boardActors = new HashMap<>();
 
+  // TODO: Debug
+  public float tX = -1;
+  public float tY = -1;
+  public float pX = -1;
+  public float pY = -1;
+
   public GameScreen(final GoG gameUI) {
     this.gameUI = gameUI;
     this.shapeRend = new ShapeRenderer();
-    this.stage = new Stage(new FitViewport(GoG.V_WIDTH, GoG.V_HEIGHT, gameUI.camera));
+    this.stage = new Stage(new StretchViewport(GoG.V_WIDTH, GoG.V_HEIGHT, gameUI.camera));
     Gdx.input.setInputProcessor(stage);
 
     // Initialize GoG game engine
@@ -93,7 +99,7 @@ public class GameScreen implements Screen {
           piece.setHeight(tileHeight);
           piece.setPosition(tileX, tileY);
 
-          piece.addListener(new PieceUIListener(gameUI.camera, piece));
+          piece.addListener(new PieceUIListener(gameUI.camera, piece, tiles, this));
 
           stage.addActor(piece);
 
@@ -156,6 +162,16 @@ public class GameScreen implements Screen {
         shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
       }
     }
+    shapeRend.end();
+
+    // Draw snap-to-tile line
+    shapeRend.begin(ShapeType.Filled);
+
+    shapeRend.setColor(Color.YELLOW);
+    if (tX != -1 && tY != -1 && pX != -1 && pY != -1) {
+      shapeRend.rectLine(tX, tY, pX, pY, 0.8f);
+    }
+
     shapeRend.end();
     batch.end();
   }
