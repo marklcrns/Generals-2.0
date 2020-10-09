@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
-import com.markl.game.ui.GoG;
+import com.markl.game.ui.Application;
 
 import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
 
@@ -20,66 +20,66 @@ import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
  */
 public class LoadingScreen implements Screen {
 
-  private final GoG gameUI;
+  private final Application app;
 
   private ShapeRenderer shapeRend;
   private float progress;
 
-  public LoadingScreen(final GoG game) {
-    this.gameUI = game;
+  public LoadingScreen(final Application app) {
+    this.app = app;
     this.shapeRend = new ShapeRenderer();
   }
 
   private void queueAssets() {
     // Load black pieces
-    gameUI.assets.load(getPieceImagePath("black", "GeneralFive"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "GeneralFour"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "GeneralThree"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "GeneralTwo"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "GeneralOne"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "Colonel"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "LtCol"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "Major"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "Captain"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "LtOne"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "LtTwo"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "Sergeant"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "Private"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "Spy"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("black", "Flag"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "GeneralFive"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "GeneralFour"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "GeneralThree"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "GeneralTwo"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "GeneralOne"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "Colonel"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "LtCol"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "Major"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "Captain"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "LtOne"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "LtTwo"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "Sergeant"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "Private"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "Spy"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "Flag"), Texture.class);
 
     // Load white pieces
-    gameUI.assets.load(getPieceImagePath("white", "GeneralFive"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "GeneralFour"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "GeneralThree"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "GeneralTwo"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "GeneralOne"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "Colonel"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "LtCol"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "Major"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "Captain"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "LtOne"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "LtTwo"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "Sergeant"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "Private"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "Spy"), Texture.class);
-    gameUI.assets.load(getPieceImagePath("white", "Flag"), Texture.class);
-    gameUI.assets.finishLoading();
+    app.assets.load(getPieceImagePath("white", "GeneralFive"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "GeneralFour"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "GeneralThree"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "GeneralTwo"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "GeneralOne"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "Colonel"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "LtCol"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "Major"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "Captain"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "LtOne"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "LtTwo"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "Sergeant"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "Private"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "Spy"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "Flag"), Texture.class);
+    app.assets.finishLoading();
   }
 
   @Override
   public void show() {
     System.out.println("LoadingScreen Show");
-    shapeRend.setProjectionMatrix(gameUI.camera.combined);
+    shapeRend.setProjectionMatrix(app.camera.combined);
     this.progress = 0f;
     queueAssets();
   }
 
   public void update(float delta) {
     // Linear interpolation a + (b - 1) * lerp
-    progress = MathUtils.lerp(progress, gameUI.assets.getProgress(), .1f);
-    if (gameUI.assets.update() && progress >= gameUI.assets.getProgress() - 0.001f) {
-      gameUI.setScreen(gameUI.mainMenuScreen);
+    progress = MathUtils.lerp(progress, app.assets.getProgress(), .1f);
+    if (app.assets.update() && progress >= app.assets.getProgress() - 0.001f) {
+      app.setScreen(app.mainMenuScreen);
     }
   }
 
@@ -92,10 +92,10 @@ public class LoadingScreen implements Screen {
 
     shapeRend.begin(ShapeType.Filled);
     shapeRend.setColor(Color.BLACK);
-    shapeRend.rect(32, gameUI.camera.viewportHeight / 2 - 8, gameUI.camera.viewportWidth - 64, 16);
+    shapeRend.rect(32, app.camera.viewportHeight / 2 - 8, app.camera.viewportWidth - 64, 16);
 
     shapeRend.setColor(Color.BLUE);
-    shapeRend.rect(32, gameUI.camera.viewportHeight / 2 - 8, progress * (gameUI.camera.viewportWidth - 64), 16);
+    shapeRend.rect(32, app.camera.viewportHeight / 2 - 8, progress * (app.camera.viewportWidth - 64), 16);
     shapeRend.end();
   }
 

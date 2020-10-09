@@ -13,7 +13,7 @@ import com.markl.game.ui.screen.LoadingScreen;
 import com.markl.game.ui.screen.MainMenuScreen;
 import com.markl.game.ui.screen.SplashScreen;
 
-public class GoG extends Game {
+public class Application extends Game {
 
   public static final String TITLE = "Game of The Generals";
   public static final float VERSION = 0.1f;

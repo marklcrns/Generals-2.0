@@ -18,7 +18,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.markl.game.ui.GoG;
+import com.markl.game.ui.Application;
 
 /**
  * TODO Class Description.
@@ -28,14 +28,14 @@ import com.markl.game.ui.GoG;
  */
 public class SplashScreen implements Screen {
 
-  private final GoG game;
+  private final Application app;
 
   private Stage stage;
   private Image pieceImg;
 
-  public SplashScreen(final GoG game) {
-    this.game = game;
-    stage = new Stage(new StretchViewport(GoG.V_WIDTH, GoG.V_HEIGHT, game.camera));
+  public SplashScreen(final Application app) {
+    this.app = app;
+    stage = new Stage(new StretchViewport(Application.V_WIDTH, Application.V_HEIGHT, app.camera));
   }
 
   @Override
@@ -43,7 +43,7 @@ public class SplashScreen implements Screen {
     System.out.println("SplashScreen Show");
     Gdx.input.setInputProcessor(stage);
 
-    Texture pieceTex = game.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class);
+    Texture pieceTex = app.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class);
     pieceImg = new Image(pieceTex);
     pieceImg.setWidth(64f);
     pieceImg.setHeight(64f);
@@ -71,7 +71,7 @@ public class SplashScreen implements Screen {
     stage.act(delta);
 
     if (pieceImg.getActions().size == 0)
-      game.setScreen(game.mainMenuScreen);
+      app.setScreen(app.mainMenuScreen);
   }
 
   @Override

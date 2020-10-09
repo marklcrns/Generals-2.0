@@ -3,7 +3,7 @@ package com.markl.game.ui.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.markl.game.ui.GoG;
+import com.markl.game.ui.Application;
 
 /**
  * TODO Class Description.
@@ -13,10 +13,10 @@ import com.markl.game.ui.GoG;
  */
 public class MainMenuScreen implements Screen {
 
-  final GoG gameUI;
+  final Application app;
 
-  public MainMenuScreen(final GoG game) {
-    this.gameUI = game;
+  public MainMenuScreen(final Application app) {
+    this.app = app;
   }
 
   @Override
@@ -29,16 +29,16 @@ public class MainMenuScreen implements Screen {
     Gdx.gl.glClearColor(0, 0, 0.2f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
-    this.gameUI.camera.update();
-    this.gameUI.batch.setProjectionMatrix(this.gameUI.camera.combined);
+    this.app.camera.update();
+    this.app.batch.setProjectionMatrix(this.app.camera.combined);
 
-    this.gameUI.batch.begin();
-    this.gameUI.font.draw(gameUI.batch, "Welcome to Game of Generals!!!", 100, 150);
-    this.gameUI.font.draw(gameUI.batch, "Tap anywhere to begin!", 100, 100);
-    this.gameUI.batch.end();
+    this.app.batch.begin();
+    this.app.font.draw(app.batch, "Welcome to Game of Generals!!!", 100, 150);
+    this.app.font.draw(app.batch, "Tap anywhere to begin!", 100, 100);
+    this.app.batch.end();
 
     if (Gdx.input.isTouched()) {
-      this.gameUI.setScreen(new GameScreen(gameUI));
+      this.app.setScreen(new GameScreen(app));
       dispose();
     }
   }

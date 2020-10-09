@@ -21,7 +21,7 @@ import com.markl.game.GameState;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
-import com.markl.game.ui.GoG;
+import com.markl.game.ui.Application;
 import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.PieceUIListener;
 import com.markl.game.ui.board.TileUI;
@@ -36,7 +36,7 @@ public class GameScreen implements Screen {
   public static final float BOARD_WIDTH = TILE_SIZE * BOARD_TILES_COL_COUNT;
   public static final float BOARD_HEIGHT = TILE_SIZE * BOARD_TILES_ROW_COUNT;
 
-  private final GoG gameUI;
+  private final Application app;
 
   private Stage stage;
   private ShapeRenderer shapeRend;
@@ -55,10 +55,10 @@ public class GameScreen implements Screen {
   public float pX = -1;
   public float pY = -1;
 
-  public GameScreen(final GoG gameUI) {
-    this.gameUI = gameUI;
+  public GameScreen(final Application app) {
+    this.app = app;
     this.shapeRend = new ShapeRenderer();
-    this.stage = new Stage(new StretchViewport(GoG.V_WIDTH, GoG.V_HEIGHT, gameUI.camera));
+    this.stage = new Stage(new StretchViewport(Application.V_WIDTH, Application.V_HEIGHT, app.camera));
     Gdx.input.setInputProcessor(stage);
 
     // Initialize GoG game engine
@@ -99,7 +99,7 @@ public class GameScreen implements Screen {
           piece.setHeight(tileHeight);
           piece.setPosition(tileX, tileY);
 
-          piece.addListener(new PieceUIListener(gameUI.camera, piece, tiles, this));
+          piece.addListener(new PieceUIListener(app.camera, piece, tiles, this));
 
           stage.addActor(piece);
 
@@ -182,18 +182,18 @@ public class GameScreen implements Screen {
     Gdx.gl.glClearColor(0, 0, 0.2f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
-    gameUI.camera.update();
-    gameUI.batch.setProjectionMatrix(gameUI.camera.combined);
+    app.camera.update();
+    app.batch.setProjectionMatrix(app.camera.combined);
 
     // Update stage
     update(delta);
 
-    drawBoard(gameUI.batch, shapeRend);
+    drawBoard(app.batch, shapeRend);
     // Draw board and board actors
-    gameUI.batch.begin();
+    app.batch.begin();
     stage.draw();
-    gameUI.font.draw(gameUI.batch, "Generals", 0, GoG.V_HEIGHT);
-    gameUI.batch.end();
+    app.font.draw(app.batch, "Generals", 0, Application.V_HEIGHT);
+    app.batch.end();
 
     // // process user input
     // if(Gdx.input.isTouched()) {
@@ -244,37 +244,37 @@ public class GameScreen implements Screen {
 
   private void getAssetImages() {
     // Get black pieces
-    blackPiecesTex.put("GeneralFive", gameUI.assets.get(getPieceImagePath("black", "GeneralFive"), Texture.class));
-    blackPiecesTex.put("GeneralFour", gameUI.assets.get(getPieceImagePath("black", "GeneralFour"), Texture.class));
-    blackPiecesTex.put("GeneralThree", gameUI.assets.get(getPieceImagePath("black", "GeneralThree"), Texture.class));
-    blackPiecesTex.put("GeneralTwo", gameUI.assets.get(getPieceImagePath("black", "GeneralTwo"), Texture.class));
-    blackPiecesTex.put("GeneralOne", gameUI.assets.get(getPieceImagePath("black", "GeneralOne"), Texture.class));
-    blackPiecesTex.put("Colonel", gameUI.assets.get(getPieceImagePath("black", "Colonel"), Texture.class));
-    blackPiecesTex.put("LtCol", gameUI.assets.get(getPieceImagePath("black", "LtCol"), Texture.class));
-    blackPiecesTex.put("Major", gameUI.assets.get(getPieceImagePath("black", "Major"), Texture.class));
-    blackPiecesTex.put("Captain", gameUI.assets.get(getPieceImagePath("black", "Captain"), Texture.class));
-    blackPiecesTex.put("LtOne", gameUI.assets.get(getPieceImagePath("black", "LtOne"), Texture.class));
-    blackPiecesTex.put("LtTwo", gameUI.assets.get(getPieceImagePath("black", "LtTwo"), Texture.class));
-    blackPiecesTex.put("Sergeant", gameUI.assets.get(getPieceImagePath("black", "Sergeant"), Texture.class));
-    blackPiecesTex.put("Private", gameUI.assets.get(getPieceImagePath("black", "Private"), Texture.class));
-    blackPiecesTex.put("Spy", gameUI.assets.get(getPieceImagePath("black", "Spy"), Texture.class));
-    blackPiecesTex.put("Flag", gameUI.assets.get(getPieceImagePath("black", "Flag"), Texture.class));
+    blackPiecesTex.put("GeneralFive", app.assets.get(getPieceImagePath("black", "GeneralFive"), Texture.class));
+    blackPiecesTex.put("GeneralFour", app.assets.get(getPieceImagePath("black", "GeneralFour"), Texture.class));
+    blackPiecesTex.put("GeneralThree", app.assets.get(getPieceImagePath("black", "GeneralThree"), Texture.class));
+    blackPiecesTex.put("GeneralTwo", app.assets.get(getPieceImagePath("black", "GeneralTwo"), Texture.class));
+    blackPiecesTex.put("GeneralOne", app.assets.get(getPieceImagePath("black", "GeneralOne"), Texture.class));
+    blackPiecesTex.put("Colonel", app.assets.get(getPieceImagePath("black", "Colonel"), Texture.class));
+    blackPiecesTex.put("LtCol", app.assets.get(getPieceImagePath("black", "LtCol"), Texture.class));
+    blackPiecesTex.put("Major", app.assets.get(getPieceImagePath("black", "Major"), Texture.class));
+    blackPiecesTex.put("Captain", app.assets.get(getPieceImagePath("black", "Captain"), Texture.class));
+    blackPiecesTex.put("LtOne", app.assets.get(getPieceImagePath("black", "LtOne"), Texture.class));
+    blackPiecesTex.put("LtTwo", app.assets.get(getPieceImagePath("black", "LtTwo"), Texture.class));
+    blackPiecesTex.put("Sergeant", app.assets.get(getPieceImagePath("black", "Sergeant"), Texture.class));
+    blackPiecesTex.put("Private", app.assets.get(getPieceImagePath("black", "Private"), Texture.class));
+    blackPiecesTex.put("Spy", app.assets.get(getPieceImagePath("black", "Spy"), Texture.class));
+    blackPiecesTex.put("Flag", app.assets.get(getPieceImagePath("black", "Flag"), Texture.class));
 
     // Get white pieces
-    whitePiecesTex.put("GeneralFive", gameUI.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class));
-    whitePiecesTex.put("GeneralFour", gameUI.assets.get(getPieceImagePath("white", "GeneralFour"), Texture.class));
-    whitePiecesTex.put("GeneralThree", gameUI.assets.get(getPieceImagePath("white", "GeneralThree"), Texture.class));
-    whitePiecesTex.put("GeneralTwo", gameUI.assets.get(getPieceImagePath("white", "GeneralTwo"), Texture.class));
-    whitePiecesTex.put("GeneralOne", gameUI.assets.get(getPieceImagePath("white", "GeneralOne"), Texture.class));
-    whitePiecesTex.put("Colonel", gameUI.assets.get(getPieceImagePath("white", "Colonel"), Texture.class));
-    whitePiecesTex.put("LtCol", gameUI.assets.get(getPieceImagePath("white", "LtCol"), Texture.class));
-    whitePiecesTex.put("Major", gameUI.assets.get(getPieceImagePath("white", "Major"), Texture.class));
-    whitePiecesTex.put("Captain", gameUI.assets.get(getPieceImagePath("white", "Captain"), Texture.class));
-    whitePiecesTex.put("LtOne", gameUI.assets.get(getPieceImagePath("white", "LtOne"), Texture.class));
-    whitePiecesTex.put("LtTwo", gameUI.assets.get(getPieceImagePath("white", "LtTwo"), Texture.class));
-    whitePiecesTex.put("Sergeant", gameUI.assets.get(getPieceImagePath("white", "Sergeant"), Texture.class));
-    whitePiecesTex.put("Private", gameUI.assets.get(getPieceImagePath("white", "Private"), Texture.class));
-    whitePiecesTex.put("Spy", gameUI.assets.get(getPieceImagePath("white", "Spy"), Texture.class));
-    whitePiecesTex.put("Flag", gameUI.assets.get(getPieceImagePath("white", "Flag"), Texture.class));
+    whitePiecesTex.put("GeneralFive", app.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class));
+    whitePiecesTex.put("GeneralFour", app.assets.get(getPieceImagePath("white", "GeneralFour"), Texture.class));
+    whitePiecesTex.put("GeneralThree", app.assets.get(getPieceImagePath("white", "GeneralThree"), Texture.class));
+    whitePiecesTex.put("GeneralTwo", app.assets.get(getPieceImagePath("white", "GeneralTwo"), Texture.class));
+    whitePiecesTex.put("GeneralOne", app.assets.get(getPieceImagePath("white", "GeneralOne"), Texture.class));
+    whitePiecesTex.put("Colonel", app.assets.get(getPieceImagePath("white", "Colonel"), Texture.class));
+    whitePiecesTex.put("LtCol", app.assets.get(getPieceImagePath("white", "LtCol"), Texture.class));
+    whitePiecesTex.put("Major", app.assets.get(getPieceImagePath("white", "Major"), Texture.class));
+    whitePiecesTex.put("Captain", app.assets.get(getPieceImagePath("white", "Captain"), Texture.class));
+    whitePiecesTex.put("LtOne", app.assets.get(getPieceImagePath("white", "LtOne"), Texture.class));
+    whitePiecesTex.put("LtTwo", app.assets.get(getPieceImagePath("white", "LtTwo"), Texture.class));
+    whitePiecesTex.put("Sergeant", app.assets.get(getPieceImagePath("white", "Sergeant"), Texture.class));
+    whitePiecesTex.put("Private", app.assets.get(getPieceImagePath("white", "Private"), Texture.class));
+    whitePiecesTex.put("Spy", app.assets.get(getPieceImagePath("white", "Spy"), Texture.class));
+    whitePiecesTex.put("Flag", app.assets.get(getPieceImagePath("white", "Flag"), Texture.class));
   }
 }
