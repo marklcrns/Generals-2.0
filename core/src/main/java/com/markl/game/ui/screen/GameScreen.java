@@ -54,6 +54,8 @@ public class GameScreen implements Screen {
   public float tY = -1;
   public float pX = -1;
   public float pY = -1;
+  public TileUI origTile;
+  public TileUI destTile;
 
   public GameScreen(final Application app) {
     this.app = app;
@@ -88,21 +90,19 @@ public class GameScreen implements Screen {
         if (board.getTile(tileId).isTileOccupied()) {
           Alliance alliance = board.getTile(tileId).getPiece().getAlliance();
           String pieceRank = board.getTile(tileId).getPiece().getRank();
-          PieceUI piece;
 
+          PieceUI piece;
           if (alliance == Alliance.BLACK)
-            piece = new PieceUI(blackPiecesTex.get(pieceRank));
+            piece = new PieceUI(tiles[i][j], blackPiecesTex.get(pieceRank));
           else
-            piece = new PieceUI(whitePiecesTex.get(pieceRank));
+            piece = new PieceUI(tiles[i][j], whitePiecesTex.get(pieceRank));
 
           piece.setWidth(tileWidth);
           piece.setHeight(tileHeight);
           piece.setPosition(tileX, tileY);
-
           piece.addListener(new PieceUIListener(app.camera, piece, tiles, this));
 
           stage.addActor(piece);
-
           boardActors.put(tileId, piece);
         }
       }
@@ -156,23 +156,33 @@ public class GameScreen implements Screen {
     shapeRend.begin(ShapeType.Line);
     for (int i = 0; i < BOARD_TILES_COL_COUNT; i++) {
       for (int j = 0; j < BOARD_TILES_ROW_COUNT; j++) {
+        TileUI tile = tiles[i][j];
         shapeRend.setColor(Color.BLACK);
 
-        TileUI tile = tiles[i][j];
         shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
       }
     }
     shapeRend.end();
 
     // Draw snap-to-tile line
-    shapeRend.begin(ShapeType.Filled);
-
-    shapeRend.setColor(Color.YELLOW);
     if (tX != -1 && tY != -1 && pX != -1 && pY != -1) {
-      shapeRend.rectLine(tX, tY, pX, pY, 0.8f);
+      shapeRend.begin(ShapeType.Filled);
+      shapeRend.setColor(Color.YELLOW);
+      shapeRend.rectLine(tX, tY, pX, pY, 1f);
+      shapeRend.end();
     }
-
-    shapeRend.end();
+    // Draw snap-to-tile tile highlight
+    if (destTile != null) {
+      shapeRend.begin(ShapeType.Line);
+      shapeRend.setColor(Color.YELLOW);
+      shapeRend.rect(destTile.x, destTile.y, destTile.width, destTile.height);
+      shapeRend.end();
+    } else if (origTile != null) {
+      shapeRend.begin(ShapeType.Line);
+      shapeRend.setColor(Color.YELLOW);
+      shapeRend.rect(origTile.x, origTile.y, origTile.width, origTile.height);
+      shapeRend.end();
+    }
     batch.end();
   }
 

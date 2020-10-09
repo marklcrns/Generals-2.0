@@ -13,17 +13,15 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
  */
 public class PieceUI extends Actor {
 
+  public TileUI tile;
   private Texture pieceTex;
 
   /**
    * No-args constructor
    */
-  public PieceUI(Texture pieceTex) {
+  public PieceUI(TileUI tile, Texture pieceTex) {
+    this.tile = tile;
     this.pieceTex = pieceTex;
-  }
-
-  public void draw(Batch batch) {
-    batch.draw(pieceTex, getX(), getY(), getWidth(), getHeight());
   }
 
   @Override
