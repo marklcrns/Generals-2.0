@@ -11,7 +11,7 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-  private GameState game;               // Game instance reference
+  private GameState game;          // Game instance reference
   private LinkedList<Tile> tiles;  // List of all Tiles containing data of each piece
   private Player playerBlack;      // Player instance that all contains all infos on black pieces
   private Player playerWhite;      // Player instance that all contains all infos on white pieces

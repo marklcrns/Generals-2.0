@@ -1,12 +1,11 @@
 package com.markl.game.ui.screen;
 
-import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_COL_COUNT;
-import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_ROW_COUNT;
-import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
+import static com.markl.game.engine.board.BoardUtils.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -44,7 +43,7 @@ public class GameScreen implements Screen {
   public GameState game;
   public Board board;
   public BoardBuilder builder;
-  public TileUI[][] tiles;
+  public LinkedList<TileUI> tiles;  // List of all Tiles containing data of each piece
   public Map<String, Texture> blackPiecesTex = new HashMap<>();
   public Map<String, Texture> whitePiecesTex = new HashMap<>();
   public Map<Integer, PieceUI> boardActors = new HashMap<>();
@@ -67,44 +66,40 @@ public class GameScreen implements Screen {
     game = new GameState();
     board = new Board(this.game);
 
-    // Initialize TileUI 2D array
-    tiles = new TileUI[BOARD_TILES_COL_COUNT][BOARD_TILES_ROW_COUNT];
+    // Initialize TileUI List
+    tiles = new LinkedList<TileUI>();
   }
 
   public void populateTiles() {
-    // Fill tiles top to bottom, left to right
-    for (int i = 0; i < BOARD_TILES_COL_COUNT; i++) {
-      for (int j = 0; j < BOARD_TILES_ROW_COUNT; j++) {
+    for (int i = 0; i < TOTAL_BOARD_TILES; i++) {
 
-        int tileId = (BOARD_TILES_COL_COUNT * j) + i;
+      // Invert Y to have tiles arranged left to right, top to bottom
+      float tileWidth = TILE_SIZE;
+      float tileHeight = TILE_SIZE;
+      float tileX = getTileColNum(i) * tileWidth;
+      float tileY = (TILE_SIZE * (BOARD_TILES_ROW_COUNT - 1)) - (getTileRowNum(i) * TILE_SIZE);
 
-        // Invert Y to have tiles arranged left to right, top to bottom
-        float tileX = 0 + (i * TILE_SIZE);
-        float tileY = (TILE_SIZE * (BOARD_TILES_ROW_COUNT - 1)) - (j * TILE_SIZE);
-        float tileWidth = TILE_SIZE;
-        float tileHeight = TILE_SIZE;
+      TileUI newTile = new TileUI(i, tileX, tileY, tileWidth, tileHeight);
+      tiles.add(newTile);
 
-        tiles[i][j] = new TileUI(tileId, tileX, tileY, tileWidth, tileHeight);
+      // Create PieceUI as stage actor if tile is occupied
+      if (board.getTile(i).isTileOccupied()) {
+        Alliance alliance = board.getTile(i).getPiece().getAlliance();
+        String pieceRank = board.getTile(i).getPiece().getRank();
 
-        // Create PieceUI as stage actor if tile is occupied
-        if (board.getTile(tileId).isTileOccupied()) {
-          Alliance alliance = board.getTile(tileId).getPiece().getAlliance();
-          String pieceRank = board.getTile(tileId).getPiece().getRank();
+        PieceUI piece;
+        if (alliance == Alliance.BLACK)
+          piece = new PieceUI(newTile, blackPiecesTex.get(pieceRank));
+        else
+          piece = new PieceUI(newTile, whitePiecesTex.get(pieceRank));
 
-          PieceUI piece;
-          if (alliance == Alliance.BLACK)
-            piece = new PieceUI(tiles[i][j], blackPiecesTex.get(pieceRank));
-          else
-            piece = new PieceUI(tiles[i][j], whitePiecesTex.get(pieceRank));
+        piece.setWidth(tileWidth);
+        piece.setHeight(tileHeight);
+        piece.setPosition(tileX, tileY);
+        piece.addListener(new PieceUIListener(this, piece, app.camera));
 
-          piece.setWidth(tileWidth);
-          piece.setHeight(tileHeight);
-          piece.setPosition(tileX, tileY);
-          piece.addListener(new PieceUIListener(app.camera, piece, tiles, this));
-
-          stage.addActor(piece);
-          boardActors.put(tileId, piece);
-        }
+        stage.addActor(piece);
+        boardActors.put(i, piece);
       }
     }
   }
@@ -134,33 +129,27 @@ public class GameScreen implements Screen {
     shapeRend.setProjectionMatrix(batch.getProjectionMatrix());
     shapeRend.setTransformMatrix(batch.getTransformMatrix());
 
-    // Draw board background
+    // Draw board
     shapeRend.begin(ShapeType.Filled);
-    for (int i = 0; i < BOARD_TILES_COL_COUNT; i++) {
-      for (int j = 0; j < BOARD_TILES_ROW_COUNT; j++) {
-        TileUI tile = tiles[i][j];
-
-        // Split board into two territory
-        if (j < BOARD_TILES_ROW_COUNT / 2)
-          shapeRend.setColor(Color.ORANGE);
-        else
-          shapeRend.setColor(Color.RED);
-
-        tiles[i][j] = new TileUI(tile.id, tile.x, tile.y, tile.width, tile.height);
-        shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
-      }
+    for (int i = 0; i < tiles.size(); i++) {
+      TileUI tile = tiles.get(i);
+      // Split board into two territory
+      if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
+        shapeRend.setColor(Color.ORANGE);
+      else
+        shapeRend.setColor(Color.RED);
+      // Draw square tile
+      shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
     }
     shapeRend.end();
 
     // Draw tile borders
     shapeRend.begin(ShapeType.Line);
-    for (int i = 0; i < BOARD_TILES_COL_COUNT; i++) {
-      for (int j = 0; j < BOARD_TILES_ROW_COUNT; j++) {
-        TileUI tile = tiles[i][j];
-        shapeRend.setColor(Color.BLACK);
 
-        shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
-      }
+    for (int i = 0; i < tiles.size(); i++) {
+      TileUI tile = tiles.get(i);
+      shapeRend.setColor(Color.BLACK);
+      shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
     }
     shapeRend.end();
 
@@ -184,6 +173,13 @@ public class GameScreen implements Screen {
       shapeRend.end();
     }
     batch.end();
+  }
+
+  public boolean movePieceUI(int srcPieceUICoords, int tgtPieceUICoords) {
+    if (board.movePiece(srcPieceUICoords, tgtPieceUICoords)) {
+      return true;
+    }
+    return false;
   }
 
   @Override

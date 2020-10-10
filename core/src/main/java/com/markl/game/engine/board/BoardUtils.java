@@ -26,13 +26,12 @@ import com.markl.game.engine.board.pieces.Spy;
 public class BoardUtils {
 
   /** Board tiles measurements */
-  public static final int BOARD_TILES_COL_COUNT = 9; // Number of columns in the game board
-  public static final int BOARD_TILES_ROW_COUNT = 8; // Number of row in the game board
+  public static final int BOARD_TILES_COL_COUNT = 9;     // Number of columns in the game board
+  public static final int BOARD_TILES_ROW_COUNT = 8;     // Number of row in the game board
   public static final int TOTAL_BOARD_TILES =
-    BOARD_TILES_COL_COUNT * BOARD_TILES_ROW_COUNT;   // Count of all tiles in the game board
-
-  /** Board anchors */
-  public static final int FIRST_ROW_INIT = 0;              // First tile index of the first board row
+    BOARD_TILES_COL_COUNT * BOARD_TILES_ROW_COUNT;       // Count of all tiles in the game board
+  /* * Board anchors */
+  public static final int FIRST_ROW_INIT = 0;            // First tile index of the first board row
   public static final int SECOND_ROW_INIT =
     FIRST_ROW_INIT + BOARD_TILES_COL_COUNT;              // First tile index of the second board row
   public static final int LAST_ROW_INIT =
@@ -118,6 +117,28 @@ public class BoardUtils {
       piece = new Spy(board, owner, alliance);
 
     return piece;
+  }
+
+  /**
+   *
+   * @return tile column number on a 2D board
+   */
+  public static int getTileColNum(int id) {
+    if (id <= TOTAL_BOARD_TILES - 1)
+      return id % BOARD_TILES_COL_COUNT;
+
+    return -1;
+  }
+
+  /**
+   *
+   * @return tile row number on a 2D board
+   */
+  public static int getTileRowNum(int id) {
+    if (id <= TOTAL_BOARD_TILES - 1)
+      return id / BOARD_TILES_COL_COUNT;
+
+    return - 1;
   }
 
   /**

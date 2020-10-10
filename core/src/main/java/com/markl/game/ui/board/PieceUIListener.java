@@ -1,12 +1,13 @@
 package com.markl.game.ui.board;
 
+import java.util.LinkedList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.markl.game.engine.board.BoardUtils;
 import com.markl.game.ui.screen.GameScreen;
 
 /**
@@ -16,21 +17,22 @@ import com.markl.game.ui.screen.GameScreen;
  * Created on 10/07/2020.
  */
 public class PieceUIListener extends ClickListener {
-private Camera camera;
-  private PieceUI piece;
-  private TileUI[][] tiles;
+
   private GameScreen gameScreen;
+  private PieceUI piece;
+  private Camera camera;
+  private LinkedList<TileUI> tiles;
 
   private Vector3 mousePos;
   private TileUI destTile;
   private TileUI origTile;
   boolean hasDestTile = false;
 
-  public PieceUIListener(Camera camera, PieceUI piece, TileUI[][] tiles, GameScreen gameScreen) {
-    this.camera = camera;
-    this.piece = piece;
-    this.tiles = tiles;
+  public PieceUIListener(GameScreen gameScreen, PieceUI piece, Camera camera) {
     this.gameScreen = gameScreen;
+    this.piece = piece;
+    this.camera = camera;
+    this.tiles = gameScreen.tiles;
   }
 
   @Override
@@ -68,35 +70,34 @@ private Camera camera;
 
     // Update snap line path
     hasDestTile = false;
-    for (int i = 0; i < BoardUtils.BOARD_TILES_COL_COUNT; i++) {
-      for (int j = 0; j < BoardUtils.BOARD_TILES_ROW_COUNT; j++) {
-        TileUI tile = tiles[i][j];
 
-        // Get center coords of tile
-        final float tX = GameScreen.TILE_SIZE * 0.5f + tile.x;
-        final float tY = GameScreen.TILE_SIZE * 0.5f + tile.y;
-        // Get center coords of current piece
-        final float pX = piece.getWidth() * 0.5f + piece.getX();
-        final float pY = piece.getWidth() * 0.5f + piece.getY();
-        // Get distance between tile and current piece
-        final float dX = Math.abs(tX - pX);
-        final float dY = Math.abs(tY - pY);
-        final double dZ = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
+    for (int i = 0; i < tiles.size(); i++) {
+      TileUI tile = tiles.get(i);
 
-        // Activate snap tile
-        if (dZ <= GameScreen.TILE_SIZE * 0.5f) {
-          gameScreen.tX = tX;
-          gameScreen.tY = tY;
-          gameScreen.pX = pX;
-          gameScreen.pY = pY;
+      // Get center coords of tile
+      final float tX = GameScreen.TILE_SIZE * 0.5f + tile.x;
+      final float tY = GameScreen.TILE_SIZE * 0.5f + tile.y;
+      // Get center coords of current piece
+      final float pX = piece.getWidth() * 0.5f + piece.getX();
+      final float pY = piece.getWidth() * 0.5f + piece.getY();
+      // Get distance between tile and current piece
+      final float dX = Math.abs(tX - pX);
+      final float dY = Math.abs(tY - pY);
+      final double dZ = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
 
-          // Update destination tile
-          destTile = tile;
-          gameScreen.origTile = null;
-          gameScreen.destTile = tile;
-          hasDestTile = true;
-          break;
-        }
+      // Activate snap tile
+      if (dZ <= GameScreen.TILE_SIZE * 0.5f) {
+        gameScreen.tX = tX;
+        gameScreen.tY = tY;
+        gameScreen.pX = pX;
+        gameScreen.pY = pY;
+
+        // Update destination tile
+        destTile = tile;
+        gameScreen.origTile = null;
+        gameScreen.destTile = tile;
+        hasDestTile = true;
+        break;
       }
 
       if (hasDestTile)
