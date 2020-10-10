@@ -1,7 +1,6 @@
-package com.markl.game.ui.board;
+ package com.markl.game.ui.board;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.markl.game.engine.board.Tile;
 
 /**
  * TODO Class Description.
@@ -12,13 +11,12 @@ import com.markl.game.engine.board.Tile;
 public class TileUI extends Rectangle {
 
   public int id;
-  public Tile tile;
+  public PieceUI pieceUI;
 
   /**
    * No-argument constructor
    */
-  public TileUI() {
-  }
+  public TileUI() {}
 
   /**
    * Constructor function that takes in tileId and Rectangle params.
@@ -30,15 +28,30 @@ public class TileUI extends Rectangle {
     this.id = tileId;
   }
 
+  /**
+   * Constructor function that takes in tileId, Rectangle params and pieceUI.
+   *
+   * @param tileId
+   */
+  public TileUI (int tileId, float x, float y, float width, float height,
+      PieceUI pieceUI)
+  {
+    super(x, y, width, height);
+    this.id = tileId;
+    this.pieceUI = pieceUI;
+  }
+
+  public void setPieceUI(PieceUI pieceUI) {
+    // Reference pieceUI to this tileUI if not null
+    if (pieceUI != null)
+      pieceUI.tileUI = this;
+
+    this.pieceUI = pieceUI;
+  }
+
   @Override
   public String toString() {
     return "id=" + id + ";x=" + this.x + ";y=" + this.y +
       ";width=" + this.width + ";height=" + this.height;
   }
-
-  public void setTileId(int id)               { this.id = id; }
-  public void setTile(Tile tile)              { this.tile = tile; }
-
-  public int getTileId()                      { return this.id; }
-  public Tile getTile()                       { return this.tile; }
 }

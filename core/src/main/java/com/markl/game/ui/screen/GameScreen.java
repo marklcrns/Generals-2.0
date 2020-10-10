@@ -35,18 +35,16 @@ public class GameScreen implements Screen {
   public static final float BOARD_WIDTH = TILE_SIZE * BOARD_TILES_COL_COUNT;
   public static final float BOARD_HEIGHT = TILE_SIZE * BOARD_TILES_ROW_COUNT;
 
-  private final Application app;
-
   private Stage stage;
   private ShapeRenderer shapeRend;
 
-  public GameState game;
+  public final Application app;
+  public final GameState game;
   public Board board;
   public BoardBuilder builder;
   public LinkedList<TileUI> tiles;  // List of all Tiles containing data of each piece
   public Map<String, Texture> blackPiecesTex = new HashMap<>();
   public Map<String, Texture> whitePiecesTex = new HashMap<>();
-  public Map<Integer, PieceUI> boardActors = new HashMap<>();
 
   // TODO: Debug
   public float tX = -1;
@@ -87,19 +85,19 @@ public class GameScreen implements Screen {
         Alliance alliance = board.getTile(i).getPiece().getAlliance();
         String pieceRank = board.getTile(i).getPiece().getRank();
 
-        PieceUI piece;
+        PieceUI pieceUI;
         if (alliance == Alliance.BLACK)
-          piece = new PieceUI(newTile, blackPiecesTex.get(pieceRank));
+          pieceUI = new PieceUI(newTile, blackPiecesTex.get(pieceRank));
         else
-          piece = new PieceUI(newTile, whitePiecesTex.get(pieceRank));
+          pieceUI = new PieceUI(newTile, whitePiecesTex.get(pieceRank));
 
-        piece.setWidth(tileWidth);
-        piece.setHeight(tileHeight);
-        piece.setPosition(tileX, tileY);
-        piece.addListener(new PieceUIListener(this, piece, app.camera));
+        pieceUI.setWidth(tileWidth);
+        pieceUI.setHeight(tileHeight);
+        pieceUI.setPosition(tileX, tileY);
+        pieceUI.addListener(new PieceUIListener(this, pieceUI));
 
-        stage.addActor(piece);
-        boardActors.put(i, piece);
+        stage.addActor(pieceUI);
+        newTile.pieceUI = pieceUI;
       }
     }
   }
@@ -177,6 +175,12 @@ public class GameScreen implements Screen {
 
   public boolean movePieceUI(int srcPieceUITileId, int tgtPieceUITileId) {
     if (board.movePiece(srcPieceUITileId, tgtPieceUITileId)) {
+      TileUI srcTileUI = tiles.get(srcPieceUITileId);
+      TileUI tgtTileUI = tiles.get(srcPieceUITileId);
+
+      // Make target TileUI the tile for source PieceUI
+      tgtTileUI.setPieceUI(srcTileUI.pieceUI);
+      srcTileUI.setPieceUI(null);
       return true;
     }
     return false;

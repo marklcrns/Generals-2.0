@@ -13,14 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
  */
 public class PieceUI extends Actor {
 
-  public TileUI tile;
+  public TileUI tileUI;
   private Texture pieceTex;
 
   /**
    * No-args constructor
    */
   public PieceUI(TileUI tile, Texture pieceTex) {
-    this.tile = tile;
+    this.tileUI = tile;
     this.pieceTex = pieceTex;
   }
 
