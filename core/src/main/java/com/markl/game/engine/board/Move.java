@@ -37,10 +37,10 @@ public class Move {
 
   private int turnId;                 // Turn ID that serves as reference.
   private final Board board;          // Reference to the Board to execute the move in
-  private final GameState game;            // Reference to the Game
+  private final GameState game;       // Reference to the Game
   private final Player player;        // Reference to the Player that owns the Piece to be moved.
-  private final int srcTileCoords;    // Location of the occupied Tile in which the piece to be moved.
-  private final int tgtTileCoords;    // Location of the Tile to where the source piece will potentially move into
+  private final int srcTileId;        // Location of the occupied Tile in which the piece to be moved.
+  private final int tgtTileId;        // Location of the Tile to where the source piece will potentially move into
   private MoveType moveType;          // Move type to determine the behavior of piece relocation
   private Piece srcPieceOrigin;       // Copy of the source piece
   private Piece tgtPieceOrigin;       // Copy of the target piece if move type is aggressive or draw
@@ -51,24 +51,24 @@ public class Move {
    * Constructor that takes in the player who will move the piece, board,
    * source tile coordinates and target tile coordinates.
    *
-   * @param player            Player reference making the move.
-   * @param board             Board reference.
-   * @param srcTileCoords  location of the Tile containing a piece to be moved.
-   * @param tgtTileCoords  location of the destination of the piece to be moved.
+   * @param player     Player reference making the move.
+   * @param board      Board reference.
+   * @param srcTileId  location of the Tile containing a piece to be moved.
+   * @param tgtTileId  location of the destination of the piece to be moved.
    */
   public Move(final Player player, final Board board,
-      final int srcTileCoords, final int tgtTileCoords)
+      final int srcTileId, final int tgtTileId)
   {
-    this.player        = player;
-    this.board         = board;
-    this.game          = board.getGame();
-    this.turnId        = this.game.getCurrTurn();
-    this.srcTileCoords = srcTileCoords;
-    this.tgtTileCoords = tgtTileCoords;
+    this.player    = player;
+    this.board     = board;
+    this.game      = board.getGame();
+    this.turnId    = this.game.getCurrTurn();
+    this.srcTileId = srcTileId;
+    this.tgtTileId = tgtTileId;
   }
 
   /**
-   * Evaluate the move based on the target Tile coords and the source piece
+   * Evaluate the move based on the target Tile id and the source piece
    * to be moved.
    *
    * INVALID    = if target Tile contains friendly piece Alliance.
@@ -85,10 +85,10 @@ public class Move {
     }
 
     // Make source piece origin copy
-    this.srcPieceOrigin = this.board.getTile(srcTileCoords).getPiece().clone();
+    this.srcPieceOrigin = this.board.getTile(srcTileId).getPiece().clone();
     // Make target piece origin copy if exist
     if (isTargetTileOccupied())
-      this.tgtPieceOrigin = this.board.getTile(tgtTileCoords).getPiece().clone();
+      this.tgtPieceOrigin = this.board.getTile(tgtTileId).getPiece().clone();
     else
       this.tgtPieceOrigin = null;
 
@@ -127,8 +127,8 @@ public class Move {
 
       case 0: // DRAW
         // Eliminates both pieces from the game.
-        this.board.getTile(this.srcTileCoords).removePiece();
-        this.board.getTile(this.tgtTileCoords).removePiece();
+        this.board.getTile(this.srcTileId).removePiece();
+        this.board.getTile(this.tgtTileId).removePiece();
         break;
 
       case 1: // NORMAL
@@ -142,18 +142,18 @@ public class Move {
         }
 
         // Move Tile normally
-        this.board.movePiece(this.srcTileCoords, this.tgtTileCoords);
+        this.board.movePiece(this.srcTileId, this.tgtTileId);
         this.isExecuted = true;
         break;
 
       case 2: // AGGRESSIVE
         // Eliminate low ranking piece from the aggressive engagement.
         if (isTargetPieceEliminated()) {
-          this.board.replacePiece(this.tgtTileCoords, this.srcPieceOrigin);
-          this.board.getTile(this.srcTileCoords).removePiece();
+          this.board.replacePiece(this.tgtTileId, this.srcPieceOrigin);
+          this.board.getTile(this.srcTileId).removePiece();
           this.eliminatedPiece = this.tgtPieceOrigin;
         } else {
-          this.board.getTile(this.srcTileCoords).removePiece();
+          this.board.getTile(this.srcTileId).removePiece();
           this.eliminatedPiece = this.srcPieceOrigin;
         }
 
@@ -182,13 +182,13 @@ public class Move {
   }
 
   /**
-   * Checks if source tile coords will move a step horizontally or vertically.
+   * Checks if source tile id will move a step horizontally or vertically.
    *
    * @return boolean true of this Move is a candidate move for the source
    * piece.
    */
   private boolean isMoveLegal() {
-    int srcTgtDiff = this.tgtTileCoords - this.srcTileCoords;
+    int srcTgtDiff = this.tgtTileId - this.srcTileId;
     if (srcTgtDiff ==  1 ||
         srcTgtDiff == -1 ||
         srcTgtDiff ==  9 ||
@@ -199,26 +199,26 @@ public class Move {
   }
 
   /**
-   * Check if source and target tile coords are out of bounds.
+   * Check if source and target tile id are out of bounds.
    *
-   * @return boolean true if either or both the source or target tile coords
+   * @return boolean true if either or both the source or target tile id
    * is/are out of bounds.
    */
   private boolean isOutOfBounds() {
-    if (this.srcTileCoords < 0 || this.srcTileCoords > 71 ||
-        this.tgtTileCoords < 0 || this.tgtTileCoords > 71)
+    if (this.srcTileId < 0 || this.srcTileId > 71 ||
+        this.tgtTileId < 0 || this.tgtTileId > 71)
       return true;
 
     return false;
   }
 
   /**
-   * Checks if targetTileCoords is occupied.
+   * Checks if targetTileId is occupied.
    *
-   * @return boolean true if targetTileCoords is occupied, else false.
+   * @return boolean true if targetTileId is occupied, else false.
    */
   private boolean isTargetTileOccupied() {
-    if (board.getTile(tgtTileCoords).isTileOccupied())
+    if (board.getTile(tgtTileId).isTileOccupied())
       return true;
 
     return false;
@@ -306,12 +306,12 @@ public class Move {
    */
   private boolean isFlagSucceeded() {
     if (srcPieceOrigin.getRank() == "Flag" &&
-        board.getTile(tgtTileCoords).isTileEmpty())
+        board.getTile(tgtTileId).isTileEmpty())
       // Check if Flag piece is in the respective opposite end row of the board.
       if ((srcPieceOrigin.getAlliance() == Alliance.BLACK &&
-            tgtTileCoords >= BoardUtils.LAST_ROW_INIT) ||
+            tgtTileId >= BoardUtils.LAST_ROW_INIT) ||
           (srcPieceOrigin.getAlliance() == Alliance.WHITE &&
-           tgtTileCoords < BoardUtils.SECOND_ROW_INIT))
+           tgtTileId < BoardUtils.SECOND_ROW_INIT))
         return true;
 
     return false;
@@ -332,7 +332,7 @@ public class Move {
    * @return Tile from the Board.
    */
   public Tile getSrcTile() {
-    return board.getTile(srcTileCoords);
+    return board.getTile(srcTileId);
   }
 
   /**
@@ -341,7 +341,7 @@ public class Move {
    * @return Tile from the Board.
    */
   public Tile getTgtTile() {
-    return board.getTile(tgtTileCoords);
+    return board.getTile(tgtTileId);
   }
 
   /**
@@ -349,8 +349,8 @@ public class Move {
    *
    * @return int source piece or Tile index or ID.
    */
-  public int getSrcTileCoords() {
-    return this.srcTileCoords;
+  public int getSrcTileId() {
+    return this.srcTileId;
   }
 
   /**
@@ -358,8 +358,8 @@ public class Move {
    *
    * @return int target Tile index or ID.
    */
-  public int getTgtTileCoords() {
-    return this.tgtTileCoords;
+  public int getTgtTileId() {
+    return this.tgtTileId;
   }
 
   /**
@@ -496,18 +496,18 @@ public class Move {
       return "Turn " + this.turnId + ": " +
         srcPieceAlliance + " " +
         srcPiece + " " +
-        srcTileCoords + " to " +
+        srcTileId + " to " +
         tgtPiece + " " +
-        tgtTileCoords + " " +
+        tgtTileId + " " +
         this.moveType + superiorPieceAlliance +
         " EXECUTED";
     } else {
       return "Turn " + this.turnId + ": " +
         srcPieceAlliance + " " +
         srcPiece + " " +
-        srcTileCoords + " to " +
+        srcTileId + " to " +
         tgtPiece + " " +
-        tgtTileCoords;
+        tgtTileId;
     }
   }
 }

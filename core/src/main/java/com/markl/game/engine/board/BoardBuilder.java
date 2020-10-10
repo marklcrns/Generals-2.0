@@ -226,31 +226,31 @@ public class BoardBuilder {
     if (!isPieceWithinBounds(piece)) {
       System.out.println("setPiece() FAILED: " + piece.getAlliance() +
           " " + piece.getRank() +
-          " at " + piece.getPieceCoords() +
+          " at " + piece.getPieceTileId() +
           ". Piece out of bounds.");
       return false;
     } else if (!isPieceInCorrectTerritory(piece) && !isSkipTerritoryCheck) {
       System.out.println("setPiece() FAILED: " + piece.getAlliance() +
           " " + piece.getRank() +
-          " at " + piece.getPieceCoords() +
+          " at " + piece.getPieceTileId() +
           ". Piece not in correct territory.");
       return false;
     } else if (!isLegalPieceInstanceChecker(piece)) {
       System.out.println("setPiece() FAILED: " + piece.getAlliance() +
           " " + piece.getRank() +
-          " at " + piece.getPieceCoords() +
+          " at " + piece.getPieceTileId() +
           ". Piece instance over limit " +
           piece.getLegalPieceInstanceCount() + ".");
       return false;
-    } else if (!isTileEmpty(piece.getPieceCoords())) {
+    } else if (!isTileEmpty(piece.getPieceTileId())) {
       System.out.println("setPiece() FAILED: " + piece.getAlliance() +
           " " + piece.getRank() +
-          " at " + piece.getPieceCoords() +
+          " at " + piece.getPieceTileId() +
           ". Tile not empty.");
       return false;
     }
 
-    boardConfig.put(piece.getPieceCoords(), piece);
+    boardConfig.put(piece.getPieceTileId(), piece);
 
     if (piece.getAlliance() == Alliance.BLACK)
       this.blackPiecesCount++;
@@ -281,7 +281,7 @@ public class BoardBuilder {
 
     while (pieceInstanceCounter < piece.getLegalPieceInstanceCount()) {
       randomEmptyTile = Utils.getRandomWithExclusion(from, to, occupiedTiles);
-      pieceCopy.setPieceCoords(randomEmptyTile);
+      pieceCopy.setPieceTileId(randomEmptyTile);
       // TODO: Fix to check if randomEmptyTile is empty
       if (setPiece(pieceCopy, false)) {
         pieceCopy = piece.clone();
@@ -319,8 +319,8 @@ public class BoardBuilder {
    * @return boolean true if piece is within bounds, else false.
    */
   public boolean isPieceWithinBounds(final Piece piece) {
-    if (piece.getPieceCoords() < BoardUtils.TOTAL_BOARD_TILES &&
-        piece.getPieceCoords() >= 0)
+    if (piece.getPieceTileId() < BoardUtils.TOTAL_BOARD_TILES &&
+        piece.getPieceTileId() >= 0)
     {
       return true;
     }
@@ -337,9 +337,9 @@ public class BoardBuilder {
    */
   public boolean isPieceInCorrectTerritory(final Piece piece) {
     if ((piece.getAlliance() == Alliance.BLACK &&
-          piece.getPieceCoords() < BoardUtils.TOTAL_BOARD_TILES / 2) ||
+          piece.getPieceTileId() < BoardUtils.TOTAL_BOARD_TILES / 2) ||
         (piece.getAlliance() == Alliance.WHITE &&
-         piece.getPieceCoords() > BoardUtils.TOTAL_BOARD_TILES / 2))
+         piece.getPieceTileId() > BoardUtils.TOTAL_BOARD_TILES / 2))
     {
       return true;
     }
@@ -374,8 +374,8 @@ public class BoardBuilder {
    * Checks if Tile is empty or does not contain a Piece instance.
    * @return boolean true if Tile is empty, else false.
    */
-  public boolean isTileEmpty(final int coords) {
-    if (!boardConfig.containsKey(coords))
+  public boolean isTileEmpty(final int tileId) {
+    if (!boardConfig.containsKey(tileId))
       return true;
     return false;
   }

@@ -13,6 +13,7 @@ public class TileUI extends Rectangle {
 
   public int id;
   public Tile tile;
+
   /**
    * No-argument constructor
    */

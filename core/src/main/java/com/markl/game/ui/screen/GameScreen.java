@@ -175,8 +175,8 @@ public class GameScreen implements Screen {
     batch.end();
   }
 
-  public boolean movePieceUI(int srcPieceUICoords, int tgtPieceUICoords) {
-    if (board.movePiece(srcPieceUICoords, tgtPieceUICoords)) {
+  public boolean movePieceUI(int srcPieceUITileId, int tgtPieceUITileId) {
+    if (board.movePiece(srcPieceUITileId, tgtPieceUITileId)) {
       return true;
     }
     return false;

@@ -62,15 +62,15 @@ public class Board {
 
   /**
    * Inserts piece into an empty tile.
-   * @param srcPieceCoords source piece coordinates.
+   * @param srcPieceTileId source piece coordinates.
    * @param piece Piece instance to insert.
    * @return boolean true if successful, else false.
    */
-  public boolean insertPiece(final int srcPieceCoords, final Piece piece) {
-    if (this.getTile(srcPieceCoords).isTileEmpty()) {
-      piece.setPieceCoords(srcPieceCoords);
-      this.getAllTiles().get(srcPieceCoords).insertPiece(piece);
-      this.getTile(srcPieceCoords).insertPiece(piece);
+  public boolean insertPiece(final int srcPieceTileId, final Piece piece) {
+    if (this.getTile(srcPieceTileId).isTileEmpty()) {
+      piece.setPieceTileId(srcPieceTileId);
+      this.getAllTiles().get(srcPieceTileId).insertPiece(piece);
+      this.getTile(srcPieceTileId).insertPiece(piece);
       return true;
     }
     return false;
@@ -78,16 +78,16 @@ public class Board {
 
   /**
    * Replaces Tile piece.
-   * @param tgtCoords target occupied tile to replace.
-   * @param srcPiece new Piece instance to replace with.
+   * @param tgtTileId target occupied tile to replace.
+   * @param srcTileId new Piece instance to replace with.
    * @return boolean true if successful, else false.
    */
-  public boolean replacePiece(final int tgtCoords, final Piece srcPiece) {
-    if (this.getTile(tgtCoords).isTileOccupied()) {
+  public boolean replacePiece(final int tgtTileId, final Piece srcTileId) {
+    if (this.getTile(tgtTileId).isTileOccupied()) {
       // TODO: improve piece manipulation efficiency
-      srcPiece.setPieceCoords(tgtCoords);
-      this.getAllTiles().get(tgtCoords).replacePiece(srcPiece);
-      this.getTile(tgtCoords).replacePiece(srcPiece);
+      srcTileId.setPieceTileId(tgtTileId);
+      this.getAllTiles().get(tgtTileId).replacePiece(srcTileId);
+      this.getTile(tgtTileId).replacePiece(srcTileId);
 
       return true;
     }
@@ -96,20 +96,20 @@ public class Board {
 
   /**
    * Moves piece from one Tile to another.
-   * @param srcPieceCoords source piece coordinates.
-   * @param tgtPieceCoords targetPiece coordinates.
+   * @param srcPieceTileId source piece Tile id.
+   * @param tgtPieceTileId targetPiece Tile id.
    * @return boolean true if successful, else false.
    */
-  public boolean movePiece(final int srcPieceCoords, final int tgtPieceCoords) {
+  public boolean movePiece(final int srcPieceTileId, final int tgtPieceTileId) {
     // insert copy of source piece into target tile
-    if (this.getTile(srcPieceCoords).isTileOccupied() &&
-        this.getTile(tgtPieceCoords).isTileEmpty())
+    if (this.getTile(srcPieceTileId).isTileOccupied() &&
+        this.getTile(tgtPieceTileId).isTileEmpty())
     {
-      final Piece srcPieceCopy = this.getTile(srcPieceCoords).getPiece().clone();
-      srcPieceCopy.setPieceCoords(tgtPieceCoords);
-      this.getTile(tgtPieceCoords).insertPiece(srcPieceCopy);
+      final Piece srcPieceCopy = this.getTile(srcPieceTileId).getPiece().clone();
+      srcPieceCopy.setPieceTileId(tgtPieceTileId);
+      this.getTile(tgtPieceTileId).insertPiece(srcPieceCopy);
       // delete source piece
-      this.getTile(srcPieceCoords).removePiece();
+      this.getTile(srcPieceTileId).removePiece();
 
       return true;
     }
@@ -118,12 +118,12 @@ public class Board {
 
   /**
    * Deletes occupied tile.
-   * @param pieceCoords piece coordinates.
+   * @param pieceTileId piece coordinates.
    * @return boolean true if successful, else false.
    */
-  public boolean deletePiece(final int pieceCoords) {
-    if (this.getTile(pieceCoords).isTileOccupied()) {
-      this.getTile(pieceCoords).removePiece();
+  public boolean deletePiece(final int pieceTileId) {
+    if (this.getTile(pieceTileId).isTileOccupied()) {
+      this.getTile(pieceTileId).removePiece();
 
       return true;
     }
@@ -132,22 +132,22 @@ public class Board {
 
   /**
    * Swaps two pieces and update piece coordinates.
-   * @param srcPieceCoords source piece coordinates.
-   * @param tgtPieceCoords target piece coordinates.
+   * @param srcPieceTileId source piece coordinates.
+   * @param tgtPieceTileId target piece coordinates.
    * @return boolean true if successful, else false.
    */
-  public boolean swapPiece(final int srcPieceCoords, final int tgtPieceCoords) {
-    if (this.getTile(srcPieceCoords).isTileOccupied() &&
-        this.getTile(tgtPieceCoords).isTileOccupied())
+  public boolean swapPiece(final int srcPieceTileId, final int tgtPieceTileId) {
+    if (this.getTile(srcPieceTileId).isTileOccupied() &&
+        this.getTile(tgtPieceTileId).isTileOccupied())
     {
-      final Piece tmpSrcPiece = this.getTile(srcPieceCoords).getPiece().clone();
-      final Piece tmpTgtPiece = this.getTile(tgtPieceCoords).getPiece().clone();
+      final Piece tmpSrcPiece = this.getTile(srcPieceTileId).getPiece().clone();
+      final Piece tmpTgtPiece = this.getTile(tgtPieceTileId).getPiece().clone();
 
-      tmpSrcPiece.setPieceCoords(tgtPieceCoords);
-      tmpTgtPiece.setPieceCoords(srcPieceCoords);
+      tmpSrcPiece.setPieceTileId(tgtPieceTileId);
+      tmpTgtPiece.setPieceTileId(srcPieceTileId);
 
-      this.getAllTiles().get(srcPieceCoords).replacePiece(tmpTgtPiece);
-      this.getAllTiles().get(tgtPieceCoords).replacePiece(tmpSrcPiece);
+      this.getAllTiles().get(srcPieceTileId).replacePiece(tmpTgtPiece);
+      this.getAllTiles().get(tgtPieceTileId).replacePiece(tmpSrcPiece);
 
       return true;
     }
@@ -169,8 +169,8 @@ public class Board {
    * @param id tile number.
    * @return Tile from gameBoard field List.
    */
-  public Tile getTile(int tileNum) {
-    return this.tiles.get(tileNum);
+  public Tile getTile(int id) {
+    return this.tiles.get(id);
   }
 
   /**

@@ -22,7 +22,7 @@ public abstract class Piece {
   public String rank;                 // Rank of the piece
   public Board board;                 // Reference to game's Board
   public int powerLevel;              // Power level of the piece to compare ranks
-  public int coords;                  // Coordinates of this Piece instance
+  public int tileId;                  // Coordinates of this Piece instance
   public int legalPieceInstanceCount; // Allowed amount of piece instance owned by a Player in a single game
   public final Player owner;          // Player that owns this Piece
   public final Alliance alliance;     // Piece alliance of this Piece
@@ -40,13 +40,13 @@ public abstract class Piece {
 
   /**
    * Constructor that takes in the owner Player, and Alliance of this piece.
-   * Sets pieceCoords to -1 temporarily.
+   * Sets pieceTileId to -1 temporarily.
    */
   public Piece(final Board board, final Player owner, final Alliance alliance) {
     this.board = board;
     this.owner = owner;
     this.alliance = alliance;
-    this.coords = -1;
+    this.tileId = -1;
   }
 
   /**
@@ -54,12 +54,12 @@ public abstract class Piece {
    * Piece.
    */
   public Piece(final Board board, final Player owner,
-      final Alliance alliance, final int coords)
+      final Alliance alliance, final int tileId)
   {
     this.board = board;
     this.owner = owner;
     this.alliance = alliance;
-    this.coords = coords;
+    this.tileId = tileId;
   }
 
   /**
@@ -72,18 +72,18 @@ public abstract class Piece {
 
   /**
    * Gets this Piece current coordinates.
-   * @return int pieceCoords field.
+   * @return int pieceTileId field.
    */
-  public int getPieceCoords() {
-    return this.coords;
+  public int getPieceTileId() {
+    return this.tileId;
   }
 
   /**
    * Sets this Piece current coordinates.
-   * @param coords new piece coordinates.
+   * @param tileId new piece coordinates.
    */
-  public void setPieceCoords(final int coords) {
-    this.coords = coords;
+  public void setPieceTileId(final int tileId) {
+    this.tileId = tileId;
   }
 
   /**
@@ -92,7 +92,7 @@ public abstract class Piece {
    * @return Tile from the Board.
    */
   public Tile getTile() {
-    return this.board.getTile(coords);
+    return this.board.getTile(tileId);
   }
 
   /**
@@ -104,28 +104,28 @@ public abstract class Piece {
   public Map<String, Move> evaluateMoves() {
     moveSet = new HashMap<String, Move>();
 
-    final int upAdjacentPieceCoords = this.coords + mobility.get("u");
-    if (this.coords >= BoardUtils.SECOND_ROW_INIT) {
-      moveSet.put("up", new Move(this.owner, this.board, this.coords,
-            upAdjacentPieceCoords));
+    final int upAdjacentPieceTileId = this.tileId + mobility.get("u");
+    if (this.tileId >= BoardUtils.SECOND_ROW_INIT) {
+      moveSet.put("up", new Move(this.owner, this.board, this.tileId,
+            upAdjacentPieceTileId));
       moveSet.get("up").evaluate();
     }
-    final int downAdjacentPieceCoords = this.coords + mobility.get("d");
-    if (this.coords < BoardUtils.LAST_ROW_INIT) {
-      moveSet.put("down", new Move(this.owner, this.board, this.coords,
-            downAdjacentPieceCoords));
+    final int downAdjacentPieceTileId = this.tileId + mobility.get("d");
+    if (this.tileId < BoardUtils.LAST_ROW_INIT) {
+      moveSet.put("down", new Move(this.owner, this.board, this.tileId,
+            downAdjacentPieceTileId));
       moveSet.get("down").evaluate();
     }
-    final int leftAdjacentPieceCoords = this.coords + mobility.get("l");
-    if (this.coords % 9 != 0) {
-      moveSet.put("left", new Move(this.owner, this.board, this.coords,
-            leftAdjacentPieceCoords));
+    final int leftAdjacentPieceTileId = this.tileId + mobility.get("l");
+    if (this.tileId % 9 != 0) {
+      moveSet.put("left", new Move(this.owner, this.board, this.tileId,
+            leftAdjacentPieceTileId));
       moveSet.get("left").evaluate();
     }
-    final int rightAdjacentPieceCoords = this.coords + mobility.get("r");
-    if (rightAdjacentPieceCoords % 9 != 0) {
-      moveSet.put("right", new Move(this.owner, this.board, this.coords,
-            rightAdjacentPieceCoords));
+    final int rightAdjacentPieceTileId = this.tileId + mobility.get("r");
+    if (rightAdjacentPieceTileId % 9 != 0) {
+      moveSet.put("right", new Move(this.owner, this.board, this.tileId,
+            rightAdjacentPieceTileId));
       moveSet.get("right").evaluate();
     }
 

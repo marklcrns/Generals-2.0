@@ -19,7 +19,6 @@ public class LtTwo extends Piece {
 
   /**
    * Constructor that takes in the owner Player, and Alliance of this piece.
-   * Sets coords to -1 temporarily.
    */
   public LtTwo(final Board board, final Player owner, final Alliance alliance) {
     super(board, owner, alliance);
@@ -30,8 +29,8 @@ public class LtTwo extends Piece {
    * this Piece.
    */
   public LtTwo(final Board board, final Player owner,
-      final Alliance alliance, final int coords) {
-    super(board, owner, alliance, coords);
+      final Alliance alliance, final int tileId) {
+    super(board, owner, alliance, tileId);
   }
 
   /**
@@ -77,14 +76,14 @@ public class LtTwo extends Piece {
   @Override
   public final Piece clone() {
     final LtTwo copy = new LtTwo(
-        this.board, this.owner, this.alliance, this.coords);
+        this.board, this.owner, this.alliance, this.tileId);
     return copy;
   }
 
   @Override
   public String toString() {
     return "piece=" + rank + ";powerLevel=" + powerLevel +
-      ";coords=" + coords +
+      ";tileId=" + tileId +
       ";legalPieceInstanceCount=" + legalPieceInstanceCount +
       ";owner=" + owner.getAlliance() +
       ";alliance=" + alliance;
