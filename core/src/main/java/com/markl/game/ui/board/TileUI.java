@@ -1,4 +1,4 @@
- package com.markl.game.ui.board;
+package com.markl.game.ui.board;
 
 import com.badlogic.gdx.math.Rectangle;
 

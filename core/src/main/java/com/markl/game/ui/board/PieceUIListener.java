@@ -18,6 +18,8 @@ import com.markl.game.ui.screen.GameScreen;
  */
 public class PieceUIListener extends ClickListener {
 
+  public float alpha = 0.5f; // piece touch drag transparency
+
   private GameScreen gameScreen;
   private Camera camera;
   private LinkedList<TileUI> tiles;
@@ -38,7 +40,8 @@ public class PieceUIListener extends ClickListener {
 
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-    pieceUI.getColor().a = 0.3f; // Make piece transparent
+    pieceUI.getColor().a = alpha; // Make piece transparent
+    gameScreen.origTile = origTile;
     return super.touchDown(event, x, y, pointer, button);
   }
 
@@ -50,15 +53,21 @@ public class PieceUIListener extends ClickListener {
     mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
     camera.unproject(mousePos); // mousePos is now in world coordinates
 
-    // Prevent from leaving the board
-    if (mousePos.x + pieceUI.getWidth() * 0.5f > GameScreen.BOARD_WIDTH)
-      mousePos.x = GameScreen.BOARD_WIDTH - pieceUI.getWidth() * 0.5f;
-    else if (mousePos.x - pieceUI.getWidth() * 0.5f < 0)
-      mousePos.x = pieceUI.getWidth() * 0.5f;
-    if (mousePos.y + pieceUI.getHeight() * 0.5f > GameScreen.BOARD_HEIGHT)
-      mousePos.y = GameScreen.BOARD_HEIGHT - pieceUI.getHeight() * 0.5f;
-    else if (mousePos.y - pieceUI.getHeight() * 0.5f < 0)
-      mousePos.y = pieceUI.getHeight() * 0.5f;
+    // Adjusted board borders
+    float boardRightBorder = GameScreen.BOARD_WIDTH + GameScreen.BOARD_X_OFFSET;
+    float boardLeftBorder = GameScreen.BOARD_X_OFFSET;
+    float boardTopBorder = GameScreen.BOARD_HEIGHT + GameScreen.BOARD_Y_OFFSET;
+    float boardBottomBorder = GameScreen.BOARD_Y_OFFSET;
+
+    // Prevent piece from leaving the board
+    if (mousePos.x + pieceUI.getWidth() * 0.5f > boardRightBorder)        // Right border stopper
+      mousePos.x = boardRightBorder - pieceUI.getWidth() * 0.5f;
+    else if (mousePos.x - pieceUI.getWidth() * 0.5f < boardLeftBorder)    // Left border stopper
+      mousePos.x = GameScreen.BOARD_X_OFFSET + pieceUI.getWidth() * 0.5f;
+    if (mousePos.y + pieceUI.getHeight() * 0.5f > boardTopBorder)         // Top border stopper
+      mousePos.y = boardTopBorder - pieceUI.getHeight() * 0.5f;
+    else if (mousePos.y - pieceUI.getHeight() * 0.5f < boardBottomBorder) // Bottom border stopper
+      mousePos.y = boardBottomBorder + pieceUI.getHeight() * 0.5f;
 
     // add MoveToAction to piece actor
     MoveToAction mta = new MoveToAction();
@@ -92,7 +101,6 @@ public class PieceUIListener extends ClickListener {
 
         // Update destination tile
         destTile = tile;
-        gameScreen.origTile = null;
         gameScreen.destTile = tile;
         hasDestTile = true;
         break;
@@ -109,7 +117,6 @@ public class PieceUIListener extends ClickListener {
       gameScreen.pX = -1;
       gameScreen.pY = -1;
       gameScreen.destTile = null;
-      gameScreen.origTile = origTile;
       destTile = null;
     }
   }
@@ -157,7 +164,7 @@ public class PieceUIListener extends ClickListener {
     gameScreen.destTile = null;
     destTile = null;
 
-
+    System.out.println("");
     System.out.println(gameScreen.board.toString());
   }
 }

@@ -35,9 +35,11 @@ import com.markl.game.ui.board.TileUI;
  */
 public class GameScreen implements Screen {
 
-  public static final float TILE_SIZE = 70f;
+  public static final float TILE_SIZE = 60f;
   public static final float BOARD_WIDTH = TILE_SIZE * BOARD_TILES_COL_COUNT;
   public static final float BOARD_HEIGHT = TILE_SIZE * BOARD_TILES_ROW_COUNT;
+  public static final float BOARD_X_OFFSET = (Application.V_WIDTH - BOARD_WIDTH) / 2;
+  public static final float BOARD_Y_OFFSET = (Application.V_HEIGHT - BOARD_HEIGHT) / 2;
 
   private Stage stage;
   private ShapeRenderer shapeRend;
@@ -78,8 +80,9 @@ public class GameScreen implements Screen {
       // Invert Y to have tiles arranged left to right, top to bottom
       float tileWidth = TILE_SIZE;
       float tileHeight = TILE_SIZE;
-      float tileX = getTileColNum(i) * tileWidth;
-      float tileY = (TILE_SIZE * (BOARD_TILES_ROW_COUNT - 1)) - (getTileRowNum(i) * TILE_SIZE);
+      float tileX = getTileColNum(i) * tileWidth + BOARD_X_OFFSET;
+      float tileY = (TILE_SIZE * (BOARD_TILES_ROW_COUNT - 1)) -
+        (getTileRowNum(i) * TILE_SIZE) + BOARD_Y_OFFSET;
 
       TileUI newTile = new TileUI(i, tileX, tileY, tileWidth, tileHeight);
       tiles.add(newTile);
@@ -130,11 +133,11 @@ public class GameScreen implements Screen {
     shapeRend.begin(ShapeType.Filled);
     for (int i = 0; i < tiles.size(); i++) {
       TileUI tile = tiles.get(i);
+
       // Split board into two territory
-      if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
-        shapeRend.setColor(Color.BLUE);
-      else
-        shapeRend.setColor(Color.RED);
+      // if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
+
+      shapeRend.setColor(new Color(0x9BB6CBFF));
       // Draw square tile
       shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
     }
@@ -144,7 +147,7 @@ public class GameScreen implements Screen {
     shapeRend.begin(ShapeType.Line);
     for (int i = 0; i < tiles.size(); i++) {
       TileUI tile = tiles.get(i);
-      shapeRend.setColor(Color.BLACK);
+      shapeRend.setColor(new Color(0x6F83A4FF));
       shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
     }
     shapeRend.end();
@@ -152,14 +155,24 @@ public class GameScreen implements Screen {
 
   // Draw snap-to-tile tile highlight
   public void drawTileHighlights() {
-    if (destTile != null) {
+    // TODO: Adjust alpha <10-10-20, yourname> //
+    if (destTile != null && destTile.id != origTile.id) {
       shapeRend.begin(ShapeType.Filled);
-      shapeRend.setColor(Color.YELLOW);
+      if (board.getTile(destTile.id).isTileOccupied()) {
+        if (board.getTile(origTile.id).getPiece().getAlliance() != // Aggressive move tile highlight
+            board.getTile(destTile.id).getPiece().getAlliance())
+          shapeRend.setColor(Color.MAROON);
+        else                                                       // Invalid friendly-fire move tile highlight
+          shapeRend.setColor(Color.GRAY);
+      } else {
+        shapeRend.setColor(Color.GOLD);                            // Normal move tile highlight
+      }
+
       shapeRend.rect(destTile.x, destTile.y, destTile.width, destTile.height);
       shapeRend.end();
     } else if (origTile != null) {
       shapeRend.begin(ShapeType.Line);
-      shapeRend.setColor(Color.YELLOW);
+      shapeRend.setColor(Color.BLUE);
       shapeRend.rect(origTile.x, origTile.y, origTile.width, origTile.height);
       shapeRend.end();
     }
@@ -169,7 +182,7 @@ public class GameScreen implements Screen {
   public void drawTileSnapLinePath() {
     if (tX != -1 && tY != -1 && pX != -1 && pY != -1) {
       shapeRend.begin(ShapeType.Filled);
-      shapeRend.setColor(Color.MAROON);
+      shapeRend.setColor(Color.WHITE);
       shapeRend.rectLine(tX, tY, pX, pY, 1.5f);
       shapeRend.end();
     }
@@ -191,7 +204,9 @@ public class GameScreen implements Screen {
   public void render(float delta) {
     // Background
     Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);     // Clear screen
+    Gdx.gl.glEnable(GL20.GL_BLEND);               // Enable color transparent
+    Gdx.gl20.glLineWidth(2.5f / app.camera.zoom); // Set line width
 
     app.camera.update();
     app.batch.setProjectionMatrix(app.camera.combined);
