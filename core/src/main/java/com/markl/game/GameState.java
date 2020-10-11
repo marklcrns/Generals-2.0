@@ -1,5 +1,6 @@
 package com.markl.game;
 
+import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.Player;
 
@@ -12,19 +13,20 @@ import com.markl.game.engine.board.Player;
  */
 public class GameState {
 
-  private int turnId;                     // Current turn of the game
   private Board board;                    // Board instance
   private Player gameWinner;              // Game winner
+  private Player currentTurnMaker;         // Current player to make move
   private String blackPlayerName = "";    // Black player's name assigned when game initialized
   private String whitePlayerName = "";    // White player's name assigned when game initialized
   private boolean hasGameStarted = false; // Turns true when game started
   private boolean hasGameEnded = false;   // Turns true when game started
+  private int currentTurnId;              // Current turn of the game
 
   /**
    * No-constructor function
    */
   public GameState() {
-    this.turnId = 0;
+    this.currentTurnId = 0;
   }
 
   /**
@@ -33,7 +35,7 @@ public class GameState {
    * @param board {@link Board} instance.
    */
   public GameState(Board board) {
-    this.turnId = 0;
+    this.currentTurnId = 0;
     this.board = board;
   }
 
@@ -47,12 +49,15 @@ public class GameState {
   /**
    * Start game.
    */
-  public void start() {
+  public boolean start() {
     if (!this.hasGameStarted) {
+      if (this.currentTurnMaker == null)
+        setRandomFirstMoveMaker();
+      this.currentTurnId = 1;
       this.hasGameStarted = true;
-      this.turnId = 1;
+      return true;
     }
-    // TODO: Continue implementation <02-10-20, Mark Lucernas> //
+    return false;
   }
 
   /**
@@ -74,18 +79,49 @@ public class GameState {
     this.hasGameEnded = true;
   }
 
-  public void nextTurn()             { this.turnId++; }
-  public void prevTurn()             { if (this.turnId > 0) this.turnId--; }
+  public void setFirstMoveMaker(Alliance moveMakerAlliance) {
+    if (currentTurnId == 0)
+      this.currentTurnMaker = board.getPlayer(moveMakerAlliance);
+  }
+
+  public void setRandomFirstMoveMaker() {
+    if (currentTurnId == 0) {
+      if (Math.random() < 0.5f)
+        this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
+      else
+        this.currentTurnMaker = board.getPlayer(Alliance.WHITE);
+    }
+  }
+
+  public void nextTurn() {
+    switchTurnMakerPlayer();
+    incrementTurnId();
+  }
+
+  public void prevTurn() {
+    switchTurnMakerPlayer();
+    decrementTurnId();
+  }
+
+  public void switchTurnMakerPlayer() {
+    if (currentTurnMaker.getAlliance() == Alliance.BLACK)
+      this.currentTurnMaker = board.getPlayer(Alliance.WHITE);
+    else
+      this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
+  }
+
+  public void decrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId--; }
+  public void incrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId++; }
 
   /** Accessor methods */
-  public int getCurrTurn()           { return this.turnId; }
-  public Player getPlayerWinner()    { if (this.hasGameEnded) return this.gameWinner; else return null; }
-  public String getBlackPlayerName() { return this.blackPlayerName; }
-  public String getWhitePlayerName() { return this.whitePlayerName; }
+  public int getCurrTurn()            { return this.currentTurnId; }
+  public Player getPlayerWinner()     { if (this.hasGameEnded) return this.gameWinner; else return null; }
+  public Player getCurrentTurnMaker() { return this.currentTurnMaker; }
+  public String getBlackPlayerName()  { return this.blackPlayerName; }
+  public String getWhitePlayerName()  { return this.whitePlayerName; }
   public boolean isRunning() {
     if (this.hasGameStarted && !this.hasGameEnded)
       return true;
-
     return false;
   }
 

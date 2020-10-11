@@ -33,8 +33,8 @@ public class TileUI extends Rectangle {
    *
    * @param tileId
    */
-  public TileUI (int tileId, float x, float y, float width, float height,
-      PieceUI pieceUI)
+  public TileUI (int tileId, float x, float y,
+                 float width, float height, PieceUI pieceUI)
   {
     super(x, y, width, height);
     this.id = tileId;
@@ -43,10 +43,24 @@ public class TileUI extends Rectangle {
 
   public void setPieceUI(PieceUI pieceUI) {
     // Reference pieceUI to this tileUI if not null
-    if (pieceUI != null)
+    if (pieceUI != null) {
       pieceUI.tileUI = this;
+      this.pieceUI = pieceUI;
+    } else {
+      this.pieceUI = null;
+    }
+  }
 
-    this.pieceUI = pieceUI;
+  public boolean isTileUIOccupied() {
+    if (pieceUI != null)
+      return true;
+    return false;
+  }
+
+  public boolean isTileUIEmpty() {
+    if (pieceUI == null)
+      return true;
+    return false;
   }
 
   @Override

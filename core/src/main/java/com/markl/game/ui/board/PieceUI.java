@@ -14,14 +14,16 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class PieceUI extends Actor {
 
   public TileUI tileUI;
+  public String pieceRank;
   private Texture pieceTex;
 
   /**
    * No-args constructor
    */
-  public PieceUI(TileUI tile, Texture pieceTex) {
+  public PieceUI(TileUI tile, Texture pieceTex, String pieceRank) {
     this.tileUI = tile;
     this.pieceTex = pieceTex;
+    this.pieceRank = pieceRank;
   }
 
   @Override

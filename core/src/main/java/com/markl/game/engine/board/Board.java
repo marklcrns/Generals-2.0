@@ -45,6 +45,19 @@ public class Board {
     this.game.setBoard(this);
   }
 
+  public int makeMove(int srcPieceTileId, int tgtPieceTileId) {
+    if (getTile(srcPieceTileId).getPiece().getAlliance() ==
+        game.getCurrentTurnMaker().getAlliance())
+    {
+      Move newMove = new Move(game.getCurrentTurnMaker(), this, srcPieceTileId, tgtPieceTileId);
+      newMove.evaluate();
+      newMove.execute();
+      return newMove.getMoveType().getValue();
+    }
+    // Return invalid if piece does not owned by current turn maker player
+    return -1;
+  }
+
   /**
    * Method that empties board Tiles pieces.
    */
@@ -194,6 +207,22 @@ public class Board {
       return this.playerWhite;
   }
 
+  /**
+   * Sets the required black Player instance.
+   * @param player black Player instance.
+   */
+  public void setPlayerBlack(final Player player) {
+    this.playerBlack = player;
+  }
+
+  /**
+   * Sets the required white Player instance.
+   * @param player white Player instance.
+   */
+  public void setPlayerWhite(final Player player) {
+    this.playerWhite = player;
+  }
+
   public void setBlackPiecesLeft(int blackPiecesLeft) {
     this.blackPiecesLeft = blackPiecesLeft;
   }
@@ -209,7 +238,8 @@ public class Board {
    */
   @Override
   public String toString() {
-    String debugBoard = "    0 1 2 3 4 5 6 7 8\n";
+    String debugBoard = "Board Debug Board\n";
+    debugBoard += "    0 1 2 3 4 5 6 7 8\n";
     debugBoard += "    _________________\n";
     for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES / 2; i += 9) {
       if (i < 10)

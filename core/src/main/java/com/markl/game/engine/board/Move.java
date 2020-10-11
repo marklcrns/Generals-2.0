@@ -19,13 +19,14 @@ public class Move {
   /**
    * Enum class for Move typification
    *
-   * INVALID    = -1
-   * DRAW       =  0
-   * NORMAL     =  1
-   * AGGRESSIVE =  2
+   * INVALID         = -1
+   * DRAW            =  0
+   * NORMAL          =  1
+   * AGGRESSIVE_WIN  =  2
+   * AGGRESSIVE_LOSE =  3
    */
   public enum MoveType {
-    INVALID(-1), DRAW(0), NORMAL(1), AGGRESSIVE(2);
+    INVALID(-1), DRAW(0), NORMAL(1), AGGRESSIVE_WIN(2), AGGRESSIVE_LOSE(3);
     private final int value;
 
     MoveType(final int value) {
@@ -78,7 +79,6 @@ public class Move {
    * AGGRESSIVE = if target Tile contains opposing piece Alliance.
    */
   public void evaluate() {
-
     if (isOutOfBounds()) {
       this.moveType = MoveType.INVALID;
       return;
@@ -98,11 +98,14 @@ public class Move {
           this.moveType = MoveType.INVALID;
         else
           if (isSameRank() && isTargetPieceFlag())
-            this.moveType = MoveType.AGGRESSIVE;
+            this.moveType = MoveType.AGGRESSIVE_WIN;
           else if (isSameRank())
             this.moveType = MoveType.DRAW;
           else
-            this.moveType = MoveType.AGGRESSIVE;
+            if (isTargetPieceEliminated())
+              this.moveType = MoveType.AGGRESSIVE_WIN;
+            else
+              this.moveType = MoveType.AGGRESSIVE_LOSE;
       else
         this.moveType = MoveType.NORMAL;
 
@@ -146,28 +149,27 @@ public class Move {
         this.isExecuted = true;
         break;
 
-      case 2: // AGGRESSIVE
-        // Eliminate low ranking piece from the aggressive engagement.
-        if (isTargetPieceEliminated()) {
-          this.board.replacePiece(this.tgtTileId, this.srcPieceOrigin);
-          this.board.getTile(this.srcTileId).removePiece();
-          this.eliminatedPiece = this.tgtPieceOrigin;
-        } else {
-          this.board.getTile(this.srcTileId).removePiece();
-          this.eliminatedPiece = this.srcPieceOrigin;
-        }
+      case 2: // AGGRESSIVE_WIN
+        this.board.replacePiece(this.tgtTileId, this.srcPieceOrigin);
+        this.board.getTile(this.srcTileId).removePiece();
+        this.eliminatedPiece = this.tgtPieceOrigin;
 
         // Check if source or target piece is Flag rank, then conclude the game.
         if (isTargetPieceFlag()) {
           this.game.endGame(srcPieceOrigin.getPieceOwner());
-          System.out.println(
-              "\n" + this.srcPieceOrigin.getAlliance() +
-              " player WON!\n");
-        } else if (isSourcePieceFlag() && !isTargetPieceFlag()){
+          System.out.println("\n" + this.srcPieceOrigin.getAlliance() +
+                             " player WON!\n");
+        }
+        break;
+
+      case 3: // AGGRESSIVE_LOSE
+        this.board.getTile(this.srcTileId).removePiece();
+        this.eliminatedPiece = this.srcPieceOrigin;
+
+        if (isSourcePieceFlag() && !isTargetPieceFlag()){
           this.game.endGame(tgtPieceOrigin.getPieceOwner());
-          System.out.println(
-              "\n" + this.tgtPieceOrigin.getAlliance() +
-              " player WON!\n");
+          System.out.println("\n" + this.tgtPieceOrigin.getAlliance() +
+                             " player WON!\n");
         }
         break;
 
@@ -489,7 +491,7 @@ public class Move {
 
     if (isExecuted) {
       String superiorPieceAlliance = "";
-      if (this.moveType == MoveType.AGGRESSIVE) {
+      if (this.moveType == MoveType.AGGRESSIVE_WIN) {
         superiorPieceAlliance = eliminatedPiece.getAlliance() == Alliance.BLACK ?
           " " + Alliance.WHITE: " " + Alliance.BLACK;
       }

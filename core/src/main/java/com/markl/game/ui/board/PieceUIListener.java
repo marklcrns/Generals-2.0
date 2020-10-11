@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.markl.game.ui.screen.GameScreen;
@@ -125,35 +126,55 @@ public class PieceUIListener extends ClickListener {
   public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
     super.touchUp(event, x, y, pointer, button);
 
-    float toX = origTile.x;
-    float toY = origTile.y;
-
+    int moveType = - 1;
     if (hasDestTile && destTile != null) {
-      toX = destTile.x;
-      toY = destTile.y;
-
-      System.out.println("origin = " + origTile.toString());
-      System.out.println("destination = " + destTile.toString());
-
-      if (gameScreen.movePieceUI(origTile.id, destTile.id))
-        origTile = destTile;
-      else {
-        // Move back to origin tile if error
-        toX = origTile.x; toY = origTile.y;
-        System.out.println("\nMOVE ERROR\n");
-      }
-
+      moveType = gameScreen.board.makeMove(origTile.id, destTile.id);
       hasDestTile = false;
     }
 
-    // add MoveToAction to piece actor
-    MoveToAction mta = new MoveToAction();
-    mta.setX(toX);
-    mta.setY(toY);
-    mta.setDuration(0.08f);
-    pieceUI.addAction(mta);
-    pieceUI.setZIndex(999); // Always on top of any pieces
-    pieceUI.getColor().a = 1; // Remove transparency
+    if (moveType != -1) {
+      if (moveType == 0) {
+        gameScreen.removePieceUI(origTile.id);
+        gameScreen.removePieceUI(destTile.id);
+        System.out.println("DRAW");
+      } else if (moveType == 1) {
+        // add MoveToAction to piece actor
+        MoveToAction mta = new MoveToAction();
+        mta.setX(destTile.x);
+        mta.setY(destTile.y);
+        mta.setDuration(0.08f);
+        pieceUI.addAction(mta);
+        pieceUI.setZIndex(999); // Always on top of any pieces
+        pieceUI.getColor().a = 1; // Remove transparency
+        origTile = destTile;
+        System.out.println("NORMAL");
+      } else if (moveType == 2) {
+        gameScreen.removePieceUI(destTile.id);
+        // add MoveToAction to piece actor
+        MoveToAction mta = new MoveToAction();
+        mta.setX(destTile.x);
+        mta.setY(destTile.y);
+        mta.setDuration(0.08f);
+        pieceUI.addAction(mta);
+        pieceUI.setZIndex(999); // Always on top of any pieces
+        pieceUI.getColor().a = 1; // Remove transparency
+        origTile = destTile;
+        System.out.println("AGGRESSIVE WIN");
+      } else if (moveType == 3) {
+        gameScreen.removePieceUI(origTile.id);
+        System.out.println("AGGRESSIVE LOSE");
+      }
+    } else {
+      // add MoveToAction to piece actor
+      MoveToAction mta = new MoveToAction();
+      mta.setX(origTile.x);
+      mta.setY(origTile.y);
+      mta.setDuration(0.08f);
+      pieceUI.addAction(mta);
+      pieceUI.setZIndex(999); // Always on top of any pieces
+      pieceUI.getColor().a = 1; // Remove transparency
+      System.out.println("INVALID");
+    }
 
     // Clear snap tile and drag tile highlights
     gameScreen.tX = -1;
@@ -165,6 +186,7 @@ public class PieceUIListener extends ClickListener {
     destTile = null;
 
     System.out.println("");
+    System.out.println(gameScreen.toString());
     System.out.println(gameScreen.board.toString());
   }
 }

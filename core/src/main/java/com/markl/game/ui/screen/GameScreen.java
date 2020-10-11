@@ -19,11 +19,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.markl.game.GameState;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
+import com.markl.game.engine.board.Player;
 import com.markl.game.ui.Application;
 import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.PieceUIListener;
@@ -35,11 +37,19 @@ import com.markl.game.ui.board.TileUI;
  */
 public class GameScreen implements Screen {
 
-  public static final float TILE_SIZE = 60f;
-  public static final float BOARD_WIDTH = TILE_SIZE * BOARD_TILES_COL_COUNT;
-  public static final float BOARD_HEIGHT = TILE_SIZE * BOARD_TILES_ROW_COUNT;
-  public static final float BOARD_X_OFFSET = (Application.V_WIDTH - BOARD_WIDTH) / 2;
-  public static final float BOARD_Y_OFFSET = (Application.V_HEIGHT - BOARD_HEIGHT) / 2;
+  /** Tile metrics */
+  public static final float TILE_SIZE          = 60f;
+  public static final float BOARD_WIDTH        = TILE_SIZE * BOARD_TILES_COL_COUNT;
+  public static final float BOARD_HEIGHT       = TILE_SIZE * BOARD_TILES_ROW_COUNT;
+  public static final float BOARD_X_OFFSET     = (Application.V_WIDTH - BOARD_WIDTH) / 2;
+  public static final float BOARD_Y_OFFSET     = (Application.V_HEIGHT - BOARD_HEIGHT) / 2;
+  /** Color Scheme */
+  public final Color TILE_COLOR                = new Color(0x9BB6CBFF);
+  public final Color TILE_BORDER_COLOR         = new Color(0x6F83A4FF);
+  public final Color AGGRESSIVE_TILE_HIGHLIGHT = Color.MAROON;
+  public final Color INVALID_TILE_HIGHLIGHT    = Color.GRAY;
+  public final Color NORMAL_TILE_HIGHLIGHT     = Color.GOLD;
+  public final Color ORIGIN_TILE_HIGHLIGHT     = Color.BLUE;
 
   private Stage stage;
   private ShapeRenderer shapeRend;
@@ -48,6 +58,8 @@ public class GameScreen implements Screen {
   public final GameState game;
   public Board board;
   public BoardBuilder builder;
+  public Player playerBlack;
+  public Player playerWhite;
   public LinkedList<TileUI> tiles;  // List of all Tiles containing data of each piece
   public Map<String, Texture> blackPiecesTex = new HashMap<>();
   public Map<String, Texture> whitePiecesTex = new HashMap<>();
@@ -68,7 +80,10 @@ public class GameScreen implements Screen {
 
     // Initialize GoG game engine
     game = new GameState();
-    board = new Board(this.game);
+    board = new Board(game);
+    builder = new BoardBuilder(board);
+    playerBlack = new Player(Alliance.BLACK);
+    playerWhite = new Player(Alliance.WHITE);
 
     // Initialize TileUI List
     tiles = new LinkedList<TileUI>();
@@ -94,9 +109,9 @@ public class GameScreen implements Screen {
 
         PieceUI pieceUI;
         if (alliance == Alliance.BLACK)
-          pieceUI = new PieceUI(newTile, blackPiecesTex.get(pieceRank));
+          pieceUI = new PieceUI(newTile, blackPiecesTex.get(pieceRank), pieceRank);
         else
-          pieceUI = new PieceUI(newTile, whitePiecesTex.get(pieceRank));
+          pieceUI = new PieceUI(newTile, whitePiecesTex.get(pieceRank), pieceRank);
 
         pieceUI.setWidth(tileWidth);
         pieceUI.setHeight(tileHeight);
@@ -112,11 +127,12 @@ public class GameScreen implements Screen {
   @Override
   public void show() {
     System.out.println("GameScreen show");
-
     // Create initial board arrangement and start game
-    BoardBuilder builder = new BoardBuilder(board);
+    board.setPlayerBlack(playerBlack);
+    board.setPlayerWhite(playerWhite);
     builder.createDemoBoardBuild();
     builder.build(true);
+    board.initGame();
     game.start();
 
     getAssetImages();
@@ -137,7 +153,7 @@ public class GameScreen implements Screen {
       // Split board into two territory
       // if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
 
-      shapeRend.setColor(new Color(0x9BB6CBFF));
+      shapeRend.setColor(TILE_COLOR);
       // Draw square tile
       shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
     }
@@ -147,7 +163,7 @@ public class GameScreen implements Screen {
     shapeRend.begin(ShapeType.Line);
     for (int i = 0; i < tiles.size(); i++) {
       TileUI tile = tiles.get(i);
-      shapeRend.setColor(new Color(0x6F83A4FF));
+      shapeRend.setColor(TILE_BORDER_COLOR);
       shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
     }
     shapeRend.end();
@@ -158,21 +174,24 @@ public class GameScreen implements Screen {
     // TODO: Adjust alpha <10-10-20, yourname> //
     if (destTile != null && destTile.id != origTile.id) {
       shapeRend.begin(ShapeType.Filled);
+
+      // TODO: Depend on Move.moveType
+      // Highlight destination tile based on move type
       if (board.getTile(destTile.id).isTileOccupied()) {
         if (board.getTile(origTile.id).getPiece().getAlliance() != // Aggressive move tile highlight
             board.getTile(destTile.id).getPiece().getAlliance())
-          shapeRend.setColor(Color.MAROON);
+          shapeRend.setColor(AGGRESSIVE_TILE_HIGHLIGHT);
         else                                                       // Invalid friendly-fire move tile highlight
-          shapeRend.setColor(Color.GRAY);
+          shapeRend.setColor(INVALID_TILE_HIGHLIGHT);
       } else {
-        shapeRend.setColor(Color.GOLD);                            // Normal move tile highlight
+        shapeRend.setColor(NORMAL_TILE_HIGHLIGHT);                 // Normal move tile highlight
       }
 
       shapeRend.rect(destTile.x, destTile.y, destTile.width, destTile.height);
       shapeRend.end();
     } else if (origTile != null) {
       shapeRend.begin(ShapeType.Line);
-      shapeRend.setColor(Color.BLUE);
+      shapeRend.setColor(ORIGIN_TILE_HIGHLIGHT);
       shapeRend.rect(origTile.x, origTile.y, origTile.width, origTile.height);
       shapeRend.end();
     }
@@ -189,21 +208,40 @@ public class GameScreen implements Screen {
   }
 
   public boolean movePieceUI(int srcPieceUITileId, int tgtPieceUITileId) {
-    if (board.movePiece(srcPieceUITileId, tgtPieceUITileId)) {
-      TileUI srcTileUI = tiles.get(srcPieceUITileId);
-      TileUI tgtTileUI = tiles.get(srcPieceUITileId);
+    PieceUI srcPieceUI = tiles.get(srcPieceUITileId).pieceUI;
+    PieceUI tgtPieceUI = tiles.get(tgtPieceUITileId).pieceUI;
+    if (srcPieceUI != null && tgtPieceUI == null) {
       // Make target TileUI the tile for source PieceUI
-      tgtTileUI.setPieceUI(srcTileUI.pieceUI);
-      srcTileUI.setPieceUI(null);
+      tiles.get(tgtPieceUITileId).setPieceUI(srcPieceUI);
+      tiles.get(srcPieceUITileId).setPieceUI(null);
       return true;
     }
     return false;
   }
 
+  public boolean removePieceUI(int tileId) {
+    TileUI tile = tiles.get(tileId);
+    if (tile.pieceUI != null) {
+      tiles.get(tileId).pieceUI.addAction(Actions.removeActor());
+      tiles.get(tileId).setPieceUI(null);
+      return true;
+    }
+    return false;
+  }
+
+  // TODO: Make sure TileUI is cloned <11-10-20, yourname> //
+  public void swapPieceUI(int srcPieceUITileId, int tgtPieceUITileId) {
+    TileUI srcTileUI = tiles.get(srcPieceUITileId);
+    TileUI tgtTileUI = tiles.get(srcPieceUITileId);
+    TileUI tmpTileUI = tgtTileUI;
+    // Make target TileUI the tile for source PieceUI
+    tgtTileUI.setPieceUI(srcTileUI.pieceUI);
+    srcTileUI.setPieceUI(tmpTileUI.pieceUI);
+  }
+
   @Override
   public void render(float delta) {
-    // Background
-    Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+    Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);     // Background color
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);     // Clear screen
     Gdx.gl.glEnable(GL20.GL_BLEND);               // Enable color transparent
     Gdx.gl20.glLineWidth(2.5f / app.camera.zoom); // Set line width
@@ -218,36 +256,17 @@ public class GameScreen implements Screen {
 
     // Draw board -> tile highlights -> piece actors
     app.batch.begin();
-
     drawBoard();
     drawTileHighlights();
     stage.draw();
-    app.font.draw(app.batch, "Generals", 0, Application.V_HEIGHT);
-
+    app.font.draw(app.batch, "PLAYER: " + game.getCurrentTurnMaker().getAlliance(), 0, Application.V_HEIGHT);
+    app.font.draw(app.batch, "TURN: " + game.getCurrTurn(), BOARD_X_OFFSET, BOARD_Y_OFFSET);
     app.batch.end();
 
     // For debug
     app.batch.begin();
     drawTileSnapLinePath();
     app.batch.end();
-
-    // // process user input
-    // if(Gdx.input.isTouched()) {
-    //   Vector3 touchPos = new Vector3();
-    //   touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-    //   gameUI.camera.unproject(touchPos);
-    //   piece.x = touchPos.x - 64 / 2;
-    //   piece.y = touchPos.y - 64 / 2;
-    // }
-    // if(Gdx.input.isKeyPressed(Keys.LEFT)) piece.x -= 200 * Gdx.graphics.getDeltaTime();
-    // if(Gdx.input.isKeyPressed(Keys.RIGHT)) piece.x += 200 * Gdx.graphics.getDeltaTime();
-    //
-    // // make sure the bucket stays within the screen bounds
-    // if(piece.x < 0) piece.x = 0;
-    // if(piece.x > GoG.V_WIDTH - 64) piece.x = GoG.V_WIDTH - 64;
-    //
-    // if(piece.y < 0) piece.y = 0;
-    // if(piece.y > GoG.V_HEIGHT - 64) piece.y = GoG.V_HEIGHT - 64;
   }
 
   @Override
@@ -312,5 +331,74 @@ public class GameScreen implements Screen {
     whitePiecesTex.put("Private", app.assets.get(getPieceImagePath("white", "Private"), Texture.class));
     whitePiecesTex.put("Spy", app.assets.get(getPieceImagePath("white", "Spy"), Texture.class));
     whitePiecesTex.put("Flag", app.assets.get(getPieceImagePath("white", "Flag"), Texture.class));
+  }
+
+  /**
+   * @return String representation of all current TilesUI for debugging
+   */
+  @Override
+  public String toString() {
+    String debugBoard = "GameScreen Debug Board\n";
+    debugBoard += "    0 1 2 3 4 5 6 7 8\n";
+    debugBoard += "    _________________\n";
+    for (int i = 0; i < TOTAL_BOARD_TILES / 2; i += 9) {
+      if (i < 10)
+        debugBoard += " " + i + " |";
+      else
+        debugBoard += i + " |";
+      for (int j = i; j < i + 9; j++) {
+        if (tiles.get(j).isTileUIEmpty()) {
+          debugBoard += "-";
+        } else {
+          final String rank = tiles.get(j).pieceUI.pieceRank;
+          if (rank == "GeneralOne")
+            debugBoard += "1";
+          else if (rank == "GeneralTwo")
+            debugBoard += "2";
+          else if (rank == "GeneralThree")
+            debugBoard += "3";
+          else if (rank == "GeneralFour")
+            debugBoard += "4";
+          else if (rank == "GeneralFive")
+            debugBoard += "5";
+          else
+            debugBoard += rank.substring(0, 1);
+        }
+        debugBoard += " ";
+      }
+      debugBoard += "\n";
+    }
+
+    debugBoard += "   |-----------------\n";
+
+    for (int i = TOTAL_BOARD_TILES / 2; i < TOTAL_BOARD_TILES; i += 9) {
+      if (i < 10)
+        debugBoard += " " + i + " |";
+      else
+        debugBoard += i + " |";
+      for (int j = i; j < i + 9; j++) {
+        if (tiles.get(j).isTileUIEmpty()) {
+          debugBoard += "-";
+        } else {
+          final String rank = tiles.get(j).pieceUI.pieceRank;
+          if (rank == "GeneralOne")
+            debugBoard += "1";
+          else if (rank == "GeneralTwo")
+            debugBoard += "2";
+          else if (rank == "GeneralThree")
+            debugBoard += "3";
+          else if (rank == "GeneralFour")
+            debugBoard += "4";
+          else if (rank == "GeneralFive")
+            debugBoard += "5";
+          else
+            debugBoard += rank.substring(0, 1);
+        }
+        debugBoard += " ";
+      }
+      debugBoard += "\n";
+    }
+
+    return debugBoard;
   }
 }
