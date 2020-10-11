@@ -1,17 +1,21 @@
 package com.markl.game.ui.screen;
 
-import static com.markl.game.engine.board.BoardUtils.*;
+import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_COL_COUNT;
+import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_ROW_COUNT;
+import static com.markl.game.engine.board.BoardUtils.TOTAL_BOARD_TILES;
+import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
+import static com.markl.game.engine.board.BoardUtils.getTileColNum;
+import static com.markl.game.engine.board.BoardUtils.getTileRowNum;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
-import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -122,18 +126,13 @@ public class GameScreen implements Screen {
     stage.act(delta);
   }
 
-  public void drawBoard(Batch batch, ShapeRenderer shapeRend) {
-    batch.begin();
-    shapeRend.setProjectionMatrix(batch.getProjectionMatrix());
-    shapeRend.setTransformMatrix(batch.getTransformMatrix());
-
-    // Draw board
+  public void drawBoard() {
     shapeRend.begin(ShapeType.Filled);
     for (int i = 0; i < tiles.size(); i++) {
       TileUI tile = tiles.get(i);
       // Split board into two territory
       if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
-        shapeRend.setColor(Color.ORANGE);
+        shapeRend.setColor(Color.BLUE);
       else
         shapeRend.setColor(Color.RED);
       // Draw square tile
@@ -143,24 +142,18 @@ public class GameScreen implements Screen {
 
     // Draw tile borders
     shapeRend.begin(ShapeType.Line);
-
     for (int i = 0; i < tiles.size(); i++) {
       TileUI tile = tiles.get(i);
       shapeRend.setColor(Color.BLACK);
       shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
     }
     shapeRend.end();
+  }
 
-    // Draw snap-to-tile line
-    if (tX != -1 && tY != -1 && pX != -1 && pY != -1) {
-      shapeRend.begin(ShapeType.Filled);
-      shapeRend.setColor(Color.YELLOW);
-      shapeRend.rectLine(tX, tY, pX, pY, 1f);
-      shapeRend.end();
-    }
-    // Draw snap-to-tile tile highlight
+  // Draw snap-to-tile tile highlight
+  public void drawTileHighlights() {
     if (destTile != null) {
-      shapeRend.begin(ShapeType.Line);
+      shapeRend.begin(ShapeType.Filled);
       shapeRend.setColor(Color.YELLOW);
       shapeRend.rect(destTile.x, destTile.y, destTile.width, destTile.height);
       shapeRend.end();
@@ -170,14 +163,22 @@ public class GameScreen implements Screen {
       shapeRend.rect(origTile.x, origTile.y, origTile.width, origTile.height);
       shapeRend.end();
     }
-    batch.end();
+  }
+
+  // Draw snap-to-tile line
+  public void drawTileSnapLinePath() {
+    if (tX != -1 && tY != -1 && pX != -1 && pY != -1) {
+      shapeRend.begin(ShapeType.Filled);
+      shapeRend.setColor(Color.MAROON);
+      shapeRend.rectLine(tX, tY, pX, pY, 1.5f);
+      shapeRend.end();
+    }
   }
 
   public boolean movePieceUI(int srcPieceUITileId, int tgtPieceUITileId) {
     if (board.movePiece(srcPieceUITileId, tgtPieceUITileId)) {
       TileUI srcTileUI = tiles.get(srcPieceUITileId);
       TileUI tgtTileUI = tiles.get(srcPieceUITileId);
-
       // Make target TileUI the tile for source PieceUI
       tgtTileUI.setPieceUI(srcTileUI.pieceUI);
       srcTileUI.setPieceUI(null);
@@ -189,20 +190,30 @@ public class GameScreen implements Screen {
   @Override
   public void render(float delta) {
     // Background
-    Gdx.gl.glClearColor(0, 0, 0.2f, 1);
+    Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
     app.camera.update();
     app.batch.setProjectionMatrix(app.camera.combined);
+    shapeRend.setProjectionMatrix(app.batch.getProjectionMatrix());
+    shapeRend.setTransformMatrix(app.batch.getTransformMatrix());
 
     // Update stage
     update(delta);
 
-    drawBoard(app.batch, shapeRend);
-    // Draw board and board actors
+    // Draw board -> tile highlights -> piece actors
     app.batch.begin();
+
+    drawBoard();
+    drawTileHighlights();
     stage.draw();
     app.font.draw(app.batch, "Generals", 0, Application.V_HEIGHT);
+
+    app.batch.end();
+
+    // For debug
+    app.batch.begin();
+    drawTileSnapLinePath();
     app.batch.end();
 
     // // process user input

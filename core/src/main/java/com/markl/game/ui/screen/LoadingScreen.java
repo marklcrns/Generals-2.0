@@ -79,7 +79,7 @@ public class LoadingScreen implements Screen {
     // Linear interpolation a + (b - 1) * lerp
     progress = MathUtils.lerp(progress, app.assets.getProgress(), .1f);
     if (app.assets.update() && progress >= app.assets.getProgress() - 0.001f) {
-      app.setScreen(app.mainMenuScreen);
+      app.setScreen(app.splashScreen);
     }
   }
 
