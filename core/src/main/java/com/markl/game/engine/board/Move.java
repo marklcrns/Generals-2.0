@@ -72,11 +72,12 @@ public class Move {
    * Evaluate the move based on the target Tile id and the source piece
    * to be moved.
    *
-   * INVALID    = if target Tile contains friendly piece Alliance.
-   * DRAW       = if target Tile contains opposing piece Alliance and has the
-   *              same rank, with the exception of Flag rank.
-   * NORMAL     = if target Tile is empty.
-   * AGGRESSIVE = if target Tile contains opposing piece Alliance.
+   * INVALID         = if target Tile contains friendly piece Alliance.
+   * DRAW            = if target Tile contains opposing piece and has the same
+   *                   rank, with the exception of Flag rank.
+   * NORMAL          = if target Tile is empty.
+   * AGGRESSIVE_WIN  = if target Tile contains opposing lower ranking piece.
+   * AGGRESSIVE_LOSE = if target Tile contains opposing higher ranking piece.
    */
   public void evaluate() {
     if (isOutOfBounds()) {
