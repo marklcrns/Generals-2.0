@@ -41,7 +41,6 @@ public class PieceUIListener extends ClickListener {
 
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-    pieceUI.getColor().a = alpha; // Make piece transparent
     gameScreen.origTile = origTile;
     return super.touchDown(event, x, y, pointer, button);
   }
@@ -76,7 +75,8 @@ public class PieceUIListener extends ClickListener {
     mta.setY(mousePos.y - pieceUI.getHeight() * 0.5f);
     mta.setDuration(0.08f);
     pieceUI.addAction(mta);
-    pieceUI.setZIndex(999); // Always on top of any pieces
+    pieceUI.setZIndex(999);       // Always on top of any pieces
+    pieceUI.getColor().a = alpha; // Make piece transparent
 
     // Update snap line path
     hasDestTile = false;
@@ -138,41 +138,22 @@ public class PieceUIListener extends ClickListener {
         gameScreen.removePieceUI(destTile.id);
         System.out.println("DRAW");
       } else if (moveType == 1) {
-        // add MoveToAction to piece actor
-        MoveToAction mta = new MoveToAction();
-        mta.setX(destTile.x);
-        mta.setY(destTile.y);
-        mta.setDuration(0.08f);
-        pieceUI.addAction(mta);
-        pieceUI.setZIndex(999); // Always on top of any pieces
-        pieceUI.getColor().a = 1; // Remove transparency
-        origTile = destTile;
+        gameScreen.movePieceUI(origTile.id, destTile.id);
+        movePieceActor(destTile.x, destTile.y, 0.08f);
         System.out.println("NORMAL");
       } else if (moveType == 2) {
         gameScreen.removePieceUI(destTile.id);
-        // add MoveToAction to piece actor
-        MoveToAction mta = new MoveToAction();
-        mta.setX(destTile.x);
-        mta.setY(destTile.y);
-        mta.setDuration(0.08f);
-        pieceUI.addAction(mta);
-        pieceUI.setZIndex(999); // Always on top of any pieces
-        pieceUI.getColor().a = 1; // Remove transparency
-        origTile = destTile;
+        gameScreen.movePieceUI(origTile.id, destTile.id);
+        movePieceActor(destTile.x, destTile.y, 0.08f);
         System.out.println("AGGRESSIVE WIN");
       } else if (moveType == 3) {
         gameScreen.removePieceUI(origTile.id);
         System.out.println("AGGRESSIVE LOSE");
       }
+      origTile = destTile;        // Make destination Tile the origin Tile
+      gameScreen.origTile = null; // Remove old origin tile highlight
     } else {
-      // add MoveToAction to piece actor
-      MoveToAction mta = new MoveToAction();
-      mta.setX(origTile.x);
-      mta.setY(origTile.y);
-      mta.setDuration(0.08f);
-      pieceUI.addAction(mta);
-      pieceUI.setZIndex(999); // Always on top of any pieces
-      pieceUI.getColor().a = 1; // Remove transparency
+      movePieceActor(origTile.x, origTile.y, 0.08f);
       System.out.println("INVALID");
     }
 
@@ -181,12 +162,23 @@ public class PieceUIListener extends ClickListener {
     gameScreen.tY = -1;
     gameScreen.pX = -1;
     gameScreen.pY = -1;
-    gameScreen.origTile = null;
-    gameScreen.destTile = null;
+    // Clear destination tile
     destTile = null;
+    gameScreen.destTile = null;
 
+    // TODO: Delete me later
     System.out.println("");
     System.out.println(gameScreen.toString());
     System.out.println(gameScreen.board.toString());
+  }
+
+  public void movePieceActor(float destX, float destY, float duration) {
+    MoveToAction mta = new MoveToAction();
+    mta.setX(destX);
+    mta.setY(destY);
+    mta.setDuration(duration);
+    pieceUI.addAction(mta);
+    pieceUI.setZIndex(999);   // Always on top of any pieces
+    pieceUI.getColor().a = 1; // Remove transparency
   }
 }
