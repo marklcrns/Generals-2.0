@@ -80,11 +80,6 @@ public class Move {
    * AGGRESSIVE_LOSE = if target Tile contains opposing higher ranking piece.
    */
   public void evaluate() {
-    if (isOutOfBounds()) {
-      this.moveType = MoveType.INVALID;
-      return;
-    }
-
     // Make source piece origin copy
     this.srcPieceOrigin = this.board.getTile(srcTileId).getPiece().clone();
     // Make target piece origin copy if exist
@@ -92,6 +87,12 @@ public class Move {
       this.tgtPieceOrigin = this.board.getTile(tgtTileId).getPiece().clone();
     else
       this.tgtPieceOrigin = null;
+
+    // Return if out of bounds or edge piece wrapping
+    if (isOutOfBounds() || isSrcEdgePieceWrapping()) {
+      this.moveType = MoveType.INVALID;
+      return;
+    }
 
     if (isMoveLegal()) {
       if (isTargetTileOccupied())
@@ -211,19 +212,23 @@ public class Move {
     // Check if within bounds
     if (this.srcTileId >= 0 || this.srcTileId <= 71 ||
         this.tgtTileId >= 0 || this.tgtTileId <= 71) {
-
-      // Check far left and right bounds jump to opposite side
-      if ((srcTileId % 9 == 0 &&    // Far left
-           (tgtTileId == srcTileId - 1) || (tgtTileId == srcTileId + 17)) ||
-          (srcTileId % 9 == 8 &&    // Far right
-           (tgtTileId == srcTileId + 1) || (tgtTileId == srcTileId - 17)))
-        return true;
-      else
-        return false;
-
+      return false;
     }
-
     return true;
+  }
+
+  /**
+   * Check if source piece will wrap around the board if on the edges
+   *
+   * @return boolean true if source piece will wrap, else false
+   */
+  private boolean isSrcEdgePieceWrapping() {
+    // Check far left and right bounds jump to opposite side
+    if ((srcTileId % 9 == 0 && (tgtTileId == srcTileId - 1 || tgtTileId == srcTileId + 17)) ||
+        (srcTileId % 9 == 8 && (tgtTileId == srcTileId + 1 || tgtTileId == srcTileId - 17)))
+      return true;
+
+    return false;
   }
 
   /**
