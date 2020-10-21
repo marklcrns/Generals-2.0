@@ -97,7 +97,7 @@ public abstract class Piece {
 
   /**
    * Evaluate this Piece current possible moves. Depends on
-   * Move.evaluateMove() method.
+   * Move.evaluate() method.
    *
    * @return Map<String, Move> HashMap of possible moves.
    */

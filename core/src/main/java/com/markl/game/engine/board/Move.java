@@ -126,7 +126,7 @@ public class Move {
     switch (this.moveType.getValue()) {
       case -1: // INVALID
         System.out.println("execute() E: Invalid move");
-        System.out.println(this.toString());
+        System.out.println(toString());
         return false;
 
       case 0: // DRAW
@@ -208,11 +208,22 @@ public class Move {
    * is/are out of bounds.
    */
   private boolean isOutOfBounds() {
-    if (this.srcTileId < 0 || this.srcTileId > 71 ||
-        this.tgtTileId < 0 || this.tgtTileId > 71)
-      return true;
+    // Check if within bounds
+    if (this.srcTileId >= 0 || this.srcTileId <= 71 ||
+        this.tgtTileId >= 0 || this.tgtTileId <= 71) {
 
-    return false;
+      // Check far left and right bounds jump to opposite side
+      if ((srcTileId % 9 == 0 &&    // Far left
+           (tgtTileId == srcTileId - 1) || (tgtTileId == srcTileId + 17)) ||
+          (srcTileId % 9 == 8 &&    // Far right
+           (tgtTileId == srcTileId + 1) || (tgtTileId == srcTileId - 17)))
+        return true;
+      else
+        return false;
+
+    }
+
+    return true;
   }
 
   /**

@@ -187,6 +187,19 @@ public class Board {
   }
 
   /**
+   * Gets the occupying piece in specified Tile
+   * @param tileId  tile id
+   * @return        Piece if Tile occupied, else null
+   */
+  public Piece getPiece(int tileId) {
+    if (this.tiles.get(tileId).isTileOccupied())
+      return this.tiles.get(tileId).getPiece();
+
+    return null;
+  }
+
+
+  /**
    * Gets current board state.
    * @return List<Tile> gameBoard field.
    */

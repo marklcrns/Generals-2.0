@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.markl.game.ui.screen.GameScreen;
@@ -136,25 +135,20 @@ public class PieceUIListener extends ClickListener {
       if (moveType == 0) {
         gameScreen.removePieceUI(origTile.id);
         gameScreen.removePieceUI(destTile.id);
-        System.out.println("DRAW");
       } else if (moveType == 1) {
         gameScreen.movePieceUI(origTile.id, destTile.id);
         movePieceActor(destTile.x, destTile.y, 0.08f);
-        System.out.println("NORMAL");
       } else if (moveType == 2) {
         gameScreen.removePieceUI(destTile.id);
         gameScreen.movePieceUI(origTile.id, destTile.id);
         movePieceActor(destTile.x, destTile.y, 0.08f);
-        System.out.println("AGGRESSIVE WIN");
       } else if (moveType == 3) {
         gameScreen.removePieceUI(origTile.id);
-        System.out.println("AGGRESSIVE LOSE");
       }
       origTile = destTile;        // Make destination Tile the origin Tile
       gameScreen.origTile = null; // Remove old origin tile highlight
     } else {
       movePieceActor(origTile.x, origTile.y, 0.08f);
-      System.out.println("INVALID");
     }
 
     // Clear snap tile and drag tile highlights
