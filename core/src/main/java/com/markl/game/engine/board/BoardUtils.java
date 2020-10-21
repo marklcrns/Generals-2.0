@@ -141,35 +141,6 @@ public class BoardUtils {
     return - 1;
   }
 
-  // TODO: Finish implementation. Decide if Move class checks be moved here //
-  public static int[] getLegalMoves(Board board, int srcPieceTileId) {
-    int[] legalMoves = new int[4];
-    Alliance srcPieceAlliance = board.getPiece(srcPieceTileId).getAlliance();
-
-    int fwdTileId = srcPieceTileId + 9;
-    int bckTileId = srcPieceTileId - 9;
-    int rgtTileId = srcPieceTileId + 1;
-    int lftTileId = srcPieceTileId - 1;
-
-    if (board.getTile(fwdTileId).isTileOccupied())
-      if (srcPieceAlliance != board.getPiece(fwdTileId).getAlliance())
-        legalMoves[0] = fwdTileId;
-
-    if (board.getTile(bckTileId).isTileOccupied())
-      if (srcPieceAlliance != board.getPiece(bckTileId).getAlliance())
-        legalMoves[1] = bckTileId;
-
-    if (board.getTile(rgtTileId).isTileOccupied())
-      if (srcPieceAlliance != board.getPiece(rgtTileId).getAlliance())
-        legalMoves[2] = rgtTileId;
-
-    if (board.getTile(lftTileId).isTileOccupied())
-      if (srcPieceAlliance != board.getPiece(lftTileId).getAlliance())
-        legalMoves[3] = lftTileId;
-
-    return legalMoves;
-  }
-
   /**
    * Compares two {@link Piece} equality.
    *

@@ -25,7 +25,9 @@ import com.markl.game.GameState;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
+import com.markl.game.engine.board.Move;
 import com.markl.game.engine.board.Player;
+import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.ui.Application;
 import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.PieceUIListener;
@@ -71,6 +73,7 @@ public class GameScreen implements Screen {
   public float pY = -1;
   public TileUI origTile;
   public TileUI destTile;
+  public Piece activeSrcPiece;
 
   public GameScreen(final Application app) {
     this.app = app;
@@ -171,12 +174,22 @@ public class GameScreen implements Screen {
 
   // Draw snap-to-tile tile highlight
   public void drawTileHighlights() {
-    // TODO: Adjust alpha <10-10-20, yourname> //
-    if (destTile != null && destTile.id != origTile.id) {
+    // Only highlight legal move tile destination when dragged over
+    boolean isHighlight = false;
+    if (activeSrcPiece != null && destTile != null) {
+      System.out.println("active piece detected!");
+      for (Map.Entry<Integer, Move> entry : activeSrcPiece.moveSet.entrySet()) {
+        if (entry.getValue().getTgtTileId() == destTile.id) {
+          isHighlight = true;
+          break;
+        }
+      }
+    }
+
+    if (isHighlight && destTile != null && destTile.id != origTile.id) {
       shapeRend.begin(ShapeType.Filled);
 
-      // TODO: Depend on Move.moveType
-      // Highlight destination tile based on move type
+      // Highlight destination Tile background based on move type
       if (board.getTile(destTile.id).isTileOccupied()) {
         if (board.getTile(origTile.id).getPiece().getAlliance() != // Aggressive move tile highlight
             board.getTile(destTile.id).getPiece().getAlliance())
@@ -189,7 +202,10 @@ public class GameScreen implements Screen {
 
       shapeRend.rect(destTile.x, destTile.y, destTile.width, destTile.height);
       shapeRend.end();
-    } else if (origTile != null) {
+    }
+
+    // Highlight origin Tile border
+    if (origTile != null) {
       shapeRend.begin(ShapeType.Line);
       shapeRend.setColor(ORIGIN_TILE_HIGHLIGHT);
       shapeRend.rect(origTile.x, origTile.y, origTile.width, origTile.height);

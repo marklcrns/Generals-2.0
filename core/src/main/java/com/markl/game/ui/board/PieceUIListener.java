@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.ui.screen.GameScreen;
 
 /**
@@ -28,6 +29,7 @@ public class PieceUIListener extends ClickListener {
   private Vector3 mousePos;
   private TileUI destTile;
   private TileUI origTile;
+  private Piece activeSrcPiece;
   boolean hasDestTile = false;
 
   public PieceUIListener(GameScreen gameScreen, PieceUI pieceUI) {
@@ -41,6 +43,9 @@ public class PieceUIListener extends ClickListener {
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
     gameScreen.origTile = origTile;
+    activeSrcPiece = gameScreen.board.getPiece(origTile.id);
+    activeSrcPiece.evaluateMoves();
+    gameScreen.activeSrcPiece = activeSrcPiece;
     return super.touchDown(event, x, y, pointer, button);
   }
 
@@ -77,7 +82,7 @@ public class PieceUIListener extends ClickListener {
     pieceUI.setZIndex(999);       // Always on top of any pieces
     pieceUI.getColor().a = alpha; // Make piece transparent
 
-    // Update snap line path
+    // Update snap-to-tile line path
     hasDestTile = false;
 
     for (int i = 0; i < tiles.size(); i++) {
@@ -94,7 +99,7 @@ public class PieceUIListener extends ClickListener {
       final float dY  = Math.abs(tY - pY);
       final double dZ = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
 
-      // Activate snap tile
+      // Activate snap-to-tile tile
       if (dZ <= GameScreen.TILE_SIZE * 0.5f) {
         gameScreen.tX = tX; gameScreen.tY = tY;
         gameScreen.pX = pX; gameScreen.pY = pY;
@@ -156,9 +161,10 @@ public class PieceUIListener extends ClickListener {
     gameScreen.tY = -1;
     gameScreen.pX = -1;
     gameScreen.pY = -1;
-    // Clear destination tile
+    // Clear destination tile and active piece
     destTile = null;
     gameScreen.destTile = null;
+    gameScreen.activeSrcPiece = null;
 
     // TODO: Delete me later
     System.out.println("");

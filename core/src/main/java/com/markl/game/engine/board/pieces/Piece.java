@@ -1,6 +1,5 @@
 package com.markl.game.engine.board.pieces;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,17 +25,7 @@ public abstract class Piece {
   public int legalPieceInstanceCount; // Allowed amount of piece instance owned by a Player in a single game
   public final Player owner;          // Player that owns this Piece
   public final Alliance alliance;     // Piece alliance of this Piece
-  private Map<String, Move> moveSet;  // HashMap containing all currently available moves for this Piece instance
-
-  /**
-   * HashMap that contains the Piece mobility according to the Board coordinates
-   * system.
-   */
-  public final Map<String, Integer> mobility =
-    Collections.unmodifiableMap(
-        new HashMap<String, Integer>() {
-          { put("u", -9); put("d", 9); put("l", -1); put("r", 1); }
-        });
+  public Map<Integer, Move> moveSet;  // HashMap containing all currently available moves for this Piece instance
 
   /**
    * Constructor that takes in the owner Player, and Alliance of this piece.
@@ -98,35 +87,41 @@ public abstract class Piece {
   /**
    * Evaluate this Piece current possible moves. Depends on
    * Move.evaluate() method.
+   * Directions are clockwise. 0 for upward direction, 1 right, 2 down, 3 left.
    *
    * @return Map<String, Move> HashMap of possible moves.
    */
-  public Map<String, Move> evaluateMoves() {
-    moveSet = new HashMap<String, Move>();
+  public Map<Integer, Move> evaluateMoves() {
+    moveSet = new HashMap<Integer, Move>();
+    int direction;
 
-    final int upAdjacentPieceTileId = this.tileId + mobility.get("u");
+    direction = 0;    // Up
+    final int upAdjacentPieceTileId = this.tileId + -9;
     if (this.tileId >= BoardUtils.SECOND_ROW_INIT) {
-      moveSet.put("up", new Move(this.owner, this.board, this.tileId,
+      moveSet.put(direction, new Move(this.owner, this.board, this.tileId,
             upAdjacentPieceTileId));
-      moveSet.get("up").evaluate();
+      moveSet.get(direction).evaluate();
     }
-    final int downAdjacentPieceTileId = this.tileId + mobility.get("d");
-    if (this.tileId < BoardUtils.LAST_ROW_INIT) {
-      moveSet.put("down", new Move(this.owner, this.board, this.tileId,
-            downAdjacentPieceTileId));
-      moveSet.get("down").evaluate();
-    }
-    final int leftAdjacentPieceTileId = this.tileId + mobility.get("l");
-    if (this.tileId % 9 != 0) {
-      moveSet.put("left", new Move(this.owner, this.board, this.tileId,
-            leftAdjacentPieceTileId));
-      moveSet.get("left").evaluate();
-    }
-    final int rightAdjacentPieceTileId = this.tileId + mobility.get("r");
+    direction = 1;    // Right
+    final int rightAdjacentPieceTileId = this.tileId + 1;
     if (rightAdjacentPieceTileId % 9 != 0) {
-      moveSet.put("right", new Move(this.owner, this.board, this.tileId,
+      moveSet.put(direction, new Move(this.owner, this.board, this.tileId,
             rightAdjacentPieceTileId));
-      moveSet.get("right").evaluate();
+      moveSet.get(direction).evaluate();
+    }
+    direction = 2;    // Down
+    final int downAdjacentPieceTileId = this.tileId + 9;
+    if (this.tileId < BoardUtils.LAST_ROW_INIT) {
+      moveSet.put(direction, new Move(this.owner, this.board, this.tileId,
+            downAdjacentPieceTileId));
+      moveSet.get(direction).evaluate();
+    }
+    direction = 3;    // Left
+    final int leftAdjacentPieceTileId = this.tileId + -1;
+    if (this.tileId % 9 != 0) {
+      moveSet.put(direction, new Move(this.owner, this.board, this.tileId,
+            leftAdjacentPieceTileId));
+      moveSet.get(direction).evaluate();
     }
 
     return moveSet;
