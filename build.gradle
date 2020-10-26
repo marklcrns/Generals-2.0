@@ -88,7 +88,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
-
+        implementation "io.socket:socket.io-client:1.0.0"
     }
 
     test {

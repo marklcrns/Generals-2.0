@@ -13,3 +13,6 @@ Version 2.0 [LibGDX](https://libgdx.badlogicgames.com/) re-write of
 
 ![2020-10-12](demo/2020-10-12_demo.gif)
 
+## Resources
+
+- [Creating Multiplayer Games with LibGDX and NodeJS](https://www.youtube.com/watch?v=uIPAaDslhPM&list=PLZm85UZQLd2Qh6r7jxBKPuB4hl-Xw5uZT)
