@@ -14,8 +14,10 @@ import com.markl.game.engine.board.Player;
 public class GameState {
 
   private Board board;                    // Board instance
+  private Alliance myAlliance;            // My Player alliance for TileUI orientation
+  private Alliance firstMoveMaker;        // First Player to make a move
   private Player gameWinner;              // Game winner
-  private Player currentTurnMaker;         // Current player to make move
+  private Player currentTurnMaker;        // Current player to make move
   private String blackPlayerName = "";    // Black player's name assigned when game initialized
   private String whitePlayerName = "";    // White player's name assigned when game initialized
   private boolean hasGameStarted = false; // Turns true when game started
@@ -51,8 +53,26 @@ public class GameState {
    */
   public boolean start() {
     if (!this.hasGameStarted) {
-      if (this.currentTurnMaker == null)
+      if (this.currentTurnMaker == null) {
         setRandomFirstMoveMaker();
+        setFirstMoveMaker(this.currentTurnMaker.getAlliance());
+      }
+      this.currentTurnId = 1;
+      this.hasGameStarted = true;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Start game.
+   */
+  public boolean start(Alliance firstMoveMaker) {
+    if (!this.hasGameStarted) {
+      if (this.currentTurnMaker == null) {
+        this.currentTurnMaker = board.getPlayer(firstMoveMaker);
+        setFirstMoveMaker(firstMoveMaker);
+      }
       this.currentTurnId = 1;
       this.hasGameStarted = true;
       return true;
@@ -80,8 +100,10 @@ public class GameState {
   }
 
   public void setFirstMoveMaker(Alliance moveMakerAlliance) {
-    if (currentTurnId == 0)
+    if (currentTurnId == 0) {
+      this.firstMoveMaker = moveMakerAlliance;
       this.currentTurnMaker = board.getPlayer(moveMakerAlliance);
+    }
   }
 
   public void setRandomFirstMoveMaker() {
@@ -90,6 +112,15 @@ public class GameState {
         this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
       else
         this.currentTurnMaker = board.getPlayer(Alliance.WHITE);
+    }
+  }
+
+  public void setRandomMyAlliance() {
+    if (currentTurnId == 0) {
+      if (Math.random() < 0.5f)
+        this.myAlliance = Alliance.BLACK;
+      else
+        this.myAlliance = Alliance.WHITE;
     }
   }
 
@@ -115,6 +146,8 @@ public class GameState {
 
   /** Accessor methods */
   public int getCurrTurn()            { return this.currentTurnId; }
+  public Alliance getMyAlliance()     { return this.myAlliance; }
+  public Alliance getFirstMoveMaker() { return this.firstMoveMaker; }
   public Player getPlayerWinner()     { if (this.hasGameEnded) return this.gameWinner; else return null; }
   public Player getCurrentTurnMaker() { return this.currentTurnMaker; }
   public String getBlackPlayerName()  { return this.blackPlayerName; }
@@ -127,4 +160,5 @@ public class GameState {
 
   /** Modifier methods */
   public void setBoard(Board board)  { this.board = board; }
+
 }

@@ -1,6 +1,8 @@
 package com.markl.game.engine.board;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.markl.game.GameState;
 import com.markl.game.engine.board.pieces.Piece;
@@ -11,12 +13,13 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-  private GameState game;          // Game instance reference
-  private LinkedList<Tile> tiles;  // List of all Tiles containing data of each piece
-  private Player playerBlack;      // Player instance that all contains all infos on black pieces
-  private Player playerWhite;      // Player instance that all contains all infos on white pieces
-  private int blackPiecesLeft = 0; // Black pieces counter
-  private int whitePiecesLeft = 0; // White pieces counter
+  private GameState game;                 // Game instance reference
+  private LinkedList<Tile> tiles;         // List of all Tiles containing data of each piece
+  private Map<Integer, Move> moveHistory; // Move history
+  private Player playerBlack;             // Player instance that all contains all infos on black pieces
+  private Player playerWhite;             // Player instance that all contains all infos on white pieces
+  private int blackPiecesLeft = 0;        // Black pieces counter
+  private int whitePiecesLeft = 0;        // White pieces counter
 
   /**
    * No argument constructor
@@ -39,6 +42,8 @@ public class Board {
    */
   private void initBoard() {
     this.tiles = new LinkedList<Tile>();
+    this.moveHistory = new HashMap<Integer, Move>();
+    clearBoard();
   }
 
   public void initGame() {
@@ -52,6 +57,11 @@ public class Board {
       Move newMove = new Move(game.getCurrentTurnMaker(), this, srcPieceTileId, tgtPieceTileId);
       newMove.evaluate();
       newMove.execute();
+
+      // Record if valid move
+      if (newMove.getMoveType().getValue() != -1)
+        moveHistory.put(newMove.getTurnId(), newMove);
+
       return newMove.getMoveType().getValue();
     }
     // Return invalid if piece does not owned by current turn maker player
@@ -61,7 +71,7 @@ public class Board {
   /**
    * Method that empties board Tiles pieces.
    */
-  public void discardPieces() {
+  public void clearBoard() {
     this.tiles = new LinkedList<Tile>();
     // Add new empty Tiles in board
     for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES; i++) {
@@ -216,8 +226,13 @@ public class Board {
   public Player getPlayer(final Alliance alliance) {
     if (alliance == Alliance.BLACK)
       return this.playerBlack;
-    else
-      return this.playerWhite;
+    return this.playerWhite;
+  }
+
+  public Map<Integer, Move> getMoveHistory() {
+    if (moveHistory != null)
+      return this.moveHistory;
+    return null;
   }
 
   /**

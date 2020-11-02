@@ -10,8 +10,8 @@ import com.badlogic.gdx.math.Rectangle;
  */
 public class TileUI extends Rectangle {
 
-  public int id;
-  public PieceUI pieceUI;
+  private int id;
+  private PieceUI pieceUI;
 
   /**
    * No-argument constructor
@@ -41,14 +41,27 @@ public class TileUI extends Rectangle {
     this.pieceUI = pieceUI;
   }
 
+  public int getTileId() {
+    return this.id;
+  }
+
   public void setPieceUI(PieceUI pieceUI) {
-    // Reference pieceUI to this tileUI if not null
+    pieceUI.tileUI = this;
+    this.pieceUI = pieceUI;
+  }
+
+  public void clearPieceUI() {
     if (pieceUI != null) {
-      pieceUI.tileUI = this;
-      this.pieceUI = pieceUI;
-    } else {
+
+      if (pieceUI.tileUI == this)
+        pieceUI.tileUI = null;
+
       this.pieceUI = null;
     }
+  }
+
+  public PieceUI getPieceUI() {
+    return this.pieceUI;
   }
 
   public boolean isTileUIOccupied() {

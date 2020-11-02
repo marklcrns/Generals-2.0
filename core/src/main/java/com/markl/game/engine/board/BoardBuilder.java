@@ -203,7 +203,7 @@ public class BoardBuilder {
       return;
     }
 
-    this.board.discardPieces();
+    this.board.clearBoard();
     List<Tile> tiles = this.board.getAllTiles();
 
     // Insert pieces to Board Tiles based on build config.

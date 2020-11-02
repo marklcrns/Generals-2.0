@@ -1,14 +1,10 @@
 package com.markl.game.ui.board;
 
-import java.util.LinkedList;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.markl.game.engine.board.pieces.Piece;
+import com.markl.game.control.MoveManager;
 import com.markl.game.ui.screen.GameScreen;
 
 /**
@@ -19,33 +15,23 @@ import com.markl.game.ui.screen.GameScreen;
  */
 public class PieceUIListener extends ClickListener {
 
-  public float alpha = 0.5f; // piece touch drag transparency
-
-  private GameScreen gameScreen;
-  private Camera camera;
-  private LinkedList<TileUI> tiles;
   private PieceUI pieceUI;
+  private GameScreen gameScreen;
+  private MoveManager moveManager;
 
   private Vector3 mousePos;
-  private TileUI destTile;
-  private TileUI origTile;
-  private Piece activeSrcPiece;
-  boolean hasDestTile = false;
 
-  public PieceUIListener(GameScreen gameScreen, PieceUI pieceUI) {
-    this.gameScreen = gameScreen;
-    this.pieceUI    = pieceUI;
-    tiles           = gameScreen.tiles;
-    camera          = gameScreen.app.camera;
-    origTile        = pieceUI.tileUI;
+  public PieceUIListener(PieceUI pieceUI, GameScreen gameScreen) {
+    this.pieceUI     = pieceUI;
+    this.gameScreen  = gameScreen;
+    this.moveManager = gameScreen.moveManager;
   }
 
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-    gameScreen.origTile = origTile;
-    activeSrcPiece = gameScreen.board.getPiece(origTile.id);
-    activeSrcPiece.evaluateMoves();
-    gameScreen.activeSrcPiece = activeSrcPiece;
+    gameScreen.activeTileUI = pieceUI.tileUI;
+    gameScreen.activeSrcPiece = gameScreen.board.getPiece(pieceUI.tileUI.getTileId());
+    gameScreen.activeSrcPiece.evaluateMoves();
     return super.touchDown(event, x, y, pointer, button);
   }
 
@@ -55,7 +41,7 @@ public class PieceUIListener extends ClickListener {
 
     // Set click/touch position relative to world coordinates
     mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-    camera.unproject(mousePos); // mousePos is now in world coordinates
+    gameScreen.app.camera.unproject(mousePos); // mousePos is now in world coordinates
 
     // Adjusted board borders
     float boardRightBorder = GameScreen.BOARD_WIDTH + GameScreen.BOARD_X_OFFSET;
@@ -73,24 +59,21 @@ public class PieceUIListener extends ClickListener {
     else if (mousePos.y - pieceUI.getHeight() * 0.5f < boardBottomBorder) // Bottom border stopper
       mousePos.y = boardBottomBorder + pieceUI.getHeight() * 0.5f;
 
-    // add MoveToAction to piece actor
-    MoveToAction mta = new MoveToAction();
-    mta.setX(mousePos.x - pieceUI.getWidth() * 0.5f);
-    mta.setY(mousePos.y - pieceUI.getHeight() * 0.5f);
-    mta.setDuration(0.08f);
-    pieceUI.addAction(mta);
-    pieceUI.setZIndex(999);       // Always on top of any pieces
-    pieceUI.getColor().a = alpha; // Make piece transparent
+    // Follow mouse pointer when the PieceUI is dragged
+    moveManager.animatePieceUIMove(pieceUI,
+        mousePos.x - pieceUI.getWidth() * 0.5f,
+        mousePos.y - pieceUI.getHeight() * 0.5f,
+        0.5f); // Make piece transparent
 
-    // Update snap-to-tile line path
-    hasDestTile = false;
+    gameScreen.destTileUI = null;
 
-    for (int i = 0; i < tiles.size(); i++) {
-      TileUI tile = tiles.get(i);
+    // TODO optimize to lookup only the closest TileUI(s)
+    for (int i = 0; i < gameScreen.tilesUI.size(); i++) {
+      TileUI tileUI = gameScreen.tilesUI.get(i);
 
       // Get center coords of tile
-      final float tX  = GameScreen.TILE_SIZE * 0.5f + tile.x;
-      final float tY  = GameScreen.TILE_SIZE * 0.5f + tile.y;
+      final float tX  = GameScreen.TILE_SIZE * 0.5f + tileUI.x;
+      final float tY  = GameScreen.TILE_SIZE * 0.5f + tileUI.y;
       // Get center coords of current piece
       final float pX  = pieceUI.getWidth() * 0.5f + pieceUI.getX();
       final float pY  = pieceUI.getWidth() * 0.5f + pieceUI.getY();
@@ -99,30 +82,23 @@ public class PieceUIListener extends ClickListener {
       final float dY  = Math.abs(tY - pY);
       final double dZ = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
 
-      // Activate snap-to-tile tile
+      // Activate snap-to-tile tile within tile circle radius
       if (dZ <= GameScreen.TILE_SIZE * 0.5f) {
         gameScreen.tX = tX; gameScreen.tY = tY;
         gameScreen.pX = pX; gameScreen.pY = pY;
 
         // Update destination tile
-        destTile = tile;
-        gameScreen.destTile = tile;
-        hasDestTile = true;
+        gameScreen.destTileUI = tileUI;
         break;
       }
 
-      if (hasDestTile)
+      if (gameScreen.destTileUI != null)
         break;
     }
 
     // Clear snap tile and dest highlight then Highlight origin tile
-    if (!hasDestTile) {
-      gameScreen.tX = -1;
-      gameScreen.tY = -1;
-      gameScreen.pX = -1;
-      gameScreen.pY = -1;
-      gameScreen.destTile = null;
-      destTile = null;
+    if (gameScreen.destTileUI == null) {
+      clearSnapTileHighlights();
     }
   }
 
@@ -130,55 +106,29 @@ public class PieceUIListener extends ClickListener {
   public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
     super.touchUp(event, x, y, pointer, button);
 
-    int moveType = - 1;
-    if (hasDestTile && destTile != null) {
-      moveType = gameScreen.board.makeMove(origTile.id, destTile.id);
-      hasDestTile = false;
-    }
-
-    if (moveType != -1) {
-      if (moveType == 0) {
-        gameScreen.removePieceUI(origTile.id);
-        gameScreen.removePieceUI(destTile.id);
-      } else if (moveType == 1) {
-        gameScreen.movePieceUI(origTile.id, destTile.id);
-        movePieceActor(destTile.x, destTile.y, 0.08f);
-      } else if (moveType == 2) {
-        gameScreen.removePieceUI(destTile.id);
-        gameScreen.movePieceUI(origTile.id, destTile.id);
-        movePieceActor(destTile.x, destTile.y, 0.08f);
-      } else if (moveType == 3) {
-        gameScreen.removePieceUI(origTile.id);
-      }
-      origTile = destTile;        // Make destination Tile the origin Tile
-      gameScreen.origTile = null; // Remove old origin tile highlight
+    if (gameScreen.destTileUI != null) {
+      moveManager.makeMove(pieceUI.tileUI, gameScreen.destTileUI, true);
     } else {
-      movePieceActor(origTile.x, origTile.y, 0.08f);
+      moveManager.animatePieceUIMove(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
     }
 
+    clearSnapTileHighlights();
+
+    // Clear destination tile and active piece
+    gameScreen.destTileUI = null;
+    gameScreen.activeSrcPiece = null;
+
+    // TODO Delete me later
+    // System.out.println("");
+    // System.out.println(gameScreen.toString());
+    // System.out.println(gameScreen.board.toString());
+  }
+
+  public void clearSnapTileHighlights() {
     // Clear snap tile and drag tile highlights
     gameScreen.tX = -1;
     gameScreen.tY = -1;
     gameScreen.pX = -1;
     gameScreen.pY = -1;
-    // Clear destination tile and active piece
-    destTile = null;
-    gameScreen.destTile = null;
-    gameScreen.activeSrcPiece = null;
-
-    // TODO: Delete me later
-    System.out.println("");
-    System.out.println(gameScreen.toString());
-    System.out.println(gameScreen.board.toString());
-  }
-
-  public void movePieceActor(float destX, float destY, float duration) {
-    MoveToAction mta = new MoveToAction();
-    mta.setX(destX);
-    mta.setY(destY);
-    mta.setDuration(duration);
-    pieceUI.addAction(mta);
-    pieceUI.setZIndex(999);   // Always on top of any pieces
-    pieceUI.getColor().a = 1; // Remove transparency
   }
 }

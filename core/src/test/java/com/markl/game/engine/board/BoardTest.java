@@ -132,7 +132,7 @@ class BoardTest {
     this.builder.build(false);
 
     assertTrue(this.board.getTile(0).isTileOccupied());
-    this.board.discardPieces();
+    this.board.clearBoard();
 
     for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES; i++) {
       assertTrue(this.board.getTile(i).isTileEmpty());
