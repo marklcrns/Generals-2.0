@@ -5,13 +5,13 @@ Version 2.0 [LibGDX](https://libgdx.badlogicgames.com/) re-write of
 
 ## Current State of the Game
 
-### 2020-10-10
+### 2020-10-19
 
-![2020-10-10](demo/2020-10-10_demo.gif)
+![2020-10-19](demo/2020-10-19_demo_android.gif)
 
-### 2020-10-12
+### 2020-11-01
 
-![2020-10-12](demo/2020-10-12_demo.gif)
+![2020-11-01](demo/2020-11-01_demo_desktop.gif)
 
 ## Resources
 
