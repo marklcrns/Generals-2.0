@@ -50,8 +50,6 @@ public class MoveManager {
         gameScreen.removePieceUI(srcTileUIId);
       }
 
-      // TODO: Fix srcTileUI not changing reference. Make PieceUIListener store
-      // field members in PieceUI.
       gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
       if (isUpdateServer)
         gameScreen.serverSocket.updateMove(gameState.getCurrTurn(), srcTileUIId, tgtTileUIId);

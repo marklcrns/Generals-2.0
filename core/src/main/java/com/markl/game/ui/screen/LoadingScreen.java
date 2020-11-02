@@ -47,6 +47,7 @@ public class LoadingScreen implements Screen {
     app.assets.load(getPieceImagePath("black", "Private"), Texture.class);
     app.assets.load(getPieceImagePath("black", "Spy"), Texture.class);
     app.assets.load(getPieceImagePath("black", "Flag"), Texture.class);
+    app.assets.load(getPieceImagePath("black", "Hidden"), Texture.class);
 
     // Load white pieces
     app.assets.load(getPieceImagePath("white", "GeneralFive"), Texture.class);
@@ -64,6 +65,7 @@ public class LoadingScreen implements Screen {
     app.assets.load(getPieceImagePath("white", "Private"), Texture.class);
     app.assets.load(getPieceImagePath("white", "Spy"), Texture.class);
     app.assets.load(getPieceImagePath("white", "Flag"), Texture.class);
+    app.assets.load(getPieceImagePath("white", "Hidden"), Texture.class);
     app.assets.finishLoading();
   }
 

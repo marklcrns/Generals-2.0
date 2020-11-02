@@ -147,9 +147,15 @@ public class GameScreen implements Screen {
 
         PieceUI pieceUI;
         if (alliance == Alliance.BLACK) {
-          pieceUI = new PieceUI(tileUI, blackPiecesTex.get(pieceRank), pieceRank);
+          if (gameState.getMyAlliance() == Alliance.BLACK)
+            pieceUI = new PieceUI(tileUI, blackPiecesTex.get(pieceRank), pieceRank);
+          else
+            pieceUI = new PieceUI(tileUI, blackPiecesTex.get("Hidden"), pieceRank);
         } else {
-          pieceUI = new PieceUI(tileUI, whitePiecesTex.get(pieceRank), pieceRank);
+          if (gameState.getMyAlliance() == Alliance.WHITE)
+            pieceUI = new PieceUI(tileUI, whitePiecesTex.get(pieceRank), pieceRank);
+          else
+            pieceUI = new PieceUI(tileUI, whitePiecesTex.get("Hidden"), pieceRank);
         }
 
         pieceUI.setWidth(tileUI.width);
@@ -379,6 +385,7 @@ public class GameScreen implements Screen {
     blackPiecesTex.put("Private", app.assets.get(getPieceImagePath("black", "Private"), Texture.class));
     blackPiecesTex.put("Spy", app.assets.get(getPieceImagePath("black", "Spy"), Texture.class));
     blackPiecesTex.put("Flag", app.assets.get(getPieceImagePath("black", "Flag"), Texture.class));
+    blackPiecesTex.put("Hidden", app.assets.get(getPieceImagePath("black", "Hidden"), Texture.class));
 
     // Get white pieces
     whitePiecesTex.put("GeneralFive", app.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class));
@@ -396,6 +403,7 @@ public class GameScreen implements Screen {
     whitePiecesTex.put("Private", app.assets.get(getPieceImagePath("white", "Private"), Texture.class));
     whitePiecesTex.put("Spy", app.assets.get(getPieceImagePath("white", "Spy"), Texture.class));
     whitePiecesTex.put("Flag", app.assets.get(getPieceImagePath("white", "Flag"), Texture.class));
+    whitePiecesTex.put("Hidden", app.assets.get(getPieceImagePath("white", "Hidden"), Texture.class));
   }
 
   /**

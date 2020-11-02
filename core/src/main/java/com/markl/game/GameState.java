@@ -99,6 +99,12 @@ public class GameState {
     this.hasGameEnded = true;
   }
 
+  public void setMyAlliance(Alliance myAlliance) {
+    if (currentTurnId == 0) {
+      this.myAlliance = myAlliance;
+    }
+  }
+
   public void setFirstMoveMaker(Alliance moveMakerAlliance) {
     if (currentTurnId == 0) {
       this.firstMoveMaker = moveMakerAlliance;

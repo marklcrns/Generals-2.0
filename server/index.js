@@ -3,7 +3,8 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const port = 8080;
 
-let firstMoveMaker;
+let firstMoveMaker = null;
+let hostPlayerId = null;
 let players = [];
 let moveHistory = [];
 
@@ -16,12 +17,13 @@ io.on('connection', (socket) => {
     socket.emit('socketID', { id: socket.id });
 
     if (firstMoveMaker == null) {
-        console.log("Setting up game with host");
-        socket.emit('setupGame', { 'isClientHost': true });
+        console.log("Setting up game host...");
+        hostPlayerId = socket.id;
+        socket.emit('setupGame', { 'isClientHost': 'true' });
     } else {
-        console.log("Setting up game");
+        console.log("Connecting to game host...");
         socket.emit('setupGame', {
-            'isClientHost': false,
+            'isClientHost': 'false',
             'takenAlliance': players[0].alliance,
             'firstMoveMaker': firstMoveMaker });
     }
@@ -35,13 +37,20 @@ io.on('connection', (socket) => {
 
     socket.on('makeTurnMove', (data) => {
         data.id = socket.id
-        moveHistory.push(new move(data.id, data.turnId, data.srcTileId, data.destTileId));
+        moveHistory.push(new move(socket.id, data.turnId, data.srcTileId, data.destTileId));
         console.log(moveHistory.length);
         socket.broadcast.emit('makeTurnMove', data);
     });
 
     socket.on('disconnect', () => {
-        console.log("Disconnected");
+        if (socket.id == hostPlayerId) {
+            firstMoveMaker = null
+            hostPlayerId = null;
+            players = [];
+            moveHistory = []
+            console.log("Host player disconnected");
+        }
+        console.log("Disconnecting...");
     });
 
 });

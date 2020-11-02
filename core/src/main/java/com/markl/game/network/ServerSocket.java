@@ -62,11 +62,13 @@ public class ServerSocket {
         JSONObject inData = (JSONObject) args[0];
         JSONObject outData = new JSONObject();
         try {
-          boolean isClientHost = inData.getBoolean("isClientHost");
+          String isClientHost = inData.getString("isClientHost");
+
+          Gdx.app.log("SocketIO", "isClientHost: " + isClientHost);
           Gdx.app.log("SocketIO", "Setting up game");
           Gdx.app.log("SocketIO", "isHost" + isClientHost);
 
-          if (isClientHost) {
+          if (isClientHost.equals("true")) {
             gameScreen.gameState.setRandomMyAlliance();
             if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE)
               gameScreen.initBoard(false);
@@ -74,18 +76,20 @@ public class ServerSocket {
               gameScreen.initBoard(true);
 
             gameScreen.initGame();
-            gameScreen.gameState.setRandomMyAlliance();
 
             outData.put("myAlliance", gameScreen.gameState.getMyAlliance().getValue());
             outData.put("firstMoveMaker", gameScreen.gameState.getFirstMoveMaker());
             socket.emit("startGame", outData);
           } else {
-            if (inData.get("takenAlliance") == "WHITE")
+            if (inData.get("takenAlliance").equals("WHITE")) {
+              gameScreen.gameState.setMyAlliance(Alliance.BLACK);
               gameScreen.initBoard(true);
-            else
+            } else {
+              gameScreen.gameState.setMyAlliance(Alliance.WHITE);
               gameScreen.initBoard(false);
+            }
 
-            if (inData.get("firstMoveMaker") == "WHITE")
+            if (inData.get("firstMoveMaker").equals("WHITE"))
               gameScreen.initGame(Alliance.WHITE);
             else
               gameScreen.initGame(Alliance.BLACK);
