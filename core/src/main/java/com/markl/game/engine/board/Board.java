@@ -13,13 +13,13 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-  private GameState game;                 // Game instance reference
+  private GameState gameState;                 // Game instance reference
   private LinkedList<Tile> tiles;         // List of all Tiles containing data of each piece
   private Map<Integer, Move> moveHistory; // Move history
   private Player playerBlack;             // Player instance that all contains all infos on black pieces
   private Player playerWhite;             // Player instance that all contains all infos on white pieces
-  private int blackPiecesLeft = 0;        // Black pieces counter
-  private int whitePiecesLeft = 0;        // White pieces counter
+  private int blackPiecesLeft;
+  private int whitePiecesLeft;
 
   /**
    * No argument constructor
@@ -33,7 +33,7 @@ public class Board {
    * @param game {@link GameState} instance.
    */
   public Board(GameState game) {
-    this.game = game;
+    this.gameState = game;
     this.initBoard();
   }
 
@@ -47,14 +47,13 @@ public class Board {
   }
 
   public void initGame() {
-    this.game.setBoard(this);
+    this.gameState.setBoard(this);
   }
 
-  public int makeMove(int srcPieceTileId, int tgtPieceTileId) {
-    if (getTile(srcPieceTileId).getPiece().getAlliance() ==
-        game.getCurrentTurnMaker().getAlliance())
+  public int makeMove(Move newMove) {
+    if (getTile(newMove.getSrcTileId()).getPiece().getAlliance() ==
+        gameState.getCurrentTurnMaker().getAlliance())
     {
-      Move newMove = new Move(game.getCurrentTurnMaker(), this, srcPieceTileId, tgtPieceTileId);
       newMove.evaluate();
       newMove.execute();
 
@@ -259,7 +258,7 @@ public class Board {
     this.whitePiecesLeft = whitePiecesLeft;
   }
 
-  public GameState getGame() { return this.game; }
+  public GameState getGame() { return this.gameState; }
 
   /**
    * @return String representation of all current Tiles for debugging

@@ -1,9 +1,10 @@
 package com.markl.game.control;
 
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.markl.game.GameState;
 import com.markl.game.engine.board.Board;
+import com.markl.game.engine.board.Move;
 import com.markl.game.engine.board.pieces.Piece;
+import com.markl.game.network.ServerSocket;
 import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.TileUI;
 import com.markl.game.ui.screen.GameScreen;
@@ -17,54 +18,46 @@ import com.markl.game.ui.screen.GameScreen;
  */
 public class MoveManager {
 
-  private float PIECE_UI_ANIMATION_SPEED = 0.08f;
-
-  private GameState gameState;
-  private Board board;
   private GameScreen gameScreen;
+  private Board board;
+  private GameState gameState;
+  private ServerSocket serverSocket;
+  private PieceUIManager pieceUIManager;
 
-  public MoveManager(GameState gameState, Board board, GameScreen gameScreen) {
-    this.gameState = gameState;
-    this.board = board;
-    this.gameScreen = gameScreen;
+  public MoveManager(GameScreen gameScreen) {
+    this.gameScreen     = gameScreen;
+    this.board          = gameScreen.board;
+    this.gameState      = gameScreen.gameState;
+    this.serverSocket   = gameScreen.serverSocket;
+    this.pieceUIManager = gameScreen.pieceUIManager;
   }
 
   public void makeMove(TileUI srcTileUI, TileUI tgtTileUI, boolean isUpdateServer) {
-    final PieceUI srcPieceUI = srcTileUI.getPieceUI();
     final int srcTileUIId = srcTileUI.getTileId();
     final int tgtTileUIId = tgtTileUI.getTileId();
-    final int moveType = board.makeMove(srcTileUIId, tgtTileUIId);
+    final PieceUI srcPieceUI = srcTileUI.getPieceUI();
+    final Move newMove = new Move(gameState.getCurrentTurnMaker(), board, srcTileUIId, tgtTileUIId);
+    final int moveType = board.makeMove(newMove);
 
     if (moveType != -1) {
       if (moveType == 0) {
-        gameScreen.removePieceUI(srcTileUIId);
-        gameScreen.removePieceUI(tgtTileUIId);
+        pieceUIManager.removePieceUI(srcTileUIId);
+        pieceUIManager.removePieceUI(tgtTileUIId);
       } else if (moveType == 1) {
-        gameScreen.movePieceUI(srcTileUIId, tgtTileUIId);
-        animatePieceUIMove(srcPieceUI, tgtTileUI.x, tgtTileUI.y, 1);
+        pieceUIManager.movePieceUI(srcTileUIId, tgtTileUIId);
       } else if (moveType == 2) {
-        gameScreen.removePieceUI(tgtTileUIId);
-        gameScreen.movePieceUI(srcTileUIId, tgtTileUIId);
-        animatePieceUIMove(srcPieceUI, tgtTileUI.x, tgtTileUI.y, 1);
+        pieceUIManager.removePieceUI(tgtTileUIId);
+        pieceUIManager.movePieceUI(srcTileUIId, tgtTileUIId);
       } else if (moveType == 3) {
-        gameScreen.removePieceUI(srcTileUIId);
+        // TODO animate aggressive lose on the other client
+        pieceUIManager.removePieceUI(srcTileUIId);
       }
 
       gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
       if (isUpdateServer)
-        gameScreen.serverSocket.updateMove(gameState.getCurrTurn(), srcTileUIId, tgtTileUIId);
+        serverSocket.updateMove(gameState.getCurrTurn(), srcTileUIId, tgtTileUIId);
     } else {
-      animatePieceUIMove(srcPieceUI, srcTileUI.x, srcTileUI.y, 1);
+      pieceUIManager.animatePieceUIMove(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
     }
-  }
-
-  public void animatePieceUIMove(PieceUI pieceUI, float destX, float destY, float alpha) {
-    MoveToAction mta = new MoveToAction();
-    mta.setX(destX);
-    mta.setY(destY);
-    mta.setDuration(PIECE_UI_ANIMATION_SPEED);
-    pieceUI.addAction(mta);
-    pieceUI.setZIndex(999);   // Always on top of any pieces
-    pieceUI.getColor().a = alpha; // Remove transparency
   }
 }

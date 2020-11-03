@@ -8,8 +8,8 @@ import static com.markl.game.engine.board.BoardUtils.getTileColNum;
 import static com.markl.game.engine.board.BoardUtils.getTileRowNum;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.markl.game.GameState;
 import com.markl.game.control.MoveManager;
+import com.markl.game.control.PieceUIManager;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
@@ -62,6 +63,7 @@ public class GameScreen implements Screen {
   public final Application app;
   public final GameState gameState;
   public final Board board;
+  public final PieceUIManager pieceUIManager;
   public final MoveManager moveManager;
   public BoardBuilder builder;
   public Player playerBlack;
@@ -89,18 +91,19 @@ public class GameScreen implements Screen {
     Gdx.input.setInputProcessor(stage);
 
     // Initialize GoG game engine
-    gameState = new GameState();
-    board = new Board(gameState);
-    moveManager = new MoveManager(gameState, board, this);
+    this.gameState = new GameState();
+    this.board = new Board(gameState);
+    this.serverSocket = new ServerSocket("localhost", 8080, this);
+    this.pieceUIManager = new PieceUIManager(this);
+    this.moveManager = new MoveManager(this);
 
-    builder = new BoardBuilder(board);
-    playerBlack = new Player(Alliance.BLACK);
-    playerWhite = new Player(Alliance.WHITE);
+    this.builder = new BoardBuilder(board);
+    this.playerBlack = new Player(Alliance.BLACK);
+    this.playerWhite = new Player(Alliance.WHITE);
 
     // Initialize TileUI List
-    tilesUI = new LinkedList<TileUI>();
+    this.tilesUI = new LinkedList<TileUI>();
 
-    serverSocket = new ServerSocket("localhost", 8080, this);
   }
 
   public void initBoard(boolean isInverted) {
@@ -176,6 +179,7 @@ public class GameScreen implements Screen {
     builder.createDemoBoardBuild();
     builder.build(true);
     board.initGame();
+    gameState.setRandomFirstMoveMaker();
     gameState.start();
     populateTilesUI();
   }
@@ -187,6 +191,7 @@ public class GameScreen implements Screen {
     builder.createDemoBoardBuild();
     builder.build(true);
     board.initGame();
+    gameState.setFirstMoveMaker(firstMoveMaker);
     gameState.start();
     populateTilesUI();
   }

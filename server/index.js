@@ -19,11 +19,11 @@ io.on('connection', (socket) => {
     if (firstMoveMaker == null) {
         console.log("Setting up game host...");
         hostPlayerId = socket.id;
-        socket.emit('setupGame', { 'isClientHost': 'true' });
+        socket.emit('setupGame', { 'isClientHost': true });
     } else {
         console.log("Connecting to game host...");
         socket.emit('setupGame', {
-            'isClientHost': 'false',
+            'isClientHost': false,
             'takenAlliance': players[0].alliance,
             'firstMoveMaker': firstMoveMaker });
     }
@@ -31,6 +31,8 @@ io.on('connection', (socket) => {
     socket.on('startGame', (data) => {
         players.push(new player(socket.id, data.myAlliance));
         firstMoveMaker = data.firstMoveMaker;
+        console.log(firstMoveMaker);
+        console.log(players[0].alliance);
     });
 
     socket.broadcast.emit('newPlayer', { id: socket.id });

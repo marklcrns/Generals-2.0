@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.markl.game.control.MoveManager;
+import com.markl.game.control.PieceUIManager;
 import com.markl.game.ui.screen.GameScreen;
 
 /**
@@ -16,15 +17,17 @@ import com.markl.game.ui.screen.GameScreen;
 public class PieceUIListener extends ClickListener {
 
   private PieceUI pieceUI;
+  private PieceUIManager pieceUIManager;
   private GameScreen gameScreen;
   private MoveManager moveManager;
 
   private Vector3 mousePos;
 
   public PieceUIListener(PieceUI pieceUI, GameScreen gameScreen) {
-    this.pieceUI     = pieceUI;
-    this.gameScreen  = gameScreen;
-    this.moveManager = gameScreen.moveManager;
+    this.pieceUI        = pieceUI;
+    this.gameScreen     = gameScreen;
+    this.moveManager    = gameScreen.moveManager;
+    this.pieceUIManager = gameScreen.pieceUIManager;
   }
 
   @Override
@@ -62,7 +65,7 @@ public class PieceUIListener extends ClickListener {
         mousePos.y = boardBottomBorder + pieceUI.getHeight() * 0.5f;
 
       // Follow mouse pointer when the PieceUI is dragged
-      moveManager.animatePieceUIMove(pieceUI,
+      pieceUIManager.animatePieceUIMove(pieceUI,
           mousePos.x - pieceUI.getWidth() * 0.5f,
           mousePos.y - pieceUI.getHeight() * 0.5f,
           0.5f); // Make piece transparent
@@ -112,7 +115,7 @@ public class PieceUIListener extends ClickListener {
       if (gameScreen.destTileUI != null) {
         moveManager.makeMove(pieceUI.tileUI, gameScreen.destTileUI, true);
       } else {
-        moveManager.animatePieceUIMove(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
+        pieceUIManager.animatePieceUIMove(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
       }
 
       clearSnapTileHighlights();

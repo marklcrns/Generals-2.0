@@ -20,15 +20,15 @@ public class GameState {
   private Player currentTurnMaker;        // Current player to make move
   private String blackPlayerName = "";    // Black player's name assigned when game initialized
   private String whitePlayerName = "";    // White player's name assigned when game initialized
+  private int currentTurnId;              // Current turn of the game
   private boolean hasGameStarted = false; // Turns true when game started
   private boolean hasGameEnded = false;   // Turns true when game started
-  private int currentTurnId;              // Current turn of the game
 
   /**
    * No-constructor function
    */
   public GameState() {
-    this.currentTurnId = 0;
+    init();
   }
 
   /**
@@ -37,15 +37,15 @@ public class GameState {
    * @param board {@link Board} instance.
    */
   public GameState(Board board) {
-    this.currentTurnId = 0;
     this.board = board;
+    init();
   }
 
   /**
    * Initialize game.
    */
   public void init() {
-    // TODO: Implement <27-09-20, Mark Lucernas> //
+    this.currentTurnId = 0;
   }
 
   /**
@@ -53,10 +53,6 @@ public class GameState {
    */
   public boolean start() {
     if (!this.hasGameStarted) {
-      if (this.currentTurnMaker == null) {
-        setRandomFirstMoveMaker();
-        setFirstMoveMaker(this.currentTurnMaker.getAlliance());
-      }
       this.currentTurnId = 1;
       this.hasGameStarted = true;
       return true;
@@ -85,6 +81,7 @@ public class GameState {
    */
   public void restart() {
     // TODO: Implement <27-09-20, Mark Lucernas> //
+    this.currentTurnId = 0;
   }
 
   /**
@@ -97,6 +94,7 @@ public class GameState {
       this.gameWinner = winner;
 
     this.hasGameEnded = true;
+    this.currentTurnId = -1;
   }
 
   public void setMyAlliance(Alliance myAlliance) {
@@ -112,21 +110,25 @@ public class GameState {
     }
   }
 
-  public void setRandomFirstMoveMaker() {
-    if (currentTurnId == 0) {
-      if (Math.random() < 0.5f)
-        this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
-      else
-        this.currentTurnMaker = board.getPlayer(Alliance.WHITE);
-    }
-  }
-
   public void setRandomMyAlliance() {
     if (currentTurnId == 0) {
       if (Math.random() < 0.5f)
         this.myAlliance = Alliance.BLACK;
       else
         this.myAlliance = Alliance.WHITE;
+    }
+  }
+
+  public void setRandomFirstMoveMaker() {
+    if (currentTurnId == 0) {
+      if (Math.random() < 0.5f) {
+        this.firstMoveMaker = Alliance.BLACK;
+        this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
+      }
+      else {
+        this.firstMoveMaker = Alliance.WHITE;
+        this.currentTurnMaker = board.getPlayer(Alliance.WHITE);
+      }
     }
   }
 
@@ -147,24 +149,26 @@ public class GameState {
       this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
   }
 
-  public void decrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId--; }
-  public void incrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId++; }
-
-  /** Accessor methods */
-  public int getCurrTurn()            { return this.currentTurnId; }
-  public Alliance getMyAlliance()     { return this.myAlliance; }
-  public Alliance getFirstMoveMaker() { return this.firstMoveMaker; }
-  public Player getPlayerWinner()     { if (this.hasGameEnded) return this.gameWinner; else return null; }
-  public Player getCurrentTurnMaker() { return this.currentTurnMaker; }
-  public String getBlackPlayerName()  { return this.blackPlayerName; }
-  public String getWhitePlayerName()  { return this.whitePlayerName; }
   public boolean isRunning() {
     if (this.hasGameStarted && !this.hasGameEnded)
       return true;
     return false;
   }
 
-  /** Modifier methods */
-  public void setBoard(Board board)  { this.board = board; }
+  public void decrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId--; }
+  public void incrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId++; }
 
+  /** Accessor methods */
+  public Alliance getMyAlliance()     { return this.myAlliance; }
+  public Alliance getFirstMoveMaker() { return this.firstMoveMaker; }
+  public Player getPlayerWinner()     { if (this.hasGameEnded) return this.gameWinner; else return null; }
+  public Player getCurrentTurnMaker() { return this.currentTurnMaker; }
+  public String getBlackPlayerName()  { return this.blackPlayerName; }
+  public String getWhitePlayerName()  { return this.whitePlayerName; }
+  public int getCurrTurn()            { return this.currentTurnId; }
+
+  /** Modifier methods */
+  public void setBoard(Board board)           { this.board = board; }
+  public void setBlackPlayerName(String name) { this.blackPlayerName = name; }
+  public void setWhitePlayerName(String name) { this.whitePlayerName = name; }
 }
