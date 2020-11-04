@@ -54,7 +54,6 @@ io.on('connection', (socket) => {
         }
         console.log("Disconnecting...");
     });
-
 });
 
 function player(id, alliance) {

@@ -32,7 +32,7 @@ public class PieceUIListener extends ClickListener {
 
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-    if (isMyPiece()) {
+    if (isOwnedMyTurnMakerPlayer() && isCurrentTurnMaker()) {
       gameScreen.activeTileUI = pieceUI.tileUI;
       gameScreen.activeSrcPiece = gameScreen.board.getPiece(pieceUI.tileUI.getTileId());
       gameScreen.activeSrcPiece.evaluateMoves();
@@ -43,7 +43,7 @@ public class PieceUIListener extends ClickListener {
   @Override
   public void touchDragged(InputEvent event, float x, float y, int pointer) {
     super.touchDragged(event, x, y, pointer);
-    if (isMyPiece()) {
+    if (isOwnedMyTurnMakerPlayer() && isCurrentTurnMaker()) {
       // Set click/touch position relative to world coordinates
       mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
       gameScreen.app.camera.unproject(mousePos); // mousePos is now in world coordinates
@@ -111,7 +111,7 @@ public class PieceUIListener extends ClickListener {
   @Override
   public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
     super.touchUp(event, x, y, pointer, button);
-    if (isMyPiece()) {
+    if (isOwnedMyTurnMakerPlayer() && isCurrentTurnMaker()) {
       if (gameScreen.destTileUI != null) {
         moveManager.makeMove(pieceUI.tileUI, gameScreen.destTileUI, true);
       } else {
@@ -131,10 +131,24 @@ public class PieceUIListener extends ClickListener {
     }
   }
 
-  public boolean isMyPiece() {
-    if (gameScreen.gameState.getMyAlliance() ==
-        gameScreen.board.getPiece(pieceUI.tileUI.getTileId()).getAlliance())
+  public boolean isOwnedMyTurnMakerPlayer() {
+    if (gameScreen.gameState.getCurrentTurnMaker().isMyPiece(gameScreen.board.getPiece(pieceUI.tileUI.getTileId())))
       return true;
+
+    return false;
+
+    // if (gameScreen.gameState.getMyAlliance() ==
+    //     gameScreen.board.getPiece(pieceUI.tileUI.getTileId()).getAlliance())
+    //   return true;
+    //
+    // return false;
+  }
+
+  public boolean isCurrentTurnMaker() {
+    if (gameScreen.gameState.getCurrentTurnMaker().getAlliance() ==
+        gameScreen.gameState.getMyAlliance())
+      return true;
+
     return false;
   }
 

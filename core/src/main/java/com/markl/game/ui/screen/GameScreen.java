@@ -20,7 +20,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.markl.game.GameState;
 import com.markl.game.control.MoveManager;
@@ -49,8 +48,10 @@ public class GameScreen implements Screen {
   public static final float BOARD_HEIGHT       = TILE_SIZE * BOARD_TILES_ROW_COUNT;
   public static final float BOARD_X_OFFSET     = (Application.V_WIDTH - BOARD_WIDTH) / 2;
   public static final float BOARD_Y_OFFSET     = (Application.V_HEIGHT - BOARD_HEIGHT) / 2;
+
   /** Color Scheme */
-  public final Color TILE_COLOR                = new Color(0x9BB6CBFF);
+  public final Color TILE_COLOR_ACTIVE         = new Color(0x9BB6CBFF);
+  public final Color TILE_COLOR_INACTIVE       = new Color(0xB8BCC8FF);
   public final Color TILE_BORDER_COLOR         = new Color(0x6F83A4FF);
   public final Color AGGRESSIVE_TILE_HIGHLIGHT = Color.MAROON;
   public final Color INVALID_TILE_HIGHLIGHT    = Color.GRAY;
@@ -106,26 +107,6 @@ public class GameScreen implements Screen {
 
   }
 
-  public void initBoard(boolean isInverted) {
-    for (int i = 0; i < TOTAL_BOARD_TILES; i++) {
-
-      float tileWidth = TILE_SIZE;
-      float tileHeight = TILE_SIZE;
-      float tileX = getTileColNum(i) * tileWidth + BOARD_X_OFFSET;
-      // Invert Y to have tiles arranged left to right, top to bottom
-      float tileY;
-      if (isInverted) {
-        tileY = (getTileRowNum(i) * TILE_SIZE) + BOARD_Y_OFFSET;
-      } else {
-        tileY = (TILE_SIZE * (BOARD_TILES_ROW_COUNT - 1)) -
-          (getTileRowNum(i) * TILE_SIZE) + BOARD_Y_OFFSET;
-      }
-
-      TileUI newTileUI = new TileUI(i, tileX, tileY, tileWidth, tileHeight);
-      tilesUI.add(newTileUI);
-    }
-  }
-
   @Override
   public void show() {
     // TODO initialize board without pieces until connected to server !!!
@@ -134,176 +115,6 @@ public class GameScreen implements Screen {
     serverSocket.configSocketEvents();
     getAssetImages();
     Gdx.input.setInputProcessor(stage);
-  }
-
-  public void populateTilesUI() {
-    System.out.println("Populating tilesUI");
-
-    Iterator<TileUI> iterator = tilesUI.iterator();
-
-    while (iterator.hasNext()) {
-      TileUI tileUI = iterator.next();
-      // Create PieceUI as stage actor if tile is occupied
-      if (board.getTile(tileUI.getTileId()).isTileOccupied()) {
-        Alliance alliance = board.getTile(tileUI.getTileId()).getPiece().getAlliance();
-        String pieceRank = board.getTile(tileUI.getTileId()).getPiece().getRank();
-
-        PieceUI pieceUI;
-        if (alliance == Alliance.BLACK) {
-          if (gameState.getMyAlliance() == Alliance.BLACK)
-            pieceUI = new PieceUI(tileUI, blackPiecesTex.get(pieceRank), pieceRank);
-          else
-            pieceUI = new PieceUI(tileUI, blackPiecesTex.get("Hidden"), pieceRank);
-        } else {
-          if (gameState.getMyAlliance() == Alliance.WHITE)
-            pieceUI = new PieceUI(tileUI, whitePiecesTex.get(pieceRank), pieceRank);
-          else
-            pieceUI = new PieceUI(tileUI, whitePiecesTex.get("Hidden"), pieceRank);
-        }
-
-        pieceUI.setWidth(tileUI.width);
-        pieceUI.setHeight(tileUI.height);
-        pieceUI.setPosition(tileUI.x, tileUI.y);
-        pieceUI.addListener(new PieceUIListener(pieceUI, this));
-
-        stage.addActor(pieceUI);
-        tileUI.setPieceUI(pieceUI);
-      }
-    }
-  }
-
-  public void initGame() {
-    // Create initial board arrangement and start game
-    board.setPlayerBlack(playerBlack);
-    board.setPlayerWhite(playerWhite);
-    builder.createDemoBoardBuild();
-    builder.build(true);
-    board.initGame();
-    gameState.setRandomFirstMoveMaker();
-    gameState.start();
-    populateTilesUI();
-  }
-
-  public void initGame(Alliance firstMoveMaker) {
-    // Create initial board arrangement with firstMoveMaker and start game
-    board.setPlayerBlack(playerBlack);
-    board.setPlayerWhite(playerWhite);
-    builder.createDemoBoardBuild();
-    builder.build(true);
-    board.initGame();
-    gameState.setFirstMoveMaker(firstMoveMaker);
-    gameState.start();
-    populateTilesUI();
-  }
-
-  public void update(float delta) {
-    stage.act(delta);
-  }
-
-  public void drawBoard() {
-    shapeRend.begin(ShapeType.Filled);
-    for (int i = 0; i < tilesUI.size(); i++) {
-      TileUI tile = tilesUI.get(i);
-
-      // Split board into two territory
-      // if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
-
-      shapeRend.setColor(TILE_COLOR);
-      // Draw square tile
-      shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
-    }
-    shapeRend.end();
-
-    // Draw tile borders
-    shapeRend.begin(ShapeType.Line);
-    for (int i = 0; i < tilesUI.size(); i++) {
-      TileUI tile = tilesUI.get(i);
-      shapeRend.setColor(TILE_BORDER_COLOR);
-      shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
-    }
-    shapeRend.end();
-  }
-
-  // Draw snap-to-tile tile highlight
-  public void drawTileHighlights() {
-    // Only highlight legal move tile destination when dragged over
-    boolean isHighlight = false;
-    if (activeSrcPiece != null && destTileUI != null) {
-      for (Map.Entry<Integer, Move> entry : activeSrcPiece.moveSet.entrySet()) {
-        if (entry.getValue().getTgtTileId() == destTileUI.getTileId()) {
-          isHighlight = true;
-          break;
-        }
-      }
-    }
-
-    if (isHighlight && destTileUI != null && destTileUI.getTileId() != activeTileUI.getTileId()) {
-      shapeRend.begin(ShapeType.Filled);
-
-      // Highlight destination Tile background based on move type
-      if (board.getTile(destTileUI.getTileId()).isTileOccupied()) {
-        if (board.getTile(activeTileUI.getTileId()).getPiece().getAlliance() != // Aggressive move tile highlight
-            board.getTile(destTileUI.getTileId()).getPiece().getAlliance())
-          shapeRend.setColor(AGGRESSIVE_TILE_HIGHLIGHT);
-        else                                                       // Invalid friendly-fire move tile highlight
-          shapeRend.setColor(INVALID_TILE_HIGHLIGHT);
-      } else {
-        shapeRend.setColor(NORMAL_TILE_HIGHLIGHT);                 // Normal move tile highlight
-      }
-
-      shapeRend.rect(destTileUI.x, destTileUI.y, destTileUI.width, destTileUI.height);
-      shapeRend.end();
-    }
-
-    // Highlight origin Tile border
-    if (activeTileUI != null) {
-      shapeRend.begin(ShapeType.Line);
-      shapeRend.setColor(ORIGIN_TILE_HIGHLIGHT);
-      shapeRend.rect(activeTileUI.x, activeTileUI.y, activeTileUI.width, activeTileUI.height);
-      shapeRend.end();
-    }
-  }
-
-  // Draw snap-to-tile line
-  public void drawTileSnapLinePath() {
-    if (tX != -1 && tY != -1 && pX != -1 && pY != -1) {
-      shapeRend.begin(ShapeType.Filled);
-      shapeRend.setColor(Color.WHITE);
-      shapeRend.rectLine(tX, tY, pX, pY, 1.5f);
-      shapeRend.end();
-    }
-  }
-
-  public boolean movePieceUI(int srcPieceUITileId, int tgtPieceUITileId) {
-    PieceUI srcPieceUI = tilesUI.get(srcPieceUITileId).getPieceUI();
-    PieceUI tgtPieceUI = tilesUI.get(tgtPieceUITileId).getPieceUI();
-    if (srcPieceUI != null && tgtPieceUI == null) {
-      // Make target TileUI the tile for source PieceUI
-      tilesUI.get(tgtPieceUITileId).setPieceUI(srcPieceUI);
-      tilesUI.get(srcPieceUITileId).clearPieceUI();
-      return true;
-    }
-    return false;
-  }
-
-  public boolean removePieceUI(int tileId) {
-    TileUI tile = tilesUI.get(tileId);
-    if (tile.getPieceUI() != null) {
-      tilesUI.get(tileId).getPieceUI().addAction(Actions.removeActor());
-      tilesUI.get(tileId).clearPieceUI();
-      return true;
-    }
-    return false;
-  }
-
-  // TODO: Make sure TileUI is cloned <11-10-20, yourname> //
-  public void swapPieceUI(int srcPieceUITileId, int tgtPieceUITileId) {
-    TileUI srcTileUI = tilesUI.get(srcPieceUITileId);
-    TileUI tgtTileUI = tilesUI.get(srcPieceUITileId);
-    TileUI tmpTileUI = tgtTileUI;
-    // Make target TileUI the tile for source PieceUI
-    tgtTileUI.setPieceUI(srcTileUI.getPieceUI());
-    srcTileUI.setPieceUI(tmpTileUI.getPieceUI());
   }
 
   @Override
@@ -371,6 +182,173 @@ public class GameScreen implements Screen {
     System.out.println("GameScreen dispose");
     stage.dispose();
     shapeRend.dispose();
+  }
+
+  public void initBoard(boolean isInverted) {
+    for (int i = 0; i < TOTAL_BOARD_TILES; i++) {
+
+      float tileWidth = TILE_SIZE;
+      float tileHeight = TILE_SIZE;
+      float tileX = getTileColNum(i) * tileWidth + BOARD_X_OFFSET;
+      // Invert Y to have tiles arranged left to right, top to bottom
+      float tileY;
+      if (isInverted) {
+        tileY = (getTileRowNum(i) * TILE_SIZE) + BOARD_Y_OFFSET;
+      } else {
+        tileY = (TILE_SIZE * (BOARD_TILES_ROW_COUNT - 1)) -
+          (getTileRowNum(i) * TILE_SIZE) + BOARD_Y_OFFSET;
+      }
+
+      TileUI newTileUI = new TileUI(i, tileX, tileY, tileWidth, tileHeight);
+      tilesUI.add(newTileUI);
+    }
+  }
+
+  public void populateTilesUI() {
+    System.out.println("Populating tilesUI");
+
+    Iterator<TileUI> iterator = tilesUI.iterator();
+
+    while (iterator.hasNext()) {
+      TileUI tileUI = iterator.next();
+      // Create PieceUI as stage actor if tile is occupied
+      if (board.getTile(tileUI.getTileId()).isTileOccupied()) {
+        Alliance alliance = board.getTile(tileUI.getTileId()).getPiece().getAlliance();
+        String pieceRank = board.getTile(tileUI.getTileId()).getPiece().getRank();
+
+        PieceUI pieceUI;
+        if (alliance == Alliance.BLACK) {
+          if (gameState.getMyAlliance() == Alliance.BLACK)
+            pieceUI = new PieceUI(tileUI, blackPiecesTex.get(pieceRank), pieceRank);
+          else
+            pieceUI = new PieceUI(tileUI, blackPiecesTex.get("Hidden"), pieceRank);
+        } else {
+          if (gameState.getMyAlliance() == Alliance.WHITE)
+            pieceUI = new PieceUI(tileUI, whitePiecesTex.get(pieceRank), pieceRank);
+          else
+            pieceUI = new PieceUI(tileUI, whitePiecesTex.get("Hidden"), pieceRank);
+        }
+        pieceUI.setWidth(tileUI.width);
+        pieceUI.setHeight(tileUI.height);
+        pieceUI.setPosition(tileUI.x, tileUI.y);
+        pieceUI.addListener(new PieceUIListener(pieceUI, this));
+
+        stage.addActor(pieceUI);
+        tileUI.setPieceUI(pieceUI);
+      }
+    }
+  }
+
+
+  public void initGame() {
+    // Create initial board arrangement and start game
+    board.setPlayerBlack(playerBlack);
+    board.setPlayerWhite(playerWhite);
+    builder.createDemoBoardBuild();
+    builder.build(true);
+    board.initGame();
+    gameState.setRandomFirstMoveMaker();
+    gameState.start();
+    populateTilesUI();
+  }
+
+  public void initGame(Alliance firstMoveMaker) {
+    // Create initial board arrangement with firstMoveMaker and start game
+    board.setPlayerBlack(playerBlack);
+    board.setPlayerWhite(playerWhite);
+    builder.createDemoBoardBuild();
+    builder.build(true);
+    board.initGame();
+    gameState.setFirstMoveMaker(firstMoveMaker);
+    gameState.start();
+    populateTilesUI();
+  }
+
+  public void update(float delta) {
+    stage.act(delta);
+  }
+
+  public void drawBoard() {
+    shapeRend.begin(ShapeType.Filled);
+    for (int i = 0; i < tilesUI.size(); i++) {
+      TileUI tile = tilesUI.get(i);
+
+      // Split board into two territory based on GameState.currentTurnMaker
+      if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE) {
+        if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
+          shapeRend.setColor(TILE_COLOR_INACTIVE);
+        else
+          shapeRend.setColor(TILE_COLOR_ACTIVE);
+      } else {
+        if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
+          shapeRend.setColor(TILE_COLOR_ACTIVE);
+        else
+          shapeRend.setColor(TILE_COLOR_INACTIVE);
+      }
+
+      // Draw square tile
+      shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
+    }
+    shapeRend.end();
+
+    // Draw tile borders
+    shapeRend.begin(ShapeType.Line);
+    for (int i = 0; i < tilesUI.size(); i++) {
+      TileUI tile = tilesUI.get(i);
+      shapeRend.setColor(TILE_BORDER_COLOR);
+      shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
+    }
+    shapeRend.end();
+  }
+
+  // Draw snap-to-tile tile highlight
+  public void drawTileHighlights() {
+    // Only highlight legal move tile destination when dragged over
+    boolean isHighlight = false;
+    if (activeSrcPiece != null && destTileUI != null) {
+      for (Map.Entry<Integer, Move> entry : activeSrcPiece.moveSet.entrySet()) {
+        if (entry.getValue().getTgtTileId() == destTileUI.getTileId()) {
+          isHighlight = true;
+          break;
+        }
+      }
+    }
+
+    if (isHighlight && destTileUI != null && destTileUI.getTileId() != activeTileUI.getTileId()) {
+      shapeRend.begin(ShapeType.Filled);
+
+      // Highlight destination Tile background based on move type
+      if (board.getTile(destTileUI.getTileId()).isTileOccupied()) {
+        if (board.getTile(activeTileUI.getTileId()).getPiece().getAlliance() != // Aggressive move tile highlight
+            board.getTile(destTileUI.getTileId()).getPiece().getAlliance())
+          shapeRend.setColor(AGGRESSIVE_TILE_HIGHLIGHT);
+        else                                                       // Invalid friendly-fire move tile highlight
+          shapeRend.setColor(INVALID_TILE_HIGHLIGHT);
+      } else {
+        shapeRend.setColor(NORMAL_TILE_HIGHLIGHT);                 // Normal move tile highlight
+      }
+
+      shapeRend.rect(destTileUI.x, destTileUI.y, destTileUI.width, destTileUI.height);
+      shapeRend.end();
+    }
+
+    // Highlight origin Tile border
+    if (activeTileUI != null) {
+      shapeRend.begin(ShapeType.Line);
+      shapeRend.setColor(ORIGIN_TILE_HIGHLIGHT);
+      shapeRend.rect(activeTileUI.x, activeTileUI.y, activeTileUI.width, activeTileUI.height);
+      shapeRend.end();
+    }
+  }
+
+  // Draw snap-to-tile line
+  public void drawTileSnapLinePath() {
+    if (tX != -1 && tY != -1 && pX != -1 && pY != -1) {
+      shapeRend.begin(ShapeType.Filled);
+      shapeRend.setColor(Color.WHITE);
+      shapeRend.rectLine(tX, tY, pX, pY, 1.5f);
+      shapeRend.end();
+    }
   }
 
   private void getAssetImages() {
