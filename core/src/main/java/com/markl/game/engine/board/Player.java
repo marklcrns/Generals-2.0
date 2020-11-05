@@ -8,6 +8,7 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Player {
 
+  private String playerId;
   private Alliance alliance;
 
   public Player() {}
@@ -16,12 +17,16 @@ public class Player {
     this.alliance = alliance;
   }
 
-  public Alliance getAlliance() {
-    return this.alliance;
+  public String getPlayerId() {
+    return this.playerId;
   }
 
-  public boolean isCurrentTurnMaker() {
-    return false;
+  public void setPlayerId(String socketId) {
+    this.playerId = socketId;
+  }
+
+  public Alliance getAlliance() {
+    return this.alliance;
   }
 
   /**

@@ -1,5 +1,6 @@
 package com.markl.game.control;
 
+import com.badlogic.gdx.Gdx;
 import com.markl.game.GameState;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.Move;
@@ -23,13 +24,15 @@ public class MoveManager {
   private GameState gameState;
   private ServerSocket serverSocket;
   private PieceUIManager pieceUIManager;
+  private boolean isOnline;
 
-  public MoveManager(GameScreen gameScreen) {
+  public MoveManager(GameScreen gameScreen, boolean isOnline) {
     this.gameScreen     = gameScreen;
     this.board          = gameScreen.board;
     this.gameState      = gameScreen.gameState;
     this.serverSocket   = gameScreen.serverSocket;
     this.pieceUIManager = gameScreen.pieceUIManager;
+    this.isOnline       = isOnline;
   }
 
   public void makeMove(TileUI srcTileUI, TileUI tgtTileUI, boolean isUpdateServer) {
@@ -37,7 +40,7 @@ public class MoveManager {
     final int tgtTileUIId = tgtTileUI.getTileId();
     final PieceUI srcPieceUI = srcTileUI.getPieceUI();
     final Move newMove = new Move(gameState.getCurrentTurnMaker(), board, srcTileUIId, tgtTileUIId);
-    final int moveType = board.makeMove(newMove);
+    final int moveType = board.move(newMove);
 
     if (moveType != -1) {
       if (moveType == 0) {
@@ -54,9 +57,15 @@ public class MoveManager {
       }
 
       gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
-      if (isUpdateServer)
-        serverSocket.updateMove(gameState.getCurrTurn(), srcTileUIId, tgtTileUIId);
+
+      if (isOnline && isUpdateServer) {
+        serverSocket.updateMove(newMove.getTurnId(), newMove.getSrcTileId(), newMove.getTgtTileId());
+      }
+      Gdx.app.log("Move", "Update move by Player: " + newMove.getPlayer().getPlayerId());
+
+      Gdx.app.log("MoveHistory", "" + board.getMoveHistory().size());
     } else {
+      // Move piece back to original position
       pieceUIManager.animatePieceUIMove(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
     }
   }

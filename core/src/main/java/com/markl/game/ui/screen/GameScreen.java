@@ -96,7 +96,7 @@ public class GameScreen implements Screen {
     this.board = new Board(gameState);
     this.serverSocket = new ServerSocket("localhost", 8080, this);
     this.pieceUIManager = new PieceUIManager(this);
-    this.moveManager = new MoveManager(this);
+    this.moveManager = new MoveManager(this, true);
 
     this.builder = new BoardBuilder(board);
     this.playerBlack = new Player(Alliance.BLACK);
@@ -205,8 +205,6 @@ public class GameScreen implements Screen {
   }
 
   public void populateTilesUI() {
-    System.out.println("Populating tilesUI");
-
     Iterator<TileUI> iterator = tilesUI.iterator();
 
     while (iterator.hasNext()) {
@@ -238,7 +236,6 @@ public class GameScreen implements Screen {
       }
     }
   }
-
 
   public void initGame() {
     // Create initial board arrangement and start game
@@ -273,18 +270,23 @@ public class GameScreen implements Screen {
     for (int i = 0; i < tilesUI.size(); i++) {
       TileUI tile = tilesUI.get(i);
 
-      // Split board into two territory based on GameState.currentTurnMaker
-      if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE) {
-        if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
-          shapeRend.setColor(TILE_COLOR_INACTIVE);
-        else
-          shapeRend.setColor(TILE_COLOR_ACTIVE);
+      if (gameState.isRunning()){
+        // Split board into two territory based on GameState.currentTurnMaker
+        if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE) {
+          if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
+            shapeRend.setColor(TILE_COLOR_INACTIVE);
+          else
+            shapeRend.setColor(TILE_COLOR_ACTIVE);
+        } else {
+          if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
+            shapeRend.setColor(TILE_COLOR_ACTIVE);
+          else
+            shapeRend.setColor(TILE_COLOR_INACTIVE);
+        }
       } else {
-        if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
-          shapeRend.setColor(TILE_COLOR_ACTIVE);
-        else
-          shapeRend.setColor(TILE_COLOR_INACTIVE);
+        shapeRend.setColor(TILE_COLOR_INACTIVE);
       }
+
 
       // Draw square tile
       shapeRend.rect(tile.x, tile.y, tile.width, tile.height);

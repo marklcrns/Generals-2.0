@@ -14,9 +14,11 @@ import com.markl.game.engine.board.Player;
 public class GameState {
 
   private Board board;                    // Board instance
-  private Alliance myAlliance;            // My Player alliance for TileUI orientation
   private Alliance firstMoveMaker;        // First Player to make a move
   private Player gameWinner;              // Game winner
+  private Alliance myAlliance;            // My Player alliance for TileUI orientation
+  private Player myPlayer;                // My Player
+  private Player enemyPlayer;             // Enemy Player
   private Player currentTurnMaker;        // Current player to make move
   private String blackPlayerName = "";    // Black player's name assigned when game initialized
   private String whitePlayerName = "";    // White player's name assigned when game initialized
@@ -88,18 +90,29 @@ public class GameState {
    * End game and declare winner.
    */
   public void endGame(Player winner) {
-    if (winner == null)
-      this.gameWinner = null;
-    else
-      this.gameWinner = winner;
-
+    this.gameWinner = winner;
     this.hasGameEnded = true;
     this.currentTurnId = -1;
+    this.currentTurnMaker = null;
   }
 
   public void setMyAlliance(Alliance myAlliance) {
     if (currentTurnId == 0) {
       this.myAlliance = myAlliance;
+    }
+  }
+
+  public void setMyPlayer(Player player, String playerId) {
+    if (currentTurnId == 0) {
+      player.setPlayerId(playerId);
+      this.myPlayer = player;
+    }
+  }
+
+  public void setEnemyPlayer(Player player, String playerId) {
+    if (currentTurnId == 0) {
+      player.setPlayerId(playerId);
+      this.enemyPlayer = player;
     }
   }
 
@@ -133,20 +146,26 @@ public class GameState {
   }
 
   public void nextTurn() {
-    switchTurnMakerPlayer();
-    incrementTurnId();
+    if (isRunning()) {
+      switchTurnMakerPlayer();
+      incrementTurnId();
+    }
   }
 
   public void prevTurn() {
-    switchTurnMakerPlayer();
-    decrementTurnId();
+    if (isRunning()) {
+      switchTurnMakerPlayer();
+      decrementTurnId();
+    }
   }
 
   public void switchTurnMakerPlayer() {
-    if (currentTurnMaker.getAlliance() == Alliance.BLACK)
-      this.currentTurnMaker = board.getPlayer(Alliance.WHITE);
-    else
-      this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
+    if (currentTurnMaker != null) {
+      if (currentTurnMaker.getAlliance() == Alliance.BLACK)
+        this.currentTurnMaker = board.getPlayer(Alliance.WHITE);
+      else
+        this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
+    }
   }
 
   public boolean isRunning() {
@@ -163,6 +182,8 @@ public class GameState {
   public Alliance getFirstMoveMaker() { return this.firstMoveMaker; }
   public Player getPlayerWinner()     { if (this.hasGameEnded) return this.gameWinner; else return null; }
   public Player getCurrentTurnMaker() { return this.currentTurnMaker; }
+  public Player getMyPlayer()         { return this.myPlayer; }
+  public Player getEnemyPlayer()      { return this.enemyPlayer; }
   public String getBlackPlayerName()  { return this.blackPlayerName; }
   public String getWhitePlayerName()  { return this.whitePlayerName; }
   public int getCurrTurn()            { return this.currentTurnId; }

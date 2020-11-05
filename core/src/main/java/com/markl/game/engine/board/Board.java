@@ -13,7 +13,7 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-  private GameState gameState;                 // Game instance reference
+  private GameState gameState;            // Game instance reference
   private LinkedList<Tile> tiles;         // List of all Tiles containing data of each piece
   private Map<Integer, Move> moveHistory; // Move history
   private Player playerBlack;             // Player instance that all contains all infos on black pieces
@@ -50,10 +50,8 @@ public class Board {
     this.gameState.setBoard(this);
   }
 
-  public int makeMove(Move newMove) {
-    if (getTile(newMove.getSrcTileId()).getPiece().getAlliance() ==
-        gameState.getCurrentTurnMaker().getAlliance())
-    {
+  public int move(Move newMove) {
+    if (gameState.getCurrentTurnMaker().isMyPiece(getTile(newMove.getSrcTileId()).getPiece())) {
       newMove.evaluate();
       newMove.execute();
 

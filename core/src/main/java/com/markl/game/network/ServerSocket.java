@@ -1,9 +1,13 @@
 package com.markl.game.network;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.ui.screen.GameScreen;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +27,8 @@ public class ServerSocket {
   private String host;
   private int port;
   private GameScreen gameScreen;
+  private String mySocketId;
+  private List<String> otherPlayersSocketId = new ArrayList<>();
 
   public ServerSocket(String host, int port, GameScreen gameScreen) {
     this.host = host;
@@ -45,13 +51,59 @@ public class ServerSocket {
       public void call(Object... args) {
         Gdx.app.log("SocketIO", "Connected");
       }
-    }).on("socketID", new Emitter.Listener() {
+    }).on("socketId", new Emitter.Listener() {
       @Override
       public void call(Object... args) {
         JSONObject data = (JSONObject) args[0];
         try {
-          String id = data.getString("id");
-          Gdx.app.log("SocketIO", "My ID: " + id);
+          mySocketId = data.getString("id");
+          Gdx.app.log("SocketIO", "My ID: " + mySocketId);
+        } catch (JSONException e) {
+          Gdx.app.log("SocketIO", "Error getting ID");
+        }
+      }
+    }).on("newPlayer", new Emitter.Listener() {
+      @Override
+      public void call(Object... args) {
+        JSONObject data = (JSONObject) args[0];
+        try {
+          String newPlayerSocketId = data.getString("id");
+          otherPlayersSocketId.add(newPlayerSocketId);
+          // Add new player as enemy player
+          if (otherPlayersSocketId.size() == 1) {
+            if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
+              gameScreen.gameState.setEnemyPlayer(gameScreen.playerBlack, newPlayerSocketId);
+            } else {
+              gameScreen.gameState.setEnemyPlayer(gameScreen.playerWhite, newPlayerSocketId);
+            }
+          }
+          Gdx.app.log("SocketIO", "New Player Connect: " + newPlayerSocketId);
+        } catch (JSONException e) {
+          Gdx.app.log("SocketIO", "Error getting New Player ID");
+        }
+      }
+    }).on("getPlayers", new Emitter.Listener() {
+      @Override
+      public void call(Object... args) {
+        JSONObject data = (JSONObject) args[0];
+        try {
+          JSONArray players = data.getJSONArray("players");
+          // Add all existing players
+          if (players.length() > 0) {
+            for (int i = 0; i < players.length(); i++) {
+              JSONObject player = players.getJSONObject(i);
+              otherPlayersSocketId.add(player.getString("id"));
+              // Add enemy player
+              if (otherPlayersSocketId.size() == 1) {
+                if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
+                  gameScreen.gameState.setEnemyPlayer(gameScreen.playerBlack, player.getString("id"));
+                } else {
+                  gameScreen.gameState.setEnemyPlayer(gameScreen.playerWhite, player.getString("id"));
+                }
+              }
+            }
+            Gdx.app.log("SocketIO", "Existing players: " + players.length());
+          }
         } catch (JSONException e) {
           Gdx.app.log("SocketIO", "Error getting ID");
         }
@@ -63,50 +115,56 @@ public class ServerSocket {
         JSONObject outData = new JSONObject();
         try {
           boolean isClientHost = inData.getBoolean("isClientHost");
-
-          Gdx.app.log("SocketIO", "isClientHost: " + isClientHost);
           Gdx.app.log("SocketIO", "Setting up game");
-          Gdx.app.log("SocketIO", "isHost" + isClientHost);
 
           if (isClientHost) {
             gameScreen.gameState.setRandomMyAlliance();
-            if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE)
+            if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
+              gameScreen.gameState.setMyPlayer(gameScreen.playerWhite, mySocketId);
               gameScreen.initBoard(false);
-            else
+            } else {
+              gameScreen.gameState.setMyPlayer(gameScreen.playerBlack, mySocketId);
               gameScreen.initBoard(true);
-
-            gameScreen.initGame();
-
-            outData.put("myAlliance", gameScreen.gameState.getMyAlliance().getValue());
-            outData.put("firstMoveMaker", gameScreen.gameState.getFirstMoveMaker().getValue());
-            socket.emit("startGame", outData);
+            }
           } else {
             if (inData.get("takenAlliance").equals("WHITE")) {
               gameScreen.gameState.setMyAlliance(Alliance.BLACK);
+              gameScreen.gameState.setMyPlayer(gameScreen.playerBlack, mySocketId);
               gameScreen.initBoard(true);
             } else {
               gameScreen.gameState.setMyAlliance(Alliance.WHITE);
+              gameScreen.gameState.setMyPlayer(gameScreen.playerWhite, mySocketId);
               gameScreen.initBoard(false);
             }
-
-            if (inData.get("firstMoveMaker").equals("WHITE"))
-              gameScreen.initGame(Alliance.WHITE);
-            else
-              gameScreen.initGame(Alliance.BLACK);
           }
+
+          outData.put("myAlliance", gameScreen.gameState.getMyAlliance().getValue());
+          socket.emit("playerReady", outData);
         } catch (JSONException e) {
           Gdx.app.log("SocketIO", "Error setting up game");
         }
       }
-    }).on("newPlayer", new Emitter.Listener() {
+    }).on("playersHandshake", new Emitter.Listener() {
       @Override
       public void call(Object... args) {
         JSONObject data = (JSONObject) args[0];
-        try {
-          String id = data.getString("id");
-          Gdx.app.log("SocketIO", "New Player Connect: " + id);
-        } catch (JSONException e) {
-          Gdx.app.log("SocketIO", "Error getting New Player ID");
+        if (data != null) {
+          try {
+            String firstMoveMaker = data.getString("firstMoveMaker");
+            // Check if both players are set
+            if (gameScreen.gameState.getMyPlayer() != null &&
+                gameScreen.gameState.getEnemyPlayer() != null) {
+              if (firstMoveMaker.equals("WHITE"))
+                gameScreen.initGame(Alliance.WHITE);
+              else
+                gameScreen.initGame(Alliance.BLACK);
+              Gdx.app.log("SocketIO", "Game Started! First Move: " + firstMoveMaker);
+            } else {
+              Gdx.app.log("Game", "Game initialization failed. Missing player");
+            }
+          } catch (JSONException e) {
+            Gdx.app.log("SocketIO", "ERROR players handshake");
+          }
         }
       }
     }).on("makeTurnMove", new Emitter.Listener() {
@@ -134,6 +192,7 @@ public class ServerSocket {
   public void updateMove(int turnId, int srcTileId, int tgtTileId) {
     JSONObject data = new JSONObject();
     try {
+      data.put("socketId", mySocketId);
       data.put("turnId", turnId);
       data.put("srcTileId", srcTileId);
       data.put("tgtTileId", tgtTileId);
