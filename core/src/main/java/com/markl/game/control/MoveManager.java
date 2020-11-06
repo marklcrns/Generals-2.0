@@ -62,8 +62,6 @@ public class MoveManager {
         serverSocket.updateMove(newMove.getTurnId(), newMove.getSrcTileId(), newMove.getTgtTileId());
       }
       Gdx.app.log("Move", "Update move by Player: " + newMove.getPlayer().getPlayerId());
-
-      Gdx.app.log("MoveHistory", "" + board.getMoveHistory().size());
     } else {
       // Move piece back to original position
       pieceUIManager.animatePieceUIMove(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);

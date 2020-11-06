@@ -39,7 +39,10 @@ io.on('connection', (socket) => {
 
     socket.emit('socketId', { id: socket.id, });
     socket.broadcast.emit('newPlayer', { id: socket.id });
-    socket.emit('getPlayers', { players: players });
+
+    if (players.length > 0) {
+        socket.emit('getPlayers', { players: players });
+    }
 
     if (hostPlayerId == null) {
         console.log("Setting up game host...");

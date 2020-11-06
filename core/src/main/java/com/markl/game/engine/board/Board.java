@@ -32,8 +32,9 @@ public class Board {
    * Constructor function that takes in Game as a parameter
    * @param game {@link GameState} instance.
    */
-  public Board(GameState game) {
-    this.gameState = game;
+  public Board(GameState gameState) {
+    gameState.setBoard(this);
+    this.gameState = gameState;
     this.initBoard();
   }
 
@@ -43,6 +44,8 @@ public class Board {
   private void initBoard() {
     this.tiles = new LinkedList<Tile>();
     this.moveHistory = new HashMap<Integer, Move>();
+    this.playerBlack = new Player(Alliance.BLACK);
+    this.playerWhite = new Player(Alliance.WHITE);
     clearBoard();
   }
 
@@ -223,12 +226,14 @@ public class Board {
   public Player getPlayer(final Alliance alliance) {
     if (alliance == Alliance.BLACK)
       return this.playerBlack;
+
     return this.playerWhite;
   }
 
   public Map<Integer, Move> getMoveHistory() {
     if (moveHistory != null)
       return this.moveHistory;
+
     return null;
   }
 

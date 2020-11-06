@@ -99,12 +99,9 @@ public class GameScreen implements Screen {
     this.moveManager = new MoveManager(this, true);
 
     this.builder = new BoardBuilder(board);
-    this.playerBlack = new Player(Alliance.BLACK);
-    this.playerWhite = new Player(Alliance.WHITE);
 
     // Initialize TileUI List
     this.tilesUI = new LinkedList<TileUI>();
-
   }
 
   @Override
@@ -239,8 +236,6 @@ public class GameScreen implements Screen {
 
   public void initGame() {
     // Create initial board arrangement and start game
-    board.setPlayerBlack(playerBlack);
-    board.setPlayerWhite(playerWhite);
     builder.createDemoBoardBuild();
     builder.build(true);
     board.initGame();
@@ -251,8 +246,6 @@ public class GameScreen implements Screen {
 
   public void initGame(Alliance firstMoveMaker) {
     // Create initial board arrangement with firstMoveMaker and start game
-    board.setPlayerBlack(playerBlack);
-    board.setPlayerWhite(playerWhite);
     builder.createDemoBoardBuild();
     builder.build(true);
     board.initGame();

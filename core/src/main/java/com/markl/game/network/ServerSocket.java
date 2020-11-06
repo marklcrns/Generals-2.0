@@ -72,9 +72,9 @@ public class ServerSocket {
           // Add new player as enemy player
           if (otherPlayersSocketId.size() == 1) {
             if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
-              gameScreen.gameState.setEnemyPlayer(gameScreen.playerBlack, newPlayerSocketId);
+              gameScreen.gameState.setEnemyPlayer(Alliance.BLACK, newPlayerSocketId);
             } else {
-              gameScreen.gameState.setEnemyPlayer(gameScreen.playerWhite, newPlayerSocketId);
+              gameScreen.gameState.setEnemyPlayer(Alliance.WHITE, newPlayerSocketId);
             }
           }
           Gdx.app.log("SocketIO", "New Player Connect: " + newPlayerSocketId);
@@ -90,15 +90,18 @@ public class ServerSocket {
           JSONArray players = data.getJSONArray("players");
           // Add all existing players
           if (players.length() > 0) {
+            String playerSocketId;
             for (int i = 0; i < players.length(); i++) {
               JSONObject player = players.getJSONObject(i);
-              otherPlayersSocketId.add(player.getString("id"));
+              playerSocketId = player.getString("id");
+              otherPlayersSocketId.add(playerSocketId);
+              Gdx.app.log("SocketIO", "New Player Connect: " + playerSocketId);
               // Add enemy player
               if (otherPlayersSocketId.size() == 1) {
                 if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
-                  gameScreen.gameState.setEnemyPlayer(gameScreen.playerBlack, player.getString("id"));
+                  gameScreen.gameState.setEnemyPlayer(Alliance.BLACK, playerSocketId);
                 } else {
-                  gameScreen.gameState.setEnemyPlayer(gameScreen.playerWhite, player.getString("id"));
+                  gameScreen.gameState.setEnemyPlayer(Alliance.WHITE, playerSocketId);
                 }
               }
             }
@@ -120,20 +123,20 @@ public class ServerSocket {
           if (isClientHost) {
             gameScreen.gameState.setRandomMyAlliance();
             if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
-              gameScreen.gameState.setMyPlayer(gameScreen.playerWhite, mySocketId);
+              gameScreen.gameState.setMyPlayer(Alliance.WHITE, mySocketId);
               gameScreen.initBoard(false);
             } else {
-              gameScreen.gameState.setMyPlayer(gameScreen.playerBlack, mySocketId);
+              gameScreen.gameState.setMyPlayer(Alliance.BLACK, mySocketId);
               gameScreen.initBoard(true);
             }
           } else {
             if (inData.get("takenAlliance").equals("WHITE")) {
               gameScreen.gameState.setMyAlliance(Alliance.BLACK);
-              gameScreen.gameState.setMyPlayer(gameScreen.playerBlack, mySocketId);
+              gameScreen.gameState.setMyPlayer(Alliance.BLACK, mySocketId);
               gameScreen.initBoard(true);
             } else {
               gameScreen.gameState.setMyAlliance(Alliance.WHITE);
-              gameScreen.gameState.setMyPlayer(gameScreen.playerWhite, mySocketId);
+              gameScreen.gameState.setMyPlayer(Alliance.WHITE, mySocketId);
               gameScreen.initBoard(false);
             }
           }
@@ -173,7 +176,6 @@ public class ServerSocket {
         JSONObject data = (JSONObject) args[0];
         if (data != null) {
           try {
-            Gdx.app.log("SocketIO", "Move received!");
             int turnId = data.getInt("turnId");
             int srcTileId = data.getInt("srcTileId");
             int tgtTileId = data.getInt("tgtTileId");
@@ -197,7 +199,6 @@ public class ServerSocket {
       data.put("srcTileId", srcTileId);
       data.put("tgtTileId", tgtTileId);
       socket.emit("makeTurnMove", data);
-      Gdx.app.log("SocketIO", "Move sent!");
     } catch(JSONException e) {
       Gdx.app.log("SOCKET.IO", "Error sending makeTurnMove update");
     }
