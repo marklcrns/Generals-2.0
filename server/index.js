@@ -9,6 +9,7 @@ let hostPlayerId = null;
 let players = [];
 
 // In-game variables
+let isGameRunning = false;
 let currentTurn = 0;
 let currentMoveMaker = null;
 let moveHistory = [];
@@ -39,10 +40,7 @@ io.on('connection', (socket) => {
 
     socket.emit('socketId', { id: socket.id, });
     socket.broadcast.emit('newPlayer', { id: socket.id });
-
-    if (players.length > 0) {
-        socket.emit('getPlayers', { players: players });
-    }
+    players.push(new player(socket.id, null));
 
     if (hostPlayerId == null) {
         console.log("Setting up game host...");
@@ -51,24 +49,24 @@ io.on('connection', (socket) => {
             isClientHost: true
         });
     } else {
+        socket.emit('getPlayers', { players: players });
         console.log("Connecting to game host...");
         socket.emit('setupGame', {
             isClientHost: false,
-            takenAlliance: players[0].alliance,
         });
     }
 
     socket.on('playerReady', (data) => {
-        myAlliance = data.myAlliance;
-        players.push(new player(socket.id, data.myAlliance));
-
-        console.log("players: " + players.length)
+        console.log("players length: " + players.length)
 
         // Start game
-        if (players.length == 2) {
+        if (data.isReady && players.length >= 2) {
             startGame();
-            socket.emit('playersHandshake', { firstMoveMaker: firstMoveMakerAlliance })
-            socket.broadcast.emit('playersHandshake', { firstMoveMaker: firstMoveMakerAlliance })
+
+            io.sockets.emit('playersHandshake', {
+                players: players,
+                firstMoveMaker: firstMoveMakerAlliance
+            })
 
             console.log("Host Alliance: " + players[0].alliance);
             console.log("First Move: " + firstMoveMakerAlliance);
@@ -76,7 +74,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('makeTurnMove', (data) => {
-        if (data.turnId == currentTurn) {
+        // Validate turn ID and move maker then broadcast move
+        if (isGameRunning && data.turnId == currentTurn &&
+            currentMoveMaker == data.socketId) {
             let newMove = new move(data.socketId, data.turnId, data.srcTileId, data.tgtTileId)
             moveHistory.push(newMove);
             currentTurn++;
@@ -91,23 +91,37 @@ io.on('connection', (socket) => {
 });
 
 function startGame() {
+    assignAllianceRandomly();
     randomFirstMove();
     currentTurn = 1;
-    currentMoveMaker = firstMoveMakerAlliance;
+    isGameRunning = true;
+}
+
+function assignAllianceRandomly() {
+    if (Math.random() < 0.5) {
+        players[0].alliance = "WHITE";
+        players[1].alliance = "BLACK";
+    } else {
+        players[1].alliance = "WHITE";
+        players[0].alliance = "BLACK";
+    }
 }
 
 function randomFirstMove() {
-    if (Math.random() < 0.5)
-        firstMoveMakerAlliance = "WHITE";
-    else
-        firstMoveMakerAlliance = "BLACK";
+    if (Math.random() < 0.5) {
+        firstMoveMakerAlliance = players[0].alliance;
+        currentMoveMaker = players[0].id;
+    } else {
+        firstMoveMakerAlliance = players[1].alliance;
+        currentMoveMaker = players[1].id;
+    }
 }
 
 function switchMoveMaker() {
-    if (currentMoveMaker == "WHITE")
-        currentMoveMaker = "BLACK";
+    if (currentMoveMaker == players[0].id)
+        currentMoveMaker = players[1].id;
     else
-        currentMoveMaker = "WHITE";
+        currentMoveMaker = players[0].id;
 }
 
 function resetGame() {
@@ -115,6 +129,7 @@ function resetGame() {
     hostPlayerId = null;
     players = [];
     moveHistory = []
+    isGameRunning = false;
     currentTurn = 0;
     currentMoveMaker = null;
 }

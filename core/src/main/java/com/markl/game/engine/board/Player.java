@@ -17,11 +17,11 @@ public class Player {
     this.alliance = alliance;
   }
 
-  public String getPlayerId() {
+  public String getId() {
     return this.playerId;
   }
 
-  public void setPlayerId(String socketId) {
+  public void setId(String socketId) {
     this.playerId = socketId;
   }
 

@@ -69,15 +69,8 @@ public class ServerSocket {
         try {
           String newPlayerSocketId = data.getString("id");
           otherPlayersSocketId.add(newPlayerSocketId);
-          // Add new player as enemy player
-          if (otherPlayersSocketId.size() == 1) {
-            if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
-              gameScreen.gameState.setEnemyPlayer(Alliance.BLACK, newPlayerSocketId);
-            } else {
-              gameScreen.gameState.setEnemyPlayer(Alliance.WHITE, newPlayerSocketId);
-            }
-          }
-          Gdx.app.log("SocketIO", "New Player Connect: " + newPlayerSocketId);
+
+          Gdx.app.log("SocketIO", "New Player Connected: " + newPlayerSocketId);
         } catch (JSONException e) {
           Gdx.app.log("SocketIO", "Error getting New Player ID");
         }
@@ -94,18 +87,12 @@ public class ServerSocket {
             for (int i = 0; i < players.length(); i++) {
               JSONObject player = players.getJSONObject(i);
               playerSocketId = player.getString("id");
-              otherPlayersSocketId.add(playerSocketId);
-              Gdx.app.log("SocketIO", "New Player Connect: " + playerSocketId);
-              // Add enemy player
-              if (otherPlayersSocketId.size() == 1) {
-                if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
-                  gameScreen.gameState.setEnemyPlayer(Alliance.BLACK, playerSocketId);
-                } else {
-                  gameScreen.gameState.setEnemyPlayer(Alliance.WHITE, playerSocketId);
-                }
+
+              if (playerSocketId != mySocketId) {
+                otherPlayersSocketId.add(playerSocketId);
+                Gdx.app.log("SocketIO", "New Player Connected: " + playerSocketId);
               }
             }
-            Gdx.app.log("SocketIO", "Existing players: " + players.length());
           }
         } catch (JSONException e) {
           Gdx.app.log("SocketIO", "Error getting ID");
@@ -117,31 +104,9 @@ public class ServerSocket {
         JSONObject inData = (JSONObject) args[0];
         JSONObject outData = new JSONObject();
         try {
-          boolean isClientHost = inData.getBoolean("isClientHost");
           Gdx.app.log("SocketIO", "Setting up game");
 
-          if (isClientHost) {
-            gameScreen.gameState.setRandomMyAlliance();
-            if (gameScreen.gameState.getMyAlliance() == Alliance.WHITE) {
-              gameScreen.gameState.setMyPlayer(Alliance.WHITE, mySocketId);
-              gameScreen.initBoard(false);
-            } else {
-              gameScreen.gameState.setMyPlayer(Alliance.BLACK, mySocketId);
-              gameScreen.initBoard(true);
-            }
-          } else {
-            if (inData.get("takenAlliance").equals("WHITE")) {
-              gameScreen.gameState.setMyAlliance(Alliance.BLACK);
-              gameScreen.gameState.setMyPlayer(Alliance.BLACK, mySocketId);
-              gameScreen.initBoard(true);
-            } else {
-              gameScreen.gameState.setMyAlliance(Alliance.WHITE);
-              gameScreen.gameState.setMyPlayer(Alliance.WHITE, mySocketId);
-              gameScreen.initBoard(false);
-            }
-          }
-
-          outData.put("myAlliance", gameScreen.gameState.getMyAlliance().getValue());
+          outData.put("isReady", true);
           socket.emit("playerReady", outData);
         } catch (JSONException e) {
           Gdx.app.log("SocketIO", "Error setting up game");
@@ -153,15 +118,50 @@ public class ServerSocket {
         JSONObject data = (JSONObject) args[0];
         if (data != null) {
           try {
+            JSONArray players = data.getJSONArray("players");
             String firstMoveMaker = data.getString("firstMoveMaker");
+
+            for (int i = 0; i < players.length(); i++) {
+              JSONObject player = players.getJSONObject(i);
+              // Set my player
+              if (player.getString("id").equals(mySocketId)) {
+                Gdx.app.log("SocketIO", "My player id: " + player.getString("id"));
+                Gdx.app.log("SocketIO", "alliance: " + player.getString("alliance"));
+                if (player.getString("alliance").equals("WHITE")) {
+                  gameScreen.gameState.setMyPlayer(Alliance.WHITE, player.getString("id"));
+                  gameScreen.isBoardInverted = false;
+                } else {
+                  gameScreen.gameState.setMyPlayer(Alliance.BLACK, player.getString("id"));
+                  gameScreen.isBoardInverted = true;
+                }
+              // Set enemy player
+              } else if (player.getString("id").equals(otherPlayersSocketId.get(0))) {
+                Gdx.app.log("SocketIO", "Enemy player id: " + player.getString("id"));
+                Gdx.app.log("SocketIO", "alliance: " + player.getString("alliance"));
+                if (player.getString("alliance").equals("WHITE")) {
+                  gameScreen.gameState.setEnemyPlayer(Alliance.WHITE, player.getString("id"));
+                } else {
+                  gameScreen.gameState.setEnemyPlayer(Alliance.BLACK, player.getString("id"));
+                }
+              }
+            }
+
             // Check if both players are set
             if (gameScreen.gameState.getMyPlayer() != null &&
                 gameScreen.gameState.getEnemyPlayer() != null) {
+
+              gameScreen.initBoard();
+
               if (firstMoveMaker.equals("WHITE"))
                 gameScreen.initGame(Alliance.WHITE);
               else
                 gameScreen.initGame(Alliance.BLACK);
+
               Gdx.app.log("SocketIO", "Game Started! First Move: " + firstMoveMaker);
+              Gdx.app.log("Game", "myAlliance: " + gameScreen.gameState.getMyAlliance());
+              Gdx.app.log("Game", "mySocketId: " + gameScreen.gameState.getMyPlayer().getId());
+              Gdx.app.log("Game", "enemySocketId: " + gameScreen.gameState.getEnemyPlayer().getId());
+
             } else {
               Gdx.app.log("Game", "Game initialization failed. Missing player");
             }

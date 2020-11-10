@@ -72,6 +72,7 @@ public class GameScreen implements Screen {
   public LinkedList<TileUI> tilesUI;  // List of all Tiles containing data of each piece
   public Map<String, Texture> blackPiecesTex = new HashMap<>();
   public Map<String, Texture> whitePiecesTex = new HashMap<>();
+  public boolean isBoardInverted;
 
   // TODO: Debug
   public float tX = -1;
@@ -94,14 +95,13 @@ public class GameScreen implements Screen {
     // Initialize GoG game engine
     this.gameState = new GameState();
     this.board = new Board(gameState);
-    this.serverSocket = new ServerSocket("localhost", 8080, this);
     this.pieceUIManager = new PieceUIManager(this);
-    this.moveManager = new MoveManager(this, true);
-
     this.builder = new BoardBuilder(board);
-
+    this.moveManager = new MoveManager(this, true);
     // Initialize TileUI List
     this.tilesUI = new LinkedList<TileUI>();
+    // Connect to server
+    this.serverSocket = new ServerSocket("localhost", 8080, this);
   }
 
   @Override
@@ -181,7 +181,7 @@ public class GameScreen implements Screen {
     shapeRend.dispose();
   }
 
-  public void initBoard(boolean isInverted) {
+  public void initBoard() {
     for (int i = 0; i < TOTAL_BOARD_TILES; i++) {
 
       float tileWidth = TILE_SIZE;
@@ -189,7 +189,7 @@ public class GameScreen implements Screen {
       float tileX = getTileColNum(i) * tileWidth + BOARD_X_OFFSET;
       // Invert Y to have tiles arranged left to right, top to bottom
       float tileY;
-      if (isInverted) {
+      if (isBoardInverted) {
         tileY = (getTileRowNum(i) * TILE_SIZE) + BOARD_Y_OFFSET;
       } else {
         tileY = (TILE_SIZE * (BOARD_TILES_ROW_COUNT - 1)) -

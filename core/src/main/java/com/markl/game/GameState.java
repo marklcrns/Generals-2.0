@@ -105,15 +105,16 @@ public class GameState {
   public void setMyPlayer(Alliance alliance, String playerId) {
     if (currentTurnId == 0) {
       Player player = board.getPlayer(alliance);
-      player.setPlayerId(playerId);
+      player.setId(playerId);
       this.myPlayer = player;
+      this.myAlliance = alliance;
     }
   }
 
   public void setEnemyPlayer(Alliance alliance, String playerId) {
     if (currentTurnId == 0) {
       Player player = board.getPlayer(alliance);
-      player.setPlayerId(playerId);
+      player.setId(playerId);
       this.enemyPlayer = player;
     }
   }
