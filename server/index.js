@@ -81,9 +81,9 @@ io.on('connection', (socket) => {
             moveHistory.push(newMove);
             currentTurn++;
             switchMoveMaker();
-            console.log(moveHistory.length);
-            console.log("playerId: " + newMove.playerId + "; turnId: "+ newMove.turnId +
-                        "; from: " + newMove.srcTileId + "; to: " + newMove.tgtTileId);
+            console.log("[ " + moveHistory.length + " ] playerId: " + newMove.playerId +
+                        "; turnId: "+ newMove.turnId + "; from: " + newMove.srcTileId +
+                        "; to: " + newMove.tgtTileId);
             socket.broadcast.emit('makeTurnMove', data);
         }
     });

@@ -61,11 +61,11 @@ public class GameScreen implements Screen {
   private Stage stage;
   private ShapeRenderer shapeRend;
 
-  public final Application app;
-  public final GameState gameState;
-  public final Board board;
-  public final PieceUIManager pieceUIManager;
-  public final MoveManager moveManager;
+  public Application app;
+  public GameState gameState;
+  public Board board;
+  public PieceUIManager pieceUIManager;
+  public MoveManager moveManager;
   public BoardBuilder builder;
   public Player playerBlack;
   public Player playerWhite;
@@ -92,14 +92,10 @@ public class GameScreen implements Screen {
     this.stage = new Stage(new StretchViewport(Application.V_WIDTH, Application.V_HEIGHT, app.camera));
     Gdx.input.setInputProcessor(stage);
 
-    // Initialize GoG game engine
-    this.gameState = new GameState();
-    this.board = new Board(gameState);
-    this.pieceUIManager = new PieceUIManager(this);
-    this.builder = new BoardBuilder(board);
-    this.moveManager = new MoveManager(this, true);
     // Initialize TileUI List
     this.tilesUI = new LinkedList<TileUI>();
+    this.pieceUIManager = new PieceUIManager(this);
+
     // Connect to server
     this.serverSocket = new ServerSocket("localhost", 8080, this);
   }
@@ -129,28 +125,31 @@ public class GameScreen implements Screen {
     // Update stage
     update(delta);
 
-    // Draw board -> tile highlights -> piece actors
-    app.batch.begin();
-    drawBoard();
-    drawTileHighlights();
-    stage.draw();
-
     String currTurnMaker;
-    if (gameState.getCurrentTurnMaker() != null)
-      currTurnMaker = gameState.getCurrentTurnMaker().getAlliance().name();
-    else
-      currTurnMaker = "WAITING";
+    int currTurn;
 
-    int currTurn = gameState.getCurrTurn();
+    if (gameState != null) {
+      // Draw board -> tile highlights -> piece actors
+      app.batch.begin();
+      drawBoard();
+      drawTileHighlights();
+      stage.draw();
 
-    app.font.draw(app.batch, "PLAYER: " + currTurnMaker, 0, Application.V_HEIGHT);
-    app.font.draw(app.batch, "TURN: " + currTurn, BOARD_X_OFFSET, BOARD_Y_OFFSET);
-    app.batch.end();
+      if (gameState.isRunning())
+        currTurnMaker = gameState.getCurrentTurnMaker().getAlliance().name();
+      else
+        currTurnMaker = "WAITING";
 
-    // For debug
-    app.batch.begin();
-    drawTileSnapLinePath();
-    app.batch.end();
+      currTurn = gameState.getCurrTurn();
+      app.font.draw(app.batch, "PLAYER: " + currTurnMaker, 0, Application.V_HEIGHT);
+      app.font.draw(app.batch, "TURN: " + currTurn, BOARD_X_OFFSET, BOARD_Y_OFFSET);
+      app.batch.end();
+
+      // For debug
+      app.batch.begin();
+      drawTileSnapLinePath();
+      app.batch.end();
+    }
   }
 
   @Override
@@ -181,7 +180,15 @@ public class GameScreen implements Screen {
     shapeRend.dispose();
   }
 
-  public void initBoard() {
+  public void initEngine(boolean isOnline) {
+    // Initialize GoG game engine
+    this.gameState = new GameState();
+    this.board = new Board(gameState);
+    this.builder = new BoardBuilder(board);
+    this.moveManager = new MoveManager(this, isOnline);
+  }
+
+  public void initBoardUI() {
     for (int i = 0; i < TOTAL_BOARD_TILES; i++) {
 
       float tileWidth = TILE_SIZE;
@@ -197,7 +204,7 @@ public class GameScreen implements Screen {
       }
 
       TileUI newTileUI = new TileUI(i, tileX, tileY, tileWidth, tileHeight);
-      tilesUI.add(newTileUI);
+      this.tilesUI.add(newTileUI);
     }
   }
 
@@ -236,7 +243,7 @@ public class GameScreen implements Screen {
 
   public void initGame() {
     // Create initial board arrangement and start game
-    builder.createDemoBoardBuild();
+    builder.createBoardDemoBuild();
     builder.build(true);
     board.initGame();
     gameState.setRandomFirstMoveMaker();
@@ -246,7 +253,7 @@ public class GameScreen implements Screen {
 
   public void initGame(Alliance firstMoveMaker) {
     // Create initial board arrangement with firstMoveMaker and start game
-    builder.createDemoBoardBuild();
+    builder.createBoardDemoBuild();
     builder.build(true);
     board.initGame();
     gameState.setFirstMoveMaker(firstMoveMaker);

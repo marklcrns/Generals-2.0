@@ -88,9 +88,9 @@ public class ServerSocket {
               JSONObject player = players.getJSONObject(i);
               playerSocketId = player.getString("id");
 
-              if (playerSocketId != mySocketId) {
+              if (!playerSocketId.equals(mySocketId)) {
                 otherPlayersSocketId.add(playerSocketId);
-                Gdx.app.log("SocketIO", "New Player Connected: " + playerSocketId);
+                Gdx.app.log("SocketIO", "Player Added: " + playerSocketId);
               }
             }
           }
@@ -105,7 +105,7 @@ public class ServerSocket {
         JSONObject outData = new JSONObject();
         try {
           Gdx.app.log("SocketIO", "Setting up game");
-
+          gameScreen.initEngine(true);
           outData.put("isReady", true);
           socket.emit("playerReady", outData);
         } catch (JSONException e) {
@@ -125,8 +125,7 @@ public class ServerSocket {
               JSONObject player = players.getJSONObject(i);
               // Set my player
               if (player.getString("id").equals(mySocketId)) {
-                Gdx.app.log("SocketIO", "My player id: " + player.getString("id"));
-                Gdx.app.log("SocketIO", "alliance: " + player.getString("alliance"));
+                Gdx.app.log("SocketIO", "My player id: " + player.getString("id") + "; alliance: " + player.getString("alliance"));
                 if (player.getString("alliance").equals("WHITE")) {
                   gameScreen.gameState.setMyPlayer(Alliance.WHITE, player.getString("id"));
                   gameScreen.isBoardInverted = false;
@@ -136,8 +135,7 @@ public class ServerSocket {
                 }
               // Set enemy player
               } else if (player.getString("id").equals(otherPlayersSocketId.get(0))) {
-                Gdx.app.log("SocketIO", "Enemy player id: " + player.getString("id"));
-                Gdx.app.log("SocketIO", "alliance: " + player.getString("alliance"));
+                Gdx.app.log("SocketIO", "Enemy player id: " + player.getString("id") + "; alliance: " + player.getString("alliance"));
                 if (player.getString("alliance").equals("WHITE")) {
                   gameScreen.gameState.setEnemyPlayer(Alliance.WHITE, player.getString("id"));
                 } else {
@@ -150,7 +148,7 @@ public class ServerSocket {
             if (gameScreen.gameState.getMyPlayer() != null &&
                 gameScreen.gameState.getEnemyPlayer() != null) {
 
-              gameScreen.initBoard();
+              gameScreen.initBoardUI();
 
               if (firstMoveMaker.equals("WHITE"))
                 gameScreen.initGame(Alliance.WHITE);
