@@ -48,11 +48,26 @@ public class BoardBuilder {
     this.playerWhite = board.getPlayer(Alliance.WHITE);
   }
 
+  // TODO: For debugging ONLY. Removed later  <07-10-20, yourname> //
+  public void createTestBuild() {
+    final Alliance black = Alliance.BLACK;
+    final Alliance white = Alliance.WHITE;
+    final int[] row = {0, 8, 17, 26}; // Start Tile row index.
+
+    // Black territory
+    int boardOffset = 0;
+    setPiece(new GeneralFour(this.board, playerBlack, black, boardOffset + row[3] + 4), false);
+
+    // White territory
+    boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
+    setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[0] + 4), false);
+  }
+
   /**
    * Method that creates a sample demo board configuration.
    * @return this with pre-made board configuration.
    */
-  public void createDemoBoardBuild() {
+  public void createBoardDemoBuild() {
     final Alliance black = Alliance.BLACK;
     final Alliance white = Alliance.WHITE;
     final int[] row = {0, 8, 17, 26}; // Start Tile row index.
@@ -114,26 +129,11 @@ public class BoardBuilder {
     setPiece(new Major(this.board, playerWhite, white, boardOffset + row[3] + 8), false);
   }
 
-  // TODO: For debugging ONLY. Removed later  <07-10-20, yourname> //
-  public void createTestBuild() {
-    final Alliance black = Alliance.BLACK;
-    final Alliance white = Alliance.WHITE;
-    final int[] row = {0, 8, 17, 26}; // Start Tile row index.
-
-    // Black territory
-    int boardOffset = 0;
-    setPiece(new GeneralFour(this.board, playerBlack, black, boardOffset + row[3] + 4), false);
-
-    // White territory
-    boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
-    setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[0] + 4), false);
-  }
-
   /**
    * Method thats creates random board configuration.
    * @return this with random board configuration.
    */
-  public void createRandomBuild() {
+  public void createBoardRandomBuild() {
     final int[] occupiedTiles = {};
 
     // Black pieces
@@ -191,6 +191,69 @@ public class BoardBuilder {
   }
 
   /**
+   * Creates random build on specified territory
+   * @param alliance    Alliance to build territory randomly
+   */
+  public void createTerritoryRandomBuild(Alliance alliance) {
+    final int[] occupiedTiles = {};
+
+    if (alliance == Alliance.BLACK) {
+      // Black pieces
+      final int[] blackTerritoryBounds = {0, (BoardUtils.TOTAL_BOARD_TILES / 2) - 1};
+      final List<Piece> tmpBlackPiecesList = new ArrayList<>();
+
+      tmpBlackPiecesList.add(new GeneralFive(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralFour(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralThree(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralTwo(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralOne(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Colonel(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new LtCol(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Major(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Captain(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new LtOne(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new LtTwo(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Sergeant(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Private(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Flag(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Spy(this.board, playerBlack, Alliance.BLACK));
+
+      // Sets black pieces randomly excluding already occupied tiles.
+      for (final Piece piece : tmpBlackPiecesList) {
+        setAllPieceInstanceRandomly(piece, blackTerritoryBounds[0],
+            blackTerritoryBounds[1], occupiedTiles);
+      }
+    } else {
+      // White pieces
+      final int[] whiteTerritoryBounds = {BoardUtils.TOTAL_BOARD_TILES / 2,
+        (BoardUtils.TOTAL_BOARD_TILES) - 1};
+      final List<Piece> tmpWhitePiecesList = new ArrayList<>();
+
+      tmpWhitePiecesList.add(new GeneralFive(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralFour(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralThree(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralTwo(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralOne(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Colonel(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new LtCol(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Major(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Captain(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new LtOne(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new LtTwo(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Sergeant(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Private(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Flag(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Spy(this.board, playerWhite, Alliance.WHITE));
+
+      // Sets white pieces randomly excluding already occupied tiles.
+      for (final Piece piece : tmpWhitePiecesList) {
+        setAllPieceInstanceRandomly(piece, whiteTerritoryBounds[0],
+            whiteTerritoryBounds[1], occupiedTiles);
+      }
+    }
+  }
+
+  /**
    * Builds board pieces initial arrangement.
    * Debug mode skips board configuration size check.
    *
@@ -214,8 +277,7 @@ public class BoardBuilder {
       }
     };
     this.board.setBlackPiecesLeft(this.blackPiecesCount);
-    this.board.setWhitePiecesLeft(this.whitePiecesCount);
-  }
+    this.board.setWhitePiecesLeft(this.whitePiecesCount); }
 
   /**
    * Sets piece in designated Tile id.

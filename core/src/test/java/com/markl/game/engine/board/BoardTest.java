@@ -128,7 +128,7 @@ class BoardTest {
   @Test
   @DisplayName("Test Board.discardPieces()")
   void discardPiecesTest() {
-    this.builder.createDemoBoardBuild();
+    this.builder.createBoardDemoBuild();
     this.builder.build(false);
 
     assertTrue(this.board.getTile(0).isTileOccupied());
