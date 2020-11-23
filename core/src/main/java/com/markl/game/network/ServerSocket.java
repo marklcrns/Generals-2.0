@@ -1,16 +1,23 @@
 package com.markl.game.network;
 
+import static com.markl.game.engine.board.BoardUtils.pieceInstanceCreator;
+
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.markl.game.engine.board.Alliance;
+import com.markl.game.engine.board.Player;
+import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.ui.screen.GameScreen;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.socket.client.Ack;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -102,12 +109,28 @@ public class ServerSocket {
       @Override
       public void call(Object... args) {
         JSONObject inData = (JSONObject) args[0];
-        JSONObject outData = new JSONObject();
+        JSONArray outDataArray = new JSONArray();
         try {
           Gdx.app.log("SocketIO", "Setting up game");
+
+          Alliance myAlliance;
+          if (inData.getString("myAlliance").equals("WHITE"))
+            myAlliance = Alliance.WHITE;
+          else
+            myAlliance = Alliance.BLACK;
+
           gameScreen.initEngine(true);
-          outData.put("isReady", true);
-          socket.emit("playerReady", outData);
+          gameScreen.boardBuilder.createTerritoryRandomBuild(myAlliance);
+          LinkedHashMap<Integer, Piece> boardConfig = gameScreen.boardBuilder.getBoardConfig();
+
+          for (final Map.Entry<Integer, Piece> entry : boardConfig.entrySet()) {
+            outDataArray.put(entry.getValue());
+          }
+
+          // TODO continue building territorial piece for player independently
+          // then pass in board configs into outData
+
+          socket.emit("playerReady", outDataArray);
         } catch (JSONException e) {
           Gdx.app.log("SocketIO", "Error setting up game");
         }
@@ -120,6 +143,7 @@ public class ServerSocket {
           try {
             JSONArray players = data.getJSONArray("players");
             String firstMoveMaker = data.getString("firstMoveMaker");
+            JSONArray boardConfig = data.getJSONArray("boardConfig");
 
             for (int i = 0; i < players.length(); i++) {
               JSONObject player = players.getJSONObject(i);
@@ -147,6 +171,36 @@ public class ServerSocket {
             // Check if both players are set
             if (gameScreen.gameState.getMyPlayer() != null &&
                 gameScreen.gameState.getEnemyPlayer() != null) {
+
+              Gdx.app.log("SocketIO", "Board Config: " + boardConfig.length());
+              for (int i = 0; i < boardConfig.length(); i++) {
+                JSONArray piece = (JSONArray) boardConfig.getJSONArray(i);
+
+                String rank = piece.getJSONObject(1).getString("rank");
+                int tileId = Integer.parseInt(piece.getJSONObject(1).getString("tileId"));
+                Player owner;
+                Alliance alliance;
+
+                if (piece.getJSONObject(1).getString("owner").equals("WHITE"))
+                  owner = gameScreen.board.getPlayer(Alliance.WHITE);
+                else
+                  owner = gameScreen.board.getPlayer(Alliance.BLACK);
+
+                if (piece.getJSONObject(1).getString("alliance").equals("WHITE"))
+                  alliance = Alliance.WHITE;
+                else
+                  alliance = Alliance.BLACK;
+
+                Piece newPiece = pieceInstanceCreator(gameScreen.board, rank, owner, alliance);
+                newPiece.setPieceTileId(tileId);
+
+                gameScreen.boardBuilder.setPiece(newPiece, false);
+                Gdx.app.log("SocketIO",
+                            "rank=" + rank +
+                            ";tileId=" + tileId +
+                            ";owner=" + owner +
+                            ";alliance=" + alliance);
+              }
 
               gameScreen.initBoardUI();
 

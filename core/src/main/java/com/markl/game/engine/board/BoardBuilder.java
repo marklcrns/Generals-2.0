@@ -261,7 +261,8 @@ public class BoardBuilder {
    */
   public void build(boolean isDebugMode) {
     // Checks if all pieces has been set
-    if (this.boardConfig.size() < 42 && !isDebugMode) {
+    if ((this.boardConfig.size() == 42 || this.boardConfig.size() == 21) &&
+        !isDebugMode) {
       System.out.println("build() FAILED: Missing piece(s).");
       return;
     }

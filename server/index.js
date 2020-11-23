@@ -7,6 +7,7 @@ const port = 8080;
 let firstMoveMakerAlliance = null;
 let hostPlayerId = null;
 let players = [];
+let boardConfig = new Map();
 
 // In-game variables
 let isGameRunning = false;
@@ -19,15 +20,6 @@ http.listen(port, function() {
 });
 
 io.on('connection', (socket) => {
-    // Get all players socket IDs if existing
-    // Broadcast all existing players of a new player connected
-    // Set up game
-        // configure host player
-        // OR
-        // configure new player
-    // listen for players if ready
-    // Player handshake
-    // Startgame if both players connected
 
     socket.on('disconnect', () => {
         if (socket.id == hostPlayerId) {
@@ -43,29 +35,53 @@ io.on('connection', (socket) => {
     players.push(new player(socket.id, null));
 
     if (hostPlayerId == null) {
+        players[0].alliance = "WHITE";
+        // assignAllianceRandomly();
+
         console.log("Setting up game host...");
+
         hostPlayerId = socket.id;
         socket.emit('setupGame', {
-            isClientHost: true
+            isClientHost: true,
+            myAlliance: "WHITE"
         });
     } else {
+        players[1].alliance = "BLACK";
+
         socket.emit('getPlayers', { players: players });
         console.log("Connecting to game host...");
         socket.emit('setupGame', {
             isClientHost: false,
+            myAlliance: "BLACK"
         });
     }
 
     socket.on('playerReady', (data) => {
-        console.log("players length: " + players.length)
+        console.log("players length: " + players.length);
+
+        console.log("data");
+        for (let i = 0; i < data.length; i++) {
+            parsePieceDataString(data[i])
+            console.log(data[i]);
+        }
+
+        console.log("boardConfig");
+        boardConfig.forEach((function(value, key) {
+            console.log(key + ' = ' +
+                        "rank=" + value.rank +
+                        " ;tileId=" + value.tileId +
+                        " ;owner=" + value.owner +
+                        " ;alliance=" + value.alliance);
+        }))
 
         // Start game
-        if (data.isReady && players.length >= 2) {
+        if (players.length >= 2) {
             startGame();
 
             io.sockets.emit('playersHandshake', {
                 players: players,
-                firstMoveMaker: firstMoveMakerAlliance
+                firstMoveMaker: firstMoveMakerAlliance,
+                boardConfig: Array.from(boardConfig)
             })
 
             console.log("Host Alliance: " + players[0].alliance);
@@ -91,7 +107,6 @@ io.on('connection', (socket) => {
 });
 
 function startGame() {
-    assignAllianceRandomly();
     randomFirstMove();
     currentTurn = 1;
     isGameRunning = true;
@@ -128,6 +143,7 @@ function resetGame() {
     firstMoveMakerAlliance = null
     hostPlayerId = null;
     players = [];
+    boardConfig = new Map();
     moveHistory = []
     isGameRunning = false;
     currentTurn = 0;
@@ -144,5 +160,31 @@ function move(playerId, turnId, srcTileId, tgtTileId) {
     this.turnId = turnId;
     this.srcTileId = srcTileId;
     this.tgtTileId = tgtTileId;
+}
+
+function piece(rank, tileId, owner, alliance) {
+    this.rank = rank;
+    this.tileId = tileId;
+    this.owner = owner;
+    this.alliance = alliance;
+}
+
+function parsePieceDataString(data) {
+    let rankKey = 'rank=';
+    let tileIdKey = 'tileId=';
+    let ownerKey = 'owner=';
+    let allianceKey = 'alliance=';
+
+    let rankIdx = data.indexOf(rankKey);
+    let tileIdIdx = data.indexOf(tileIdKey);
+    let ownerIdx = data.indexOf(ownerKey);
+    let allianceIdx = data.indexOf(allianceKey);
+
+    let rank = data.substring(rankIdx + rankKey.length, tileIdIdx - 1);
+    let tileId = parseInt(data.substring(tileIdIdx + tileIdKey.length, ownerIdx - 1));
+    let owner = data.substring(ownerIdx + ownerKey.length, allianceIdx - 1);
+    let alliance = data.substring(allianceIdx + allianceKey.length, data.length);
+
+    boardConfig.set(tileId, new piece(rank, tileId, owner, alliance));
 }
 

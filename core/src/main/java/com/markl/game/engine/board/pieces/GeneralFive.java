@@ -82,9 +82,8 @@ public class GeneralFive extends Piece {
 
   @Override
   public String toString() {
-    return "piece=" + rank + ";powerLevel=" + powerLevel +
-      ";piecetileId=" + tileId +
-      ";legalPieceInstanceCount=" + legalPieceInstanceCount +
+    return "rank=" + rank +
+      ";tileId=" + tileId +
       ";owner=" + owner.getAlliance() +
       ";alliance=" + alliance;
   }

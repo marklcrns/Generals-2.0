@@ -83,9 +83,8 @@ public class GeneralOne extends Piece {
 
   @Override
   public String toString() {
-    return "piece=" + rank + ";powerLevel=" + powerLevel +
+    return "rank=" + rank +
       ";tileId=" + tileId +
-      ";legalPieceInstanceCount=" + legalPieceInstanceCount +
       ";owner=" + owner.getAlliance() +
       ";alliance=" + alliance;
   }

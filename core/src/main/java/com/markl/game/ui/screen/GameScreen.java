@@ -66,7 +66,7 @@ public class GameScreen implements Screen {
   public Board board;
   public PieceUIManager pieceUIManager;
   public MoveManager moveManager;
-  public BoardBuilder builder;
+  public BoardBuilder boardBuilder;
   public Player playerBlack;
   public Player playerWhite;
   public LinkedList<TileUI> tilesUI;  // List of all Tiles containing data of each piece
@@ -184,7 +184,7 @@ public class GameScreen implements Screen {
     // Initialize GoG game engine
     this.gameState = new GameState();
     this.board = new Board(gameState);
-    this.builder = new BoardBuilder(board);
+    this.boardBuilder = new BoardBuilder(board);
     this.moveManager = new MoveManager(this, isOnline);
   }
 
@@ -243,8 +243,8 @@ public class GameScreen implements Screen {
 
   public void initGame() {
     // Create initial board arrangement and start game
-    builder.createBoardDemoBuild();
-    builder.build(true);
+    // boardBuilder.createBoardDemoBuild();
+    boardBuilder.build(true);
     board.initGame();
     gameState.setRandomFirstMoveMaker();
     gameState.start();
@@ -253,8 +253,8 @@ public class GameScreen implements Screen {
 
   public void initGame(Alliance firstMoveMaker) {
     // Create initial board arrangement with firstMoveMaker and start game
-    builder.createBoardDemoBuild();
-    builder.build(true);
+    // boardBuilder.createBoardDemoBuild();
+    boardBuilder.build(true);
     board.initGame();
     gameState.setFirstMoveMaker(firstMoveMaker);
     gameState.start();
