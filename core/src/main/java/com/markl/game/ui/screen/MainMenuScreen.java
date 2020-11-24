@@ -1,8 +1,22 @@
 package com.markl.game.ui.screen;
 
+import static com.markl.game.util.Constants.VIEWPORT_HEIGHT;
+import static com.markl.game.util.Constants.VIEWPORT_WIDTH;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.markl.game.ui.Application;
 
 /**
@@ -15,13 +29,69 @@ public class MainMenuScreen implements Screen {
 
   final Application app;
 
+  private Stage stage;
+  private InputMultiplexer inputMultiplexer;
+
   public MainMenuScreen(final Application app) {
     this.app = app;
   }
 
+  public Table createControls() {
+    Table table = new Table();
+    LabelStyle labelStyle = new LabelStyle(app.font, Color.WHITE);
+
+    Label singlePlayer = new Label("Single Player", labelStyle);
+    Label online = new Label("Online", labelStyle);
+    Label quit = new Label("Quit", labelStyle);
+
+    table.row();
+    table.add(singlePlayer).padBottom(25);
+    table.row();
+    table.add(online).padBottom(25);
+    table.row();
+    table.add(quit).padBottom(25);
+
+    online.addListener(new ClickListener() {
+
+      @Override
+      public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+        online.setColor(Color.YELLOW);
+        super.enter(event, x, y, pointer, fromActor);
+      }
+
+      @Override
+      public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+        online.setColor(Color.WHITE);
+        super.exit(event, x, y, pointer, toActor);
+      }
+
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        app.setScreen(new GameScreen(app));
+        super.touchUp(event, x, y, pointer, button);
+      }
+    });
+
+    return table;
+  }
+
+  public void rebuildStage() {
+    Table controls = createControls();
+
+    stage.clear();
+    Stack stack = new Stack();
+    stage.addActor(stack);
+    stack.setSize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+    stack.add(controls);
+  }
+
   @Override
   public void show() {
-    // TODO
+      stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
+      inputMultiplexer = new InputMultiplexer();
+      inputMultiplexer.addProcessor(stage);
+      Gdx.input.setInputProcessor(inputMultiplexer);
+      rebuildStage();
   }
 
   @Override
@@ -29,18 +99,21 @@ public class MainMenuScreen implements Screen {
     Gdx.gl.glClearColor(0, 0, 0.2f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
-    this.app.camera.update();
-    this.app.batch.setProjectionMatrix(this.app.camera.combined);
+    stage.act(delta);
+    stage.draw();
 
-    this.app.batch.begin();
-    this.app.font.draw(app.batch, "Welcome to Game of Generals!!!", 100, 150);
-    this.app.font.draw(app.batch, "Tap anywhere to begin!", 100, 100);
-    this.app.batch.end();
+    // this.app.camera.update();
+    // this.app.batch.setProjectionMatrix(this.app.camera.combined);
 
-    if (Gdx.input.isTouched()) {
-      this.app.setScreen(new GameScreen(app));
-      dispose();
-    }
+    // this.app.batch.begin();
+    // this.app.font.draw(app.batch, "Welcome to Game of Generals!!!", 100, 150);
+    // this.app.font.draw(app.batch, "Tap anywhere to begin!", 100, 100);
+    // this.app.batch.end();
+
+    // if (Gdx.input.isTouched()) {
+    //   this.app.setScreen(new GameScreen(app));
+    //   dispose();
+    // }
   }
 
   @Override

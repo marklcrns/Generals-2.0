@@ -9,6 +9,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
+import static com.markl.game.util.Constants.VIEWPORT_HEIGHT;
+import static com.markl.game.util.Constants.VIEWPORT_WIDTH;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -35,7 +37,7 @@ public class SplashScreen implements Screen {
 
   public SplashScreen(final Application app) {
     this.app = app;
-    stage = new Stage(new StretchViewport(Application.V_WIDTH, Application.V_HEIGHT, app.camera));
+    stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
   }
 
   @Override

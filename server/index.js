@@ -100,9 +100,12 @@ io.on('connection', (socket) => {
             moveHistory.push(newMove);
             currentTurn++;
             switchMoveMaker();
-            console.log("[ " + moveHistory.length + " ] playerId: " + newMove.playerId +
-                        ";turnId="+ newMove.turnId + ";from=" + newMove.srcTileId +
-                        ";to=" + newMove.tgtTileId + ";moveType=" + newMove.moveType);
+            console.log("[ " + moveHistory.length + " ]" +
+                "playerId: " + newMove.playerId +
+                ";turnId="+ newMove.turnId +
+                ";from=" + newMove.srcTileId +
+                ";to=" + newMove.tgtTileId +
+                ";moveType=" + newMove.moveType);
             printBoardConfig();
             socket.broadcast.emit('makeTurnMove', data);
         }

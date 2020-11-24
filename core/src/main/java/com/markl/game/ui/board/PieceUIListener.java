@@ -1,5 +1,11 @@
 package com.markl.game.ui.board;
 
+import static com.markl.game.util.Constants.BOARD_HEIGHT;
+import static com.markl.game.util.Constants.BOARD_WIDTH;
+import static com.markl.game.util.Constants.BOARD_X_OFFSET;
+import static com.markl.game.util.Constants.BOARD_Y_OFFSET;
+import static com.markl.game.util.Constants.TILE_SIZE;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -49,16 +55,16 @@ public class PieceUIListener extends ClickListener {
       gameScreen.app.camera.unproject(mousePos); // mousePos is now in world coordinates
 
       // Adjusted board borders
-      float boardRightBorder = GameScreen.BOARD_WIDTH + GameScreen.BOARD_X_OFFSET;
-      float boardLeftBorder = GameScreen.BOARD_X_OFFSET;
-      float boardTopBorder = GameScreen.BOARD_HEIGHT + GameScreen.BOARD_Y_OFFSET;
-      float boardBottomBorder = GameScreen.BOARD_Y_OFFSET;
+      float boardRightBorder = BOARD_WIDTH + BOARD_X_OFFSET;
+      float boardLeftBorder = BOARD_X_OFFSET;
+      float boardTopBorder = BOARD_HEIGHT + BOARD_Y_OFFSET;
+      float boardBottomBorder = BOARD_Y_OFFSET;
 
       // Prevent piece from leaving the board
       if (mousePos.x + pieceUI.getWidth() * 0.5f > boardRightBorder)        // Right border stopper
         mousePos.x = boardRightBorder - pieceUI.getWidth() * 0.5f;
       else if (mousePos.x - pieceUI.getWidth() * 0.5f < boardLeftBorder)    // Left border stopper
-        mousePos.x = GameScreen.BOARD_X_OFFSET + pieceUI.getWidth() * 0.5f;
+        mousePos.x = BOARD_X_OFFSET + pieceUI.getWidth() * 0.5f;
       if (mousePos.y + pieceUI.getHeight() * 0.5f > boardTopBorder)         // Top border stopper
         mousePos.y = boardTopBorder - pieceUI.getHeight() * 0.5f;
       else if (mousePos.y - pieceUI.getHeight() * 0.5f < boardBottomBorder) // Bottom border stopper
@@ -77,8 +83,8 @@ public class PieceUIListener extends ClickListener {
         TileUI tileUI = gameScreen.tilesUI.get(i);
 
         // Get center coords of tile
-        final float tX  = GameScreen.TILE_SIZE * 0.5f + tileUI.x;
-        final float tY  = GameScreen.TILE_SIZE * 0.5f + tileUI.y;
+        final float tX  = TILE_SIZE * 0.5f + tileUI.x;
+        final float tY  = TILE_SIZE * 0.5f + tileUI.y;
         // Get center coords of current piece
         final float pX  = pieceUI.getWidth() * 0.5f + pieceUI.getX();
         final float pY  = pieceUI.getWidth() * 0.5f + pieceUI.getY();
@@ -88,7 +94,7 @@ public class PieceUIListener extends ClickListener {
         final double dZ = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
 
         // Activate snap-to-tile tile within tile circle radius
-        if (dZ <= GameScreen.TILE_SIZE * 0.5f) {
+        if (dZ <= TILE_SIZE * 0.5f) {
           gameScreen.tX = tX; gameScreen.tY = tY;
           gameScreen.pX = pX; gameScreen.pY = pY;
 

@@ -1,11 +1,22 @@
 package com.markl.game.ui.screen;
 
-import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_COL_COUNT;
 import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_ROW_COUNT;
 import static com.markl.game.engine.board.BoardUtils.TOTAL_BOARD_TILES;
 import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
 import static com.markl.game.engine.board.BoardUtils.getTileColNum;
 import static com.markl.game.engine.board.BoardUtils.getTileRowNum;
+import static com.markl.game.util.Constants.AGGRESSIVE_TILE_HIGHLIGHT;
+import static com.markl.game.util.Constants.BOARD_X_OFFSET;
+import static com.markl.game.util.Constants.BOARD_Y_OFFSET;
+import static com.markl.game.util.Constants.INVALID_TILE_HIGHLIGHT;
+import static com.markl.game.util.Constants.NORMAL_TILE_HIGHLIGHT;
+import static com.markl.game.util.Constants.ORIGIN_TILE_HIGHLIGHT;
+import static com.markl.game.util.Constants.TILE_BORDER_COLOR;
+import static com.markl.game.util.Constants.TILE_COLOR_ACTIVE;
+import static com.markl.game.util.Constants.TILE_COLOR_INACTIVE;
+import static com.markl.game.util.Constants.TILE_SIZE;
+import static com.markl.game.util.Constants.VIEWPORT_HEIGHT;
+import static com.markl.game.util.Constants.VIEWPORT_WIDTH;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,21 +53,21 @@ import com.markl.game.ui.board.TileUI;
  */
 public class GameScreen implements Screen {
 
-  /** Tile metrics */
-  public static final float TILE_SIZE          = 60f;
-  public static final float BOARD_WIDTH        = TILE_SIZE * BOARD_TILES_COL_COUNT;
-  public static final float BOARD_HEIGHT       = TILE_SIZE * BOARD_TILES_ROW_COUNT;
-  public static final float BOARD_X_OFFSET     = (Application.V_WIDTH - BOARD_WIDTH) / 2;
-  public static final float BOARD_Y_OFFSET     = (Application.V_HEIGHT - BOARD_HEIGHT) / 2;
-
-  /** Color Scheme */
-  public final Color TILE_COLOR_ACTIVE         = new Color(0x9BB6CBFF);
-  public final Color TILE_COLOR_INACTIVE       = new Color(0xB8BCC8FF);
-  public final Color TILE_BORDER_COLOR         = new Color(0x6F83A4FF);
-  public final Color AGGRESSIVE_TILE_HIGHLIGHT = Color.MAROON;
-  public final Color INVALID_TILE_HIGHLIGHT    = Color.GRAY;
-  public final Color NORMAL_TILE_HIGHLIGHT     = Color.GOLD;
-  public final Color ORIGIN_TILE_HIGHLIGHT     = Color.BLUE;
+  // /** Tile metrics */
+  // public static final float TILE_SIZE          = 60f;
+  // public static final float BOARD_WIDTH        = TILE_SIZE * BOARD_TILES_COL_COUNT;
+  // public static final float BOARD_HEIGHT       = TILE_SIZE * BOARD_TILES_ROW_COUNT;
+  // public static final float BOARD_X_OFFSET     = (VIEWPORT_WIDTH - BOARD_WIDTH) / 2;
+  // public static final float BOARD_Y_OFFSET     = (VIEWPORT_HEIGHT - BOARD_HEIGHT) / 2;
+  //
+  // /** Color Scheme */
+  // public final Color TILE_COLOR_ACTIVE         = new Color(0x9BB6CBFF);
+  // public final Color TILE_COLOR_INACTIVE       = new Color(0xB8BCC8FF);
+  // public final Color TILE_BORDER_COLOR         = new Color(0x6F83A4FF);
+  // public final Color AGGRESSIVE_TILE_HIGHLIGHT = Color.MAROON;
+  // public final Color INVALID_TILE_HIGHLIGHT    = Color.GRAY;
+  // public final Color NORMAL_TILE_HIGHLIGHT     = Color.GOLD;
+  // public final Color ORIGIN_TILE_HIGHLIGHT     = Color.BLUE;
 
   private Stage stage;
   private ShapeRenderer shapeRend;
@@ -89,7 +100,7 @@ public class GameScreen implements Screen {
   public GameScreen(final Application app) {
     this.app = app;
     this.shapeRend = new ShapeRenderer();
-    this.stage = new Stage(new StretchViewport(Application.V_WIDTH, Application.V_HEIGHT, app.camera));
+    this.stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
     Gdx.input.setInputProcessor(stage);
 
     // Initialize TileUI List
@@ -141,7 +152,7 @@ public class GameScreen implements Screen {
         currTurnMaker = "WAITING";
 
       currTurn = gameState.getCurrTurn();
-      app.font.draw(app.batch, "PLAYER: " + currTurnMaker, 0, Application.V_HEIGHT);
+      app.font.draw(app.batch, "PLAYER: " + currTurnMaker, 0, VIEWPORT_HEIGHT);
       app.font.draw(app.batch, "TURN: " + currTurn, BOARD_X_OFFSET, BOARD_Y_OFFSET);
       app.batch.end();
 

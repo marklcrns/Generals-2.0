@@ -400,7 +400,7 @@ public class BoardBuilder {
    */
   public boolean isPieceInCorrectTerritory(final Piece piece) {
     if ((piece.getAlliance() == Alliance.BLACK &&
-          piece.getPieceTileId() < BoardUtils.TOTAL_BOARD_TILES / 2) ||
+         piece.getPieceTileId() < BoardUtils.TOTAL_BOARD_TILES / 2) ||
         (piece.getAlliance() == Alliance.WHITE &&
          piece.getPieceTileId() > BoardUtils.TOTAL_BOARD_TILES / 2))
     {

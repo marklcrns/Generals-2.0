@@ -26,18 +26,15 @@ import com.markl.game.engine.board.pieces.Spy;
 public class BoardUtils {
 
   /** Board tiles measurements */
-  public static final int BOARD_TILES_COL_COUNT = 9;     // Number of columns in the game board
-  public static final int BOARD_TILES_ROW_COUNT = 8;     // Number of row in the game board
-  public static final int TOTAL_BOARD_TILES =
-    BOARD_TILES_COL_COUNT * BOARD_TILES_ROW_COUNT;       // Count of all tiles in the game board
+  public static final int BOARD_TILES_COL_COUNT = 9;
+  public static final int BOARD_TILES_ROW_COUNT = 8;
+  public static final int TOTAL_BOARD_TILES = BOARD_TILES_COL_COUNT * BOARD_TILES_ROW_COUNT;
+
   /* * Board anchors */
-  public static final int FIRST_ROW_INIT = 0;            // First tile index of the first board row
-  public static final int SECOND_ROW_INIT =
-    FIRST_ROW_INIT + BOARD_TILES_COL_COUNT;              // First tile index of the second board row
-  public static final int LAST_ROW_INIT =
-    (BOARD_TILES_ROW_COUNT - 1) * BOARD_TILES_COL_COUNT; // First tile index of the last board row
-  public static final int SECOND_TO_LAST_ROW_INIT =
-    LAST_ROW_INIT - BOARD_TILES_COL_COUNT;               // First tile index of the second to las board row
+  public static final int FIRST_ROW_INIT = 0;                                                  // First tile index of the first board row
+  public static final int SECOND_ROW_INIT = FIRST_ROW_INIT + BOARD_TILES_COL_COUNT;            // First tile index of the second board row
+  public static final int LAST_ROW_INIT = (BOARD_TILES_ROW_COUNT - 1) * BOARD_TILES_COL_COUNT; // First tile index of the last board row
+  public static final int SECOND_TO_LAST_ROW_INIT = LAST_ROW_INIT - BOARD_TILES_COL_COUNT;     // First tile index of the second to las board row
 
   /** Pieces ranks string name */
   public static final String GENERAL_FIVE_RANK  = "GeneralFive";
