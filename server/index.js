@@ -3,6 +3,8 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const port = 8080;
 
+const TOTAL_BOARD_TILES = 72;
+
 // Pre-game variables
 let firstMoveMakerAlliance = null;
 let hostPlayerId = null;
@@ -66,12 +68,12 @@ io.on('connection', (socket) => {
         }
 
         console.log("boardConfig");
-        boardConfig.forEach((function(value, key) {
+        boardConfig.forEach((function(val, key) {
             console.log(key + ' = ' +
-                        "rank=" + value.rank +
-                        " ;tileId=" + value.tileId +
-                        " ;owner=" + value.owner +
-                        " ;alliance=" + value.alliance);
+                        "rank=" + val.rank +
+                        ";tileId=" + val.tileId +
+                        ";owner=" + val.owner +
+                        ";alliance=" + val.alliance);
         }))
 
         // Start game
@@ -93,13 +95,15 @@ io.on('connection', (socket) => {
         // Validate turn ID and move maker then broadcast move
         if (isGameRunning && data.turnId == currentTurn &&
             currentMoveMaker == data.socketId) {
-            let newMove = new move(data.socketId, data.turnId, data.srcTileId, data.tgtTileId)
+            let newMove = new move(data.socketId, data.turnId, data.srcTileId, data.tgtTileId, data.moveType);
+            updateBoardConfig(newMove);
             moveHistory.push(newMove);
             currentTurn++;
             switchMoveMaker();
             console.log("[ " + moveHistory.length + " ] playerId: " + newMove.playerId +
-                        "; turnId: "+ newMove.turnId + "; from: " + newMove.srcTileId +
-                        "; to: " + newMove.tgtTileId);
+                        ";turnId="+ newMove.turnId + ";from=" + newMove.srcTileId +
+                        ";to=" + newMove.tgtTileId + ";moveType=" + newMove.moveType);
+            printBoardConfig();
             socket.broadcast.emit('makeTurnMove', data);
         }
     });
@@ -151,40 +155,138 @@ function resetGame() {
 }
 
 function player(id, alliance) {
-    this.id = id;
+    this.id       = id;
     this.alliance = alliance;
 }
 
-function move(playerId, turnId, srcTileId, tgtTileId) {
-    this.playerId = playerId;
-    this.turnId = turnId;
+function move(playerId, turnId, srcTileId, tgtTileId, moveType) {
+    this.playerId  = playerId;
+    this.turnId    = turnId;
     this.srcTileId = srcTileId;
     this.tgtTileId = tgtTileId;
+    this.moveType  = moveType;
+}
+
+function updateBoardConfig(move) {
+    if (move.moveType == 0) {         // Draw
+        boardConfig.delete(move.srcTileId);
+        boardConfig.delete(move.tgtTileId);
+    } else if (move.moveType == 1) {  // Normal
+        let srcPiece = boardConfig.get(move.srcTileId);
+        boardConfig.set(
+            move.tgtTileId,
+            new piece(
+                srcPiece.rank, move.tgtTileId, srcPiece.owner, srcPiece.alliance
+            )
+        )
+        boardConfig.delete(move.srcTileId);
+    } else if (move.moveType == 2) {  // Aggressive win
+        boardConfig.delete(move.tgtTileId);
+        let srcPiece = boardConfig.get(move.srcTileId);
+        boardConfig.set(
+            move.tgtTileId,
+            new piece(
+                srcPiece.rank, move.tgtTileId, srcPiece.owner, srcPiece.alliance
+            )
+        )
+        boardConfig.delete(move.srcTileId);
+    } else if (move.moveType == 3) {  // Aggressive lose
+        boardConfig.delete(move.srcTileId);
+    } else {                          // Invalid
+        console.log("Invalid Move");
+    }
+
+    boardConfig.get(move.tileId);
 }
 
 function piece(rank, tileId, owner, alliance) {
-    this.rank = rank;
-    this.tileId = tileId;
-    this.owner = owner;
+    this.rank     = rank;
+    this.tileId   = tileId;
+    this.owner    = owner;
     this.alliance = alliance;
 }
 
 function parsePieceDataString(data) {
-    let rankKey = 'rank=';
-    let tileIdKey = 'tileId=';
-    let ownerKey = 'owner=';
+    let rankKey     = 'rank=';
+    let tileIdKey   = 'tileId=';
+    let ownerKey    = 'owner=';
     let allianceKey = 'alliance=';
 
-    let rankIdx = data.indexOf(rankKey);
-    let tileIdIdx = data.indexOf(tileIdKey);
-    let ownerIdx = data.indexOf(ownerKey);
+    let rankIdx     = data.indexOf(rankKey);
+    let tileIdIdx   = data.indexOf(tileIdKey);
+    let ownerIdx    = data.indexOf(ownerKey);
     let allianceIdx = data.indexOf(allianceKey);
 
-    let rank = data.substring(rankIdx + rankKey.length, tileIdIdx - 1);
-    let tileId = parseInt(data.substring(tileIdIdx + tileIdKey.length, ownerIdx - 1));
-    let owner = data.substring(ownerIdx + ownerKey.length, allianceIdx - 1);
+    let rank     = data.substring(rankIdx + rankKey.length, tileIdIdx - 1);
+    let tileId   = parseInt(data.substring(tileIdIdx + tileIdKey.length, ownerIdx - 1));
+    let owner    = data.substring(ownerIdx + ownerKey.length, allianceIdx - 1);
     let alliance = data.substring(allianceIdx + allianceKey.length, data.length);
 
     boardConfig.set(tileId, new piece(rank, tileId, owner, alliance));
+}
+
+function printBoardConfig() {
+    let debugBoard = "\nBoardConfig\n";
+    debugBoard += "    0 1 2 3 4 5 6 7 8\n";
+    debugBoard += "    _________________\n";
+    for (let i = 0; i < TOTAL_BOARD_TILES / 2; i += 9) {
+        if (i < 10)
+            debugBoard += " " + i + " |";
+        else
+            debugBoard += i + " |";
+        for (let j = i; j < i + 9; j++) {
+            if (boardConfig.get(j) == undefined) {
+                debugBoard += "-";
+            } else {
+                let piece = boardConfig.get(j);
+                if (piece.rank == "GeneralOne")
+                    debugBoard += "1";
+                else if (piece.rank == "GeneralTwo")
+                    debugBoard += "2"
+                else if (piece.rank == "GeneralThree")
+                    debugBoard += "3";
+                else if (piece.rank == "GeneralFour")
+                    debugBoard += "4";
+                else if (piece.rank == "GeneralFive")
+                    debugBoard += "5";
+                else
+                    debugBoard += piece.rank.substring(0, 1);
+            }
+            debugBoard += " ";
+        }
+        debugBoard += "\n";
+    }
+
+    debugBoard += "   |-----------------\n";
+
+    for (let i = TOTAL_BOARD_TILES / 2; i < TOTAL_BOARD_TILES; i += 9) {
+        if (i < 10)
+            debugBoard += " " + i + " |";
+        else
+            debugBoard += i + " |";
+        for (let j = i; j < i + 9; j++) {
+            if (boardConfig.get(j) == undefined) {
+                debugBoard += "-";
+            } else {
+                let piece = boardConfig.get(j);
+                if (piece.rank == "GeneralOne")
+                    debugBoard += "1";
+                else if (piece.rank == "GeneralTwo")
+                    debugBoard += "2"
+                else if (piece.rank == "GeneralThree")
+                    debugBoard += "3";
+                else if (piece.rank == "GeneralFour")
+                    debugBoard += "4";
+                else if (piece.rank == "GeneralFive")
+                    debugBoard += "5";
+                else
+                    debugBoard += piece.rank.substring(0, 1);
+            }
+            debugBoard += " ";
+        }
+        debugBoard += "\n";
+    }
+
+    console.log(debugBoard);
 }
 

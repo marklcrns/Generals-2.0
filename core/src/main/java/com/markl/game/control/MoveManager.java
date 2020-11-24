@@ -49,7 +49,7 @@ public class MoveManager {
       gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
 
       if (isOnline && isUpdateServer) {
-        gameScreen.serverSocket.updateMove(newMove.getTurnId(), newMove.getSrcTileId(), newMove.getTgtTileId());
+        gameScreen.serverSocket.updateMove(newMove);
       }
       Gdx.app.log("Move", "Update move by Player: " + newMove.getPlayer().getId());
     } else {

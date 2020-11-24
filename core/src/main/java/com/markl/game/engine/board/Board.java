@@ -268,7 +268,7 @@ public class Board {
    */
   @Override
   public String toString() {
-    String debugBoard = "Board Debug Board\n";
+    String debugBoard = "\nBoard Debug Board\n";
     debugBoard += "    0 1 2 3 4 5 6 7 8\n";
     debugBoard += "    _________________\n";
     for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES / 2; i += 9) {

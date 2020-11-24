@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.markl.game.engine.board.Alliance;
+import com.markl.game.engine.board.Move;
 import com.markl.game.engine.board.Player;
 import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.ui.screen.GameScreen;
@@ -17,7 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.socket.client.Ack;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -243,13 +243,20 @@ public class ServerSocket {
     });
   }
 
-  public void updateMove(int turnId, int srcTileId, int tgtTileId) {
+  public void updateMove(Move move) {
     JSONObject data = new JSONObject();
     try {
+      int turnId = move.getTurnId();
+      int srcTileId = move.getSrcTileId();
+      int tgtTileId = move.getTgtTileId();
+      int moveType = move.getMoveType().getValue();
+
       data.put("socketId", mySocketId);
       data.put("turnId", turnId);
       data.put("srcTileId", srcTileId);
       data.put("tgtTileId", tgtTileId);
+      data.put("moveType", moveType);
+
       socket.emit("makeTurnMove", data);
     } catch(JSONException e) {
       Gdx.app.log("SOCKET.IO", "Error sending makeTurnMove update");

@@ -396,7 +396,7 @@ public class GameScreen implements Screen {
    */
   @Override
   public String toString() {
-    String debugBoard = "GameScreen Debug Board\n";
+    String debugBoard = "\nGameScreen Debug Board\n";
     debugBoard += "    0 1 2 3 4 5 6 7 8\n";
     debugBoard += "    _________________\n";
     for (int i = 0; i < TOTAL_BOARD_TILES / 2; i += 9) {
