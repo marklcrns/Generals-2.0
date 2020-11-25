@@ -5,16 +5,20 @@ import static com.markl.game.engine.board.BoardUtils.TOTAL_BOARD_TILES;
 import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
 import static com.markl.game.engine.board.BoardUtils.getTileColNum;
 import static com.markl.game.engine.board.BoardUtils.getTileRowNum;
-import static com.markl.game.util.Constants.AGGRESSIVE_TILE_HIGHLIGHT;
+import static com.markl.game.util.Constants.BOARD_HEIGHT;
+import static com.markl.game.util.Constants.BOARD_OUTLINE_COLOR;
+import static com.markl.game.util.Constants.BOARD_OUTLINE_THICKNESS;
+import static com.markl.game.util.Constants.BOARD_WIDTH;
 import static com.markl.game.util.Constants.BOARD_X_OFFSET;
 import static com.markl.game.util.Constants.BOARD_Y_OFFSET;
-import static com.markl.game.util.Constants.INVALID_TILE_HIGHLIGHT;
-import static com.markl.game.util.Constants.NORMAL_TILE_HIGHLIGHT;
-import static com.markl.game.util.Constants.ORIGIN_TILE_HIGHLIGHT;
+import static com.markl.game.util.Constants.TILE_ACTIVE_COLOR;
+import static com.markl.game.util.Constants.TILE_ACTIVE_PIECE_COLOR;
+import static com.markl.game.util.Constants.BOARD_ACTIVE_COLOR;
+import static com.markl.game.util.Constants.TILE_AGGRESSIVE_HIGHLIGHT_COLOR;
 import static com.markl.game.util.Constants.TILE_BORDER_COLOR;
-import static com.markl.game.util.Constants.TILE_BORDER_COLOR_ACTIVE;
-import static com.markl.game.util.Constants.TILE_COLOR_ACTIVE;
-import static com.markl.game.util.Constants.TILE_COLOR_INACTIVE;
+import static com.markl.game.util.Constants.BOARD_INACTIVE_COLOR;
+import static com.markl.game.util.Constants.TILE_INVALID_HIGHLIGHT_COLOR;
+import static com.markl.game.util.Constants.TILE_NORMAL_HIGHLIGHT_COLOR;
 import static com.markl.game.util.Constants.TILE_SIZE;
 import static com.markl.game.util.Constants.VIEWPORT_HEIGHT;
 import static com.markl.game.util.Constants.VIEWPORT_WIDTH;
@@ -143,26 +147,24 @@ public class GameScreen implements Screen {
     int currTurn;
 
     if (gameState != null) {
-      // Draw board -> tile highlights -> piece actors
+      // Draw game peripherals
       app.batch.begin();
-      drawBoard();
-      drawTileHighlights();
-      stage.draw();
-
-      if (gameState.isRunning()) {
+      if (gameState.isRunning())
         currTurnMaker = gameState.getCurrentTurnMaker().getAlliance().name();
-      }
       else
         currTurnMaker = "WAITING";
-
       currTurn = gameState.getCurrTurn();
       app.font.draw(app.batch, "PLAYER: " + currTurnMaker, 0, VIEWPORT_HEIGHT);
       app.font.draw(app.batch, "TURN: " + currTurn, BOARD_X_OFFSET, BOARD_Y_OFFSET);
       app.batch.end();
 
-      // For debug
+      // Draw game board
       app.batch.begin();
-      drawTileSnapLinePath();
+      drawBoard();
+      drawTileHighlights();
+      stage.draw();
+      drawActiveTileHighlights();
+      drawTileSnapLinePath();     // For debugging snap-to-tile
       app.batch.end();
     }
   }
@@ -300,27 +302,45 @@ public class GameScreen implements Screen {
       TileUI tileUI = iterator.next();
 
       if (gameState.isRunning()) {
-        // Separate territory with two color based on current turn
-        if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE) {
-          if (tileUI.getTileId() < TOTAL_BOARD_TILES / 2)
-            shapeRend.setColor(TILE_COLOR_INACTIVE);
-          else
-            shapeRend.setColor(TILE_COLOR_ACTIVE);
-        } else {
-          if (tileUI.getTileId() < TOTAL_BOARD_TILES / 2)
-            shapeRend.setColor(TILE_COLOR_ACTIVE);
-          else
-            shapeRend.setColor(TILE_COLOR_INACTIVE);
-        }
+        // // Separate territory with two color based on current turn
+        // if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE) {
+        //   if (tileUI.getTileId() < TOTAL_BOARD_TILES / 2)
+        //     shapeRend.setColor(TILE_INACTIVE_TERRITORY_COLOR);
+        //   else
+        //     shapeRend.setColor(TILE_ACTIVE_TERRITORY_COLOR);
+        // } else {
+        //   if (tileUI.getTileId() < TOTAL_BOARD_TILES / 2)
+        //     shapeRend.setColor(TILE_ACTIVE_TERRITORY_COLOR);
+        //   else
+        //     shapeRend.setColor(TILE_INACTIVE_TERRITORY_COLOR);
+        // }
 
+        shapeRend.setColor(BOARD_ACTIVE_COLOR);
       } else {
-        shapeRend.setColor(TILE_COLOR_INACTIVE);
+        shapeRend.setColor(BOARD_INACTIVE_COLOR);
       }
 
       // Draw square tile
       shapeRend.rect(tileUI.x, tileUI.y, tileUI.width, tileUI.height);
     }
     shapeRend.end();
+
+    // Draw active pieces tile borders
+    if (gameState.isRunning()) {
+      shapeRend.begin(ShapeType.Filled);
+      iterator = tilesUI.iterator();
+      while (iterator.hasNext()) {
+        TileUI tileUI = iterator.next();
+
+        if (tileUI.isTileUIOccupied()) {
+          if (tileUI.getPieceUI().alliance == gameState.getCurrentTurnMaker().getAlliance()) {
+            shapeRend.setColor(TILE_ACTIVE_COLOR);
+            shapeRend.rect(tileUI.x, tileUI.y, tileUI.width, tileUI.height);
+          }
+        }
+      }
+      shapeRend.end();
+    }
 
     // Draw tile borders
     shapeRend.begin(ShapeType.Line);
@@ -332,22 +352,47 @@ public class GameScreen implements Screen {
     }
     shapeRend.end();
 
-    // Draw active pieces tile borders
-    if (gameState.isRunning()) {
-      shapeRend.begin(ShapeType.Line);
-      iterator = tilesUI.iterator();
-      while (iterator.hasNext()) {
-        TileUI tileUI = iterator.next();
+    // Draw board outline territory separation line
+    shapeRend.begin(ShapeType.Filled);
+    float x1, y1, x2, y2;
+    shapeRend.setColor(BOARD_OUTLINE_COLOR);
 
-        if (tileUI.isTileUIOccupied()) {
-          if (tileUI.getPieceUI().alliance == gameState.getCurrentTurnMaker().getAlliance()) {
-            shapeRend.setColor(TILE_BORDER_COLOR_ACTIVE);
-            shapeRend.rect(tileUI.x, tileUI.y, tileUI.width, tileUI.height);
-          }
-        }
-      }
-      shapeRend.end();
-    }
+    // Board territory separation line
+    x1 = BOARD_X_OFFSET;
+    y1 = BOARD_Y_OFFSET + (BOARD_HEIGHT / 2);
+    x2 = x1 + BOARD_WIDTH;
+    y2 = y1;
+    shapeRend.rectLine(x1, y1, x2, y2, BOARD_OUTLINE_THICKNESS / 2);
+
+    // Board left segment outline
+    x1 = BOARD_X_OFFSET;
+    y1 = BOARD_Y_OFFSET;
+    x2 = x1;
+    y2 = y1 + BOARD_HEIGHT;
+    shapeRend.rectLine(x1, y1, x2, y2, BOARD_OUTLINE_THICKNESS);
+
+    // Board upper segment outline
+    x1 = BOARD_X_OFFSET;
+    y1 = BOARD_Y_OFFSET + BOARD_HEIGHT;
+    x2 = BOARD_X_OFFSET + BOARD_WIDTH;
+    y2 = y1;
+    shapeRend.rectLine(x1, y1, x2, y2, BOARD_OUTLINE_THICKNESS);
+
+    // Board right segment outline
+    x1 = BOARD_X_OFFSET + BOARD_WIDTH;
+    y1 = BOARD_Y_OFFSET + BOARD_HEIGHT;
+    x2 = BOARD_X_OFFSET + BOARD_WIDTH;
+    y2 = BOARD_Y_OFFSET;
+    shapeRend.rectLine(x1, y1, x2, y2, BOARD_OUTLINE_THICKNESS);
+
+    // Board lower segment outline
+    x1 = BOARD_X_OFFSET + BOARD_WIDTH;
+    y1 = BOARD_Y_OFFSET;
+    x2 = BOARD_X_OFFSET;
+    y2 = BOARD_Y_OFFSET;
+    shapeRend.rectLine(x1, y1, x2, y2, BOARD_OUTLINE_THICKNESS);
+
+    shapeRend.end();
   }
 
   // Draw snap-to-tile tile highlight
@@ -362,30 +407,62 @@ public class GameScreen implements Screen {
         }
       }
     }
+    shapeRend.begin(ShapeType.Line);
+
+    if (activeTileUI != null) {
+      shapeRend.setColor(TILE_ACTIVE_PIECE_COLOR);
+      shapeRend.rect(activeTileUI.x, activeTileUI.y, activeTileUI.width, activeTileUI.height);
+    }
 
     if (isHighlight && destTileUI != null && destTileUI.getTileId() != activeTileUI.getTileId()) {
-      shapeRend.begin(ShapeType.Filled);
 
       // Highlight destination Tile background based on move type
       if (board.getTile(destTileUI.getTileId()).isTileOccupied()) {
         if (board.getTile(activeTileUI.getTileId()).getPiece().getAlliance() != // Aggressive move tile highlight
             board.getTile(destTileUI.getTileId()).getPiece().getAlliance())
-          shapeRend.setColor(AGGRESSIVE_TILE_HIGHLIGHT);
+          shapeRend.setColor(TILE_AGGRESSIVE_HIGHLIGHT_COLOR);
         else                                                       // Invalid friendly-fire move tile highlight
-          shapeRend.setColor(INVALID_TILE_HIGHLIGHT);
+          shapeRend.setColor(TILE_INVALID_HIGHLIGHT_COLOR);
       } else {
-        shapeRend.setColor(NORMAL_TILE_HIGHLIGHT);                 // Normal move tile highlight
+        shapeRend.setColor(TILE_NORMAL_HIGHLIGHT_COLOR);                 // Normal move tile highlight
       }
 
       shapeRend.rect(destTileUI.x, destTileUI.y, destTileUI.width, destTileUI.height);
-      shapeRend.end();
     }
+    shapeRend.end();
+  }
 
+  public void drawActiveTileHighlights() {
     // Highlight origin Tile border
     if (activeTileUI != null) {
-      shapeRend.begin(ShapeType.Line);
-      shapeRend.setColor(ORIGIN_TILE_HIGHLIGHT);
-      shapeRend.rect(activeTileUI.x, activeTileUI.y, activeTileUI.width, activeTileUI.height);
+      shapeRend.begin(ShapeType.Filled);
+
+      if (activeSrcPiece != null) {
+        for (Map.Entry<Integer, Move> entry : activeSrcPiece.moveSet.entrySet()) {
+
+          // Skip if hovering active piece hovering on destination tile
+          if (destTileUI != null) {
+            if (entry.getValue().getTgtTileId() == destTileUI.getTileId()) {
+              continue;
+            }
+          }
+
+          if (entry.getValue().getMoveType().getValue() != -1 &&
+              entry.getValue().getTgtTileId() != activeTileUI.getTileId()) {
+            // Highlight destination Tile background based on move type
+            if (entry.getValue().getMoveType().getValue() != 1) {
+              shapeRend.setColor(TILE_AGGRESSIVE_HIGHLIGHT_COLOR);
+            } else {
+              shapeRend.setColor(TILE_NORMAL_HIGHLIGHT_COLOR);
+            }
+
+            TileUI candidateTileUI = tilesUI.get(entry.getValue().getTgtTileId());
+            shapeRend.circle(candidateTileUI.x + (candidateTileUI.width / 2),
+                candidateTileUI.y + (candidateTileUI.height / 2), 4);
+          }
+
+        }
+      }
       shapeRend.end();
     }
   }

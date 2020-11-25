@@ -27,7 +27,6 @@ public class PieceUIListener extends ClickListener {
   private PieceUIManager pieceUIManager;
   private GameScreen gameScreen;
   private MoveManager moveManager;
-
   private Vector3 mousePos;
 
   public PieceUIListener(PieceUI pieceUI, GameScreen gameScreen) {
@@ -39,10 +38,10 @@ public class PieceUIListener extends ClickListener {
 
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-    if (isPieceTouchable()) {
-      gameScreen.activeTileUI = pieceUI.tileUI;
-      gameScreen.activeSrcPiece = gameScreen.board.getPiece(pieceUI.tileUI.getTileId());
-      gameScreen.activeSrcPiece.evaluateMoves();
+    if (isPieceTouchable() && gameScreen.activeTileUI != pieceUI.tileUI) {
+      makePieceUIActive();
+    } else if (gameScreen.activeTileUI == pieceUI.tileUI){
+      makePieceUIInactive();
     }
     return super.touchDown(event, x, y, pointer, button);
   }
@@ -51,6 +50,9 @@ public class PieceUIListener extends ClickListener {
   public void touchDragged(InputEvent event, float x, float y, int pointer) {
     super.touchDragged(event, x, y, pointer);
     if (isPieceTouchable()) {
+      if (gameScreen.activeTileUI != pieceUI.tileUI) {
+        makePieceUIActive();
+      }
       // Set click/touch position relative to world coordinates
       mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
       gameScreen.app.camera.unproject(mousePos); // mousePos is now in world coordinates
@@ -98,7 +100,6 @@ public class PieceUIListener extends ClickListener {
         if (dZ <= TILE_SIZE * 0.5f) {
           gameScreen.tX = tX; gameScreen.tY = tY;
           gameScreen.pX = pX; gameScreen.pY = pY;
-
           // Update destination tile
           gameScreen.destTileUI = tileUI;
           break;
@@ -124,17 +125,11 @@ public class PieceUIListener extends ClickListener {
       } else {
         pieceUIManager.animatePieceUIMove(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
       }
-
       clearSnapTileHighlights();
-
       // Clear destination tile and active piece
       gameScreen.destTileUI = null;
-      gameScreen.activeSrcPiece = null;
-
-      // TODO Delete me later
-      // System.out.println("");
-      // System.out.println(gameScreen.toString());
-      // System.out.println(gameScreen.board.toString());
+    } else {
+      makePieceUIInactive();
     }
   }
 
@@ -146,6 +141,17 @@ public class PieceUIListener extends ClickListener {
         return true;
     }
     return false;
+  }
+
+  public void makePieceUIActive() {
+      gameScreen.activeTileUI = pieceUI.tileUI;
+      gameScreen.activeSrcPiece = gameScreen.board.getPiece(pieceUI.tileUI.getTileId());
+      gameScreen.activeSrcPiece.evaluateMoves();
+  }
+
+  public void makePieceUIInactive() {
+    gameScreen.activeTileUI = null;
+    gameScreen.activeSrcPiece = null;
   }
 
   public boolean isOwnedByTurnMakerPlayer() {

@@ -30,14 +30,16 @@ public class Constants {
   public static final float PIECE_UI_ANIMATION_SPEED = 0.08f;
 
   // Game board colorcheme
-  public static final Color TILE_COLOR_ACTIVE         = new Color(0x9BB6CBFF);
-  public static final Color TILE_COLOR_INACTIVE       = new Color(0xB8BCC8FF);
-  public static final Color TILE_BORDER_COLOR         = new Color(0x6F83A4FF);
-  public static final Color TILE_BORDER_COLOR_ACTIVE  = new Color(0xFFFFFFFF);
-  public static final Color AGGRESSIVE_TILE_HIGHLIGHT = Color.MAROON;
-  public static final Color INVALID_TILE_HIGHLIGHT    = Color.GRAY;
-  public static final Color NORMAL_TILE_HIGHLIGHT     = Color.GOLD;
-  public static final Color ORIGIN_TILE_HIGHLIGHT     = Color.BLUE;
+  public static final float BOARD_OUTLINE_THICKNESS         = 3;
+  public static final Color BOARD_OUTLINE_COLOR             = new Color(0x2f4374ff); // Dark Blue
+  public static final Color BOARD_ACTIVE_COLOR              = new Color(0x9bb6cbff); // Steel Blue
+  public static final Color BOARD_INACTIVE_COLOR            = new Color(0xb8bcc8ff); // Gray
+  public static final Color TILE_BORDER_COLOR               = new Color(0x6f83a4ff); // Faded Steel Blue
+  public static final Color TILE_ACTIVE_COLOR               = new Color(0xcbe6fbff); // Sky Blue
+  public static final Color TILE_ACTIVE_PIECE_COLOR         = new Color(0xffd700ff); // Gold
+  public static final Color TILE_AGGRESSIVE_HIGHLIGHT_COLOR = new Color(0xb03060ff); // MAROON
+  public static final Color TILE_INVALID_HIGHLIGHT_COLOR    = new Color(0x7f7f7fff); // GRAY
+  public static final Color TILE_NORMAL_HIGHLIGHT_COLOR     = new Color(0x0000bfff); // BLUE
 
   /**
    * Constructor method that ensures this Utils Constants cannot be instantiated.
