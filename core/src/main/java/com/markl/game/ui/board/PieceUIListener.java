@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.markl.game.control.MoveManager;
 import com.markl.game.control.PieceUIManager;
 import com.markl.game.ui.screen.GameScreen;
+import com.markl.game.ui.screen.GameScreen.GameMode;
 
 /**
  * TODO Class Description.
@@ -38,7 +39,7 @@ public class PieceUIListener extends ClickListener {
 
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-    if (isOwnedMyTurnMakerPlayer() && isCurrentTurnMaker()) {
+    if (isPieceTouchable()) {
       gameScreen.activeTileUI = pieceUI.tileUI;
       gameScreen.activeSrcPiece = gameScreen.board.getPiece(pieceUI.tileUI.getTileId());
       gameScreen.activeSrcPiece.evaluateMoves();
@@ -49,7 +50,7 @@ public class PieceUIListener extends ClickListener {
   @Override
   public void touchDragged(InputEvent event, float x, float y, int pointer) {
     super.touchDragged(event, x, y, pointer);
-    if (isOwnedMyTurnMakerPlayer() && isCurrentTurnMaker()) {
+    if (isPieceTouchable()) {
       // Set click/touch position relative to world coordinates
       mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
       gameScreen.app.camera.unproject(mousePos); // mousePos is now in world coordinates
@@ -117,7 +118,7 @@ public class PieceUIListener extends ClickListener {
   @Override
   public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
     super.touchUp(event, x, y, pointer, button);
-    if (isOwnedMyTurnMakerPlayer() && isCurrentTurnMaker()) {
+    if (isPieceTouchable()) {
       if (gameScreen.destTileUI != null) {
         moveManager.makeMove(pieceUI.tileUI, gameScreen.destTileUI, true);
       } else {
@@ -137,7 +138,17 @@ public class PieceUIListener extends ClickListener {
     }
   }
 
-  public boolean isOwnedMyTurnMakerPlayer() {
+  public boolean isPieceTouchable() {
+    if (isOwnedByTurnMakerPlayer()) {
+      if (gameScreen.gameMode == GameMode.ONLINE)
+        return isCurrentTurnMaker();
+      else
+        return true;
+    }
+    return false;
+  }
+
+  public boolean isOwnedByTurnMakerPlayer() {
     if (gameScreen.gameState.isRunning())
       if (gameScreen.gameState.getCurrentTurnMaker().isMyPiece(gameScreen.board.getPiece(pieceUI.tileUI.getTileId())))
         return true;

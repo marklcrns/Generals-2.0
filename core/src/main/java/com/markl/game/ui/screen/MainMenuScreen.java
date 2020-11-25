@@ -51,8 +51,27 @@ public class MainMenuScreen implements Screen {
     table.row();
     table.add(quit).padBottom(25);
 
-    online.addListener(new ClickListener() {
+    singlePlayer.addListener(new ClickListener() {
+      @Override
+      public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+        singlePlayer.setColor(Color.YELLOW);
+        super.enter(event, x, y, pointer, fromActor);
+      }
 
+      @Override
+      public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+        singlePlayer.setColor(Color.WHITE);
+        super.exit(event, x, y, pointer, toActor);
+      }
+
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        app.setScreen(app.singleGameScreen);
+        super.touchUp(event, x, y, pointer, button);
+      }
+    });
+
+    online.addListener(new ClickListener() {
       @Override
       public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
         online.setColor(Color.YELLOW);
@@ -67,7 +86,27 @@ public class MainMenuScreen implements Screen {
 
       @Override
       public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        app.setScreen(new GameScreen(app));
+        app.setScreen(app.onlineGameScreen);
+        super.touchUp(event, x, y, pointer, button);
+      }
+    });
+
+    quit.addListener(new ClickListener() {
+      @Override
+      public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+        quit.setColor(Color.YELLOW);
+        super.enter(event, x, y, pointer, fromActor);
+      }
+
+      @Override
+      public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+        quit.setColor(Color.WHITE);
+        super.exit(event, x, y, pointer, toActor);
+      }
+
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        Gdx.app.exit();
         super.touchUp(event, x, y, pointer, button);
       }
     });
@@ -143,7 +182,6 @@ public class MainMenuScreen implements Screen {
   @Override
   public void dispose() {
     // TODO Auto-generated method stub
-
   }
 }
 

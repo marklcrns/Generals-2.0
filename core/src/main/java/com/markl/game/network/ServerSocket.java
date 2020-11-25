@@ -119,7 +119,7 @@ public class ServerSocket {
           else
             myAlliance = Alliance.BLACK;
 
-          gameScreen.initEngine(true);
+          gameScreen.initEngine();
           gameScreen.boardBuilder.createTerritoryRandomBuild(myAlliance);
           LinkedHashMap<Integer, Piece> boardConfig = gameScreen.boardBuilder.getBoardConfig();
 

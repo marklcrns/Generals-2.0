@@ -12,6 +12,7 @@ import static com.markl.game.util.Constants.INVALID_TILE_HIGHLIGHT;
 import static com.markl.game.util.Constants.NORMAL_TILE_HIGHLIGHT;
 import static com.markl.game.util.Constants.ORIGIN_TILE_HIGHLIGHT;
 import static com.markl.game.util.Constants.TILE_BORDER_COLOR;
+import static com.markl.game.util.Constants.TILE_BORDER_COLOR_ACTIVE;
 import static com.markl.game.util.Constants.TILE_COLOR_ACTIVE;
 import static com.markl.game.util.Constants.TILE_COLOR_INACTIVE;
 import static com.markl.game.util.Constants.TILE_SIZE;
@@ -53,26 +54,15 @@ import com.markl.game.ui.board.TileUI;
  */
 public class GameScreen implements Screen {
 
-  // /** Tile metrics */
-  // public static final float TILE_SIZE          = 60f;
-  // public static final float BOARD_WIDTH        = TILE_SIZE * BOARD_TILES_COL_COUNT;
-  // public static final float BOARD_HEIGHT       = TILE_SIZE * BOARD_TILES_ROW_COUNT;
-  // public static final float BOARD_X_OFFSET     = (VIEWPORT_WIDTH - BOARD_WIDTH) / 2;
-  // public static final float BOARD_Y_OFFSET     = (VIEWPORT_HEIGHT - BOARD_HEIGHT) / 2;
-  //
-  // /** Color Scheme */
-  // public final Color TILE_COLOR_ACTIVE         = new Color(0x9BB6CBFF);
-  // public final Color TILE_COLOR_INACTIVE       = new Color(0xB8BCC8FF);
-  // public final Color TILE_BORDER_COLOR         = new Color(0x6F83A4FF);
-  // public final Color AGGRESSIVE_TILE_HIGHLIGHT = Color.MAROON;
-  // public final Color INVALID_TILE_HIGHLIGHT    = Color.GRAY;
-  // public final Color NORMAL_TILE_HIGHLIGHT     = Color.GOLD;
-  // public final Color ORIGIN_TILE_HIGHLIGHT     = Color.BLUE;
+  public enum GameMode {
+    SINGLE, LOCAL, ONLINE;
+  }
 
   private Stage stage;
   private ShapeRenderer shapeRend;
 
   public Application app;
+  public GameMode gameMode;
   public GameState gameState;
   public Board board;
   public PieceUIManager pieceUIManager;
@@ -97,27 +87,40 @@ public class GameScreen implements Screen {
   // Network
   public ServerSocket serverSocket;
 
-  public GameScreen(final Application app) {
+  public GameScreen(final Application app, GameMode gameMode) {
     this.app = app;
+    this.gameMode = gameMode;
     this.shapeRend = new ShapeRenderer();
     this.stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
-    Gdx.input.setInputProcessor(stage);
-
-    // Initialize TileUI List
-    this.tilesUI = new LinkedList<TileUI>();
-    this.pieceUIManager = new PieceUIManager(this);
-
-    // Connect to server
-    this.serverSocket = new ServerSocket("localhost", 8080, this);
   }
 
   @Override
   public void show() {
-    // TODO initialize board without pieces until connected to server !!!
-    System.out.println("GameScreen show");
-    serverSocket.connectSocket();
-    serverSocket.configSocketEvents();
+    Gdx.app.log("GameScreen", "show " + gameMode);
     getAssetImages();
+
+    this.tilesUI = new LinkedList<TileUI>();
+    this.pieceUIManager = new PieceUIManager(this);
+
+    if (gameMode == GameMode.SINGLE) {
+      initEngine();
+      boardBuilder.createBoardRandomBuild();
+      gameState.setMyPlayer(Alliance.WHITE, "white");
+      gameState.setEnemyPlayer(Alliance.BLACK, "black");
+      initBoardUI();
+      initGame();
+    } else if (gameMode == GameMode.LOCAL) {
+      initEngine();
+      boardBuilder.createBoardRandomBuild();
+      initBoardUI();
+      initGame();
+    } else if (gameMode == GameMode.ONLINE) {
+      // Connect to server
+      this.serverSocket = new ServerSocket("localhost", 8080, this);
+      serverSocket.connectSocket();
+      serverSocket.configSocketEvents();
+    }
+
     Gdx.input.setInputProcessor(stage);
   }
 
@@ -146,8 +149,9 @@ public class GameScreen implements Screen {
       drawTileHighlights();
       stage.draw();
 
-      if (gameState.isRunning())
+      if (gameState.isRunning()) {
         currTurnMaker = gameState.getCurrentTurnMaker().getAlliance().name();
+      }
       else
         currTurnMaker = "WAITING";
 
@@ -187,16 +191,19 @@ public class GameScreen implements Screen {
   @Override
   public void dispose() {
     System.out.println("GameScreen dispose");
-    stage.dispose();
-    shapeRend.dispose();
+    this.shapeRend.dispose();
+    this.stage.dispose();
   }
 
-  public void initEngine(boolean isOnline) {
+  public void initEngine() {
     // Initialize GoG game engine
     this.gameState = new GameState();
     this.board = new Board(gameState);
     this.boardBuilder = new BoardBuilder(board);
-    this.moveManager = new MoveManager(this, isOnline);
+    if (gameMode == GameMode.ONLINE)
+      this.moveManager = new MoveManager(this);
+    else
+      this.moveManager = new MoveManager(this);
   }
 
   public void initBoardUI() {
@@ -221,6 +228,8 @@ public class GameScreen implements Screen {
 
   public void populateTilesUI() {
     Iterator<TileUI> iterator = tilesUI.iterator();
+    Texture hiddenBlackPiece = blackPiecesTex.get("Hidden");
+    Texture hiddenWhitePiece = whitePiecesTex.get("Hidden");
 
     while (iterator.hasNext()) {
       TileUI tileUI = iterator.next();
@@ -231,15 +240,11 @@ public class GameScreen implements Screen {
 
         PieceUI pieceUI;
         if (alliance == Alliance.BLACK) {
-          if (gameState.getMyAlliance() == Alliance.BLACK)
-            pieceUI = new PieceUI(tileUI, blackPiecesTex.get(pieceRank), pieceRank);
-          else
-            pieceUI = new PieceUI(tileUI, blackPiecesTex.get("Hidden"), pieceRank);
+          pieceUI = new PieceUI(tileUI, pieceRank, alliance,
+              blackPiecesTex.get(pieceRank), hiddenBlackPiece);
         } else {
-          if (gameState.getMyAlliance() == Alliance.WHITE)
-            pieceUI = new PieceUI(tileUI, whitePiecesTex.get(pieceRank), pieceRank);
-          else
-            pieceUI = new PieceUI(tileUI, whitePiecesTex.get("Hidden"), pieceRank);
+          pieceUI = new PieceUI(tileUI, pieceRank, alliance,
+              whitePiecesTex.get(pieceRank), hiddenWhitePiece);
         }
         pieceUI.setWidth(tileUI.width);
         pieceUI.setHeight(tileUI.height);
@@ -250,11 +255,22 @@ public class GameScreen implements Screen {
         tileUI.setPieceUI(pieceUI);
       }
     }
+
+    if (gameMode == GameMode.ONLINE) {
+      if (gameState.getMyAlliance() == Alliance.WHITE)
+        pieceUIManager.hidePieceUISet(Alliance.BLACK);
+      else
+        pieceUIManager.hidePieceUISet(Alliance.WHITE);
+    } else {
+      if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE)
+        pieceUIManager.hidePieceUISet(Alliance.BLACK);
+      else
+        pieceUIManager.hidePieceUISet(Alliance.WHITE);
+    }
   }
 
   public void initGame() {
     // Create initial board arrangement and start game
-    // boardBuilder.createBoardDemoBuild();
     boardBuilder.build(true);
     board.initGame();
     gameState.setRandomFirstMoveMaker();
@@ -264,7 +280,6 @@ public class GameScreen implements Screen {
 
   public void initGame(Alliance firstMoveMaker) {
     // Create initial board arrangement with firstMoveMaker and start game
-    // boardBuilder.createBoardDemoBuild();
     boardBuilder.build(true);
     board.initGame();
     gameState.setFirstMoveMaker(firstMoveMaker);
@@ -277,41 +292,62 @@ public class GameScreen implements Screen {
   }
 
   public void drawBoard() {
-    shapeRend.begin(ShapeType.Filled);
-    for (int i = 0; i < tilesUI.size(); i++) {
-      TileUI tile = tilesUI.get(i);
+    Iterator<TileUI> iterator;
 
-      if (gameState.isRunning()){
-        // Split board into two territory based on GameState.currentTurnMaker
+    shapeRend.begin(ShapeType.Filled);
+    iterator = tilesUI.iterator();
+    while (iterator.hasNext()) {
+      TileUI tileUI = iterator.next();
+
+      if (gameState.isRunning()) {
+        // Separate territory with two color based on current turn
         if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE) {
-          if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
+          if (tileUI.getTileId() < TOTAL_BOARD_TILES / 2)
             shapeRend.setColor(TILE_COLOR_INACTIVE);
           else
             shapeRend.setColor(TILE_COLOR_ACTIVE);
         } else {
-          if (getTileRowNum(i) < BOARD_TILES_ROW_COUNT / 2)
+          if (tileUI.getTileId() < TOTAL_BOARD_TILES / 2)
             shapeRend.setColor(TILE_COLOR_ACTIVE);
           else
             shapeRend.setColor(TILE_COLOR_INACTIVE);
         }
+
       } else {
         shapeRend.setColor(TILE_COLOR_INACTIVE);
       }
 
-
       // Draw square tile
-      shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
+      shapeRend.rect(tileUI.x, tileUI.y, tileUI.width, tileUI.height);
     }
     shapeRend.end();
 
     // Draw tile borders
     shapeRend.begin(ShapeType.Line);
-    for (int i = 0; i < tilesUI.size(); i++) {
-      TileUI tile = tilesUI.get(i);
+    iterator = tilesUI.iterator();
+    while (iterator.hasNext()) {
+      TileUI tileUI = iterator.next();
       shapeRend.setColor(TILE_BORDER_COLOR);
-      shapeRend.rect(tile.x, tile.y, tile.width, tile.height);
+      shapeRend.rect(tileUI.x, tileUI.y, tileUI.width, tileUI.height);
     }
     shapeRend.end();
+
+    // Draw active pieces tile borders
+    if (gameState.isRunning()) {
+      shapeRend.begin(ShapeType.Line);
+      iterator = tilesUI.iterator();
+      while (iterator.hasNext()) {
+        TileUI tileUI = iterator.next();
+
+        if (tileUI.isTileUIOccupied()) {
+          if (tileUI.getPieceUI().alliance == gameState.getCurrentTurnMaker().getAlliance()) {
+            shapeRend.setColor(TILE_BORDER_COLOR_ACTIVE);
+            shapeRend.rect(tileUI.x, tileUI.y, tileUI.width, tileUI.height);
+          }
+        }
+      }
+      shapeRend.end();
+    }
   }
 
   // Draw snap-to-tile tile highlight

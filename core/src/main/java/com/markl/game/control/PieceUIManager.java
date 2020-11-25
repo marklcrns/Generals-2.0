@@ -1,7 +1,12 @@
 package com.markl.game.control;
 
+import static com.markl.game.util.Constants.PIECE_UI_ANIMATION_SPEED;
+
+import java.util.Iterator;
+
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.markl.game.engine.board.Alliance;
 import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.TileUI;
 import com.markl.game.ui.screen.GameScreen;
@@ -14,7 +19,6 @@ import com.markl.game.ui.screen.GameScreen;
  */
 public class PieceUIManager {
 
-  private float PIECE_UI_ANIMATION_SPEED = 0.08f;
   private GameScreen gameScreen;
 
   public PieceUIManager(GameScreen gameScreen) {
@@ -61,5 +65,33 @@ public class PieceUIManager {
     pieceUI.addAction(mta);
     pieceUI.setZIndex(999);   // Always on top of any pieces
     pieceUI.getColor().a = alpha; // Remove transparency
+  }
+
+  public void hidePieceUISet(Alliance alliance) {
+    Iterator<TileUI> iterator = gameScreen.tilesUI.iterator();
+    while (iterator.hasNext()) {
+      TileUI tileUI = iterator.next();
+      if (tileUI.isTileUIOccupied()) {
+        PieceUI pieceUI = tileUI.getPieceUI();
+        if (pieceUI.alliance == alliance)
+          pieceUI.hidePieceDisplay();
+        else
+          pieceUI.showPieceDisplay();
+      }
+    }
+  }
+
+  public void flipPieceUISetDisplay() {
+    Iterator<TileUI> iterator = gameScreen.tilesUI.iterator();
+    while (iterator.hasNext()) {
+      TileUI tileUI = iterator.next();
+      if (tileUI.isTileUIOccupied()) {
+        PieceUI pieceUI = tileUI.getPieceUI();
+        if (pieceUI.isHidden)
+          pieceUI.showPieceDisplay();
+        else
+          pieceUI.hidePieceDisplay();
+      }
+    }
   }
 }

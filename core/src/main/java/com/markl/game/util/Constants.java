@@ -26,10 +26,14 @@ public class Constants {
   public static final float BOARD_X_OFFSET     = (VIEWPORT_WIDTH - BOARD_WIDTH) / 2;
   public static final float BOARD_Y_OFFSET     = (VIEWPORT_HEIGHT - BOARD_HEIGHT) / 2;
 
+  // Game PieceUI
+  public static final float PIECE_UI_ANIMATION_SPEED = 0.08f;
+
   // Game board colorcheme
   public static final Color TILE_COLOR_ACTIVE         = new Color(0x9BB6CBFF);
   public static final Color TILE_COLOR_INACTIVE       = new Color(0xB8BCC8FF);
   public static final Color TILE_BORDER_COLOR         = new Color(0x6F83A4FF);
+  public static final Color TILE_BORDER_COLOR_ACTIVE  = new Color(0xFFFFFFFF);
   public static final Color AGGRESSIVE_TILE_HIGHLIGHT = Color.MAROON;
   public static final Color INVALID_TILE_HIGHLIGHT    = Color.GRAY;
   public static final Color NORMAL_TILE_HIGHLIGHT     = Color.GOLD;

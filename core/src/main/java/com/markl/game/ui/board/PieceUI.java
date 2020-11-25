@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.markl.game.engine.board.Alliance;
 
 /**
  * TODO Class Description.
@@ -15,21 +16,45 @@ public class PieceUI extends Actor {
 
   public TileUI tileUI;
   public String pieceRank;
-  private Texture pieceTex;
+  public Alliance alliance;
+  private Texture pieceTextCurrent;
+  private Texture pieceTexShow;
+  private Texture pieceTexHidden;
+  public boolean isHidden;
 
   /**
    * No-args constructor
    */
-  public PieceUI(TileUI tile, Texture pieceTex, String pieceRank) {
+  public PieceUI(TileUI tile, String pieceRank, Alliance alliance,
+                 Texture pieceTexShow, Texture pieceTexHidden) {
     this.tileUI = tile;
-    this.pieceTex = pieceTex;
     this.pieceRank = pieceRank;
+    this.alliance = alliance;
+    this.pieceTexShow = pieceTexShow;
+    this.pieceTexHidden = pieceTexHidden;
+
+    this.pieceTextCurrent = pieceTexShow;
+    this.isHidden = false;
+  }
+
+  public void showPieceDisplay() {
+    if (isHidden) {
+      pieceTextCurrent = pieceTexShow;
+      isHidden = false;
+    }
+  }
+
+  public void hidePieceDisplay() {
+    if (!isHidden) {
+      pieceTextCurrent = pieceTexHidden;
+      isHidden = true;
+    }
   }
 
   @Override
   public void draw(Batch batch, float parentAlpha) {
     Color color = getColor();
     batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-    batch.draw(pieceTex, getX(), getY(), getWidth(), getHeight());
+    batch.draw(pieceTextCurrent, getX(), getY(), getWidth(), getHeight());
   }
 }

@@ -7,6 +7,7 @@ import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.TileUI;
 import com.markl.game.ui.screen.GameScreen;
+import com.markl.game.ui.screen.GameScreen.GameMode;
 
 /**
  * Controls movement of {@link Piece} in {@link Board} and Updates
@@ -18,11 +19,9 @@ import com.markl.game.ui.screen.GameScreen;
 public class MoveManager {
 
   private GameScreen gameScreen;
-  private boolean isOnline;
 
-  public MoveManager(GameScreen gameScreen, boolean isOnline) {
+  public MoveManager(GameScreen gameScreen) {
     this.gameScreen     = gameScreen;
-    this.isOnline       = isOnline;
   }
 
   public void makeMove(TileUI srcTileUI, TileUI tgtTileUI, boolean isUpdateServer) {
@@ -48,9 +47,13 @@ public class MoveManager {
 
       gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
 
-      if (isOnline && isUpdateServer) {
-        gameScreen.serverSocket.updateMove(newMove);
+      if (gameScreen.gameMode == GameMode.ONLINE) {
+        if (isUpdateServer)
+          gameScreen.serverSocket.updateMove(newMove);
+      } else {
+        gameScreen.pieceUIManager.flipPieceUISetDisplay();
       }
+
       Gdx.app.log("Move", "Update move by Player: " + newMove.getPlayer().getId());
     } else {
       // Move piece back to original position

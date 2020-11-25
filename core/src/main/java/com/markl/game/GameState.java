@@ -140,8 +140,7 @@ public class GameState {
       if (Math.random() < 0.5f) {
         this.firstMoveMaker = Alliance.BLACK;
         this.currentTurnMaker = board.getPlayer(Alliance.BLACK);
-      }
-      else {
+      } else {
         this.firstMoveMaker = Alliance.WHITE;
         this.currentTurnMaker = board.getPlayer(Alliance.WHITE);
       }
