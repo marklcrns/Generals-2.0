@@ -5,7 +5,9 @@ import static com.markl.game.engine.board.BoardUtils.TOTAL_BOARD_TILES;
 import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
 import static com.markl.game.engine.board.BoardUtils.getTileColNum;
 import static com.markl.game.engine.board.BoardUtils.getTileRowNum;
+import static com.markl.game.util.Constants.BOARD_ACTIVE_COLOR;
 import static com.markl.game.util.Constants.BOARD_HEIGHT;
+import static com.markl.game.util.Constants.BOARD_INACTIVE_COLOR;
 import static com.markl.game.util.Constants.BOARD_OUTLINE_COLOR;
 import static com.markl.game.util.Constants.BOARD_OUTLINE_THICKNESS;
 import static com.markl.game.util.Constants.BOARD_WIDTH;
@@ -13,12 +15,12 @@ import static com.markl.game.util.Constants.BOARD_X_OFFSET;
 import static com.markl.game.util.Constants.BOARD_Y_OFFSET;
 import static com.markl.game.util.Constants.TILE_ACTIVE_COLOR;
 import static com.markl.game.util.Constants.TILE_ACTIVE_PIECE_COLOR;
-import static com.markl.game.util.Constants.BOARD_ACTIVE_COLOR;
 import static com.markl.game.util.Constants.TILE_AGGRESSIVE_HIGHLIGHT_COLOR;
 import static com.markl.game.util.Constants.TILE_BORDER_COLOR;
-import static com.markl.game.util.Constants.BOARD_INACTIVE_COLOR;
 import static com.markl.game.util.Constants.TILE_INVALID_HIGHLIGHT_COLOR;
 import static com.markl.game.util.Constants.TILE_NORMAL_HIGHLIGHT_COLOR;
+import static com.markl.game.util.Constants.TILE_PREV_NORMAL_MOVE_COLOR;
+import static com.markl.game.util.Constants.TILE_PREV_AGGRESSIVE_MOVE_COLOR;
 import static com.markl.game.util.Constants.TILE_SIZE;
 import static com.markl.game.util.Constants.VIEWPORT_HEIGHT;
 import static com.markl.game.util.Constants.VIEWPORT_WIDTH;
@@ -45,6 +47,7 @@ import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
 import com.markl.game.engine.board.Move;
 import com.markl.game.engine.board.Player;
+import com.markl.game.engine.board.Move.MoveType;
 import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.network.ServerSocket;
 import com.markl.game.ui.Application;
@@ -87,6 +90,7 @@ public class GameScreen implements Screen {
   public TileUI activeTileUI;
   public TileUI destTileUI;
   public Piece activeSrcPiece;
+  public Move prevMove;
 
   // Network
   public ServerSocket serverSocket;
@@ -302,19 +306,6 @@ public class GameScreen implements Screen {
       TileUI tileUI = iterator.next();
 
       if (gameState.isRunning()) {
-        // // Separate territory with two color based on current turn
-        // if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE) {
-        //   if (tileUI.getTileId() < TOTAL_BOARD_TILES / 2)
-        //     shapeRend.setColor(TILE_INACTIVE_TERRITORY_COLOR);
-        //   else
-        //     shapeRend.setColor(TILE_ACTIVE_TERRITORY_COLOR);
-        // } else {
-        //   if (tileUI.getTileId() < TOTAL_BOARD_TILES / 2)
-        //     shapeRend.setColor(TILE_ACTIVE_TERRITORY_COLOR);
-        //   else
-        //     shapeRend.setColor(TILE_INACTIVE_TERRITORY_COLOR);
-        // }
-
         shapeRend.setColor(BOARD_ACTIVE_COLOR);
       } else {
         shapeRend.setColor(BOARD_INACTIVE_COLOR);
@@ -407,6 +398,30 @@ public class GameScreen implements Screen {
         }
       }
     }
+
+    shapeRend.begin(ShapeType.Filled);
+    if (prevMove != null) {
+      TileUI tgtTileUI = tilesUI.get(prevMove.getTgtTileId());
+      MoveType moveType = prevMove.getMoveType();
+
+      if (moveType == MoveType.NORMAL) {
+        shapeRend.setColor(TILE_PREV_NORMAL_MOVE_COLOR);
+        shapeRend.rect(tgtTileUI.x, tgtTileUI.y, tgtTileUI.width, tgtTileUI.height);
+      } else if (moveType == MoveType.DRAW) {
+        shapeRend.setColor(TILE_PREV_AGGRESSIVE_MOVE_COLOR);
+        shapeRend.rect(tgtTileUI.x, tgtTileUI.y, tgtTileUI.width, tgtTileUI.height);
+      } else if (moveType == MoveType.AGGRESSIVE_WIN) {
+        shapeRend.setColor(TILE_PREV_NORMAL_MOVE_COLOR);
+        shapeRend.setColor(TILE_PREV_AGGRESSIVE_MOVE_COLOR);
+        shapeRend.rect(tgtTileUI.x, tgtTileUI.y, tgtTileUI.width, tgtTileUI.height);
+      } else if (moveType == MoveType.AGGRESSIVE_LOSE) {
+        shapeRend.setColor(TILE_PREV_AGGRESSIVE_MOVE_COLOR);
+        shapeRend.setColor(TILE_PREV_NORMAL_MOVE_COLOR);
+        shapeRend.rect(tgtTileUI.x, tgtTileUI.y, tgtTileUI.width, tgtTileUI.height);
+      }
+    }
+    shapeRend.end();
+
     shapeRend.begin(ShapeType.Line);
 
     if (activeTileUI != null) {
@@ -414,21 +429,42 @@ public class GameScreen implements Screen {
       shapeRend.rect(activeTileUI.x, activeTileUI.y, activeTileUI.width, activeTileUI.height);
     }
 
-    if (isHighlight && destTileUI != null && destTileUI.getTileId() != activeTileUI.getTileId()) {
+    if (prevMove != null) {
+      TileUI srcTileUI = tilesUI.get(prevMove.getSrcTileId());
+      MoveType moveType = prevMove.getMoveType();
 
+      if (moveType == MoveType.NORMAL) {
+        shapeRend.setColor(TILE_PREV_NORMAL_MOVE_COLOR);
+        shapeRend.rect(srcTileUI.x, srcTileUI.y, srcTileUI.width, srcTileUI.height);
+      } else if (moveType == MoveType.DRAW) {
+        shapeRend.setColor(TILE_PREV_AGGRESSIVE_MOVE_COLOR);
+        shapeRend.rect(srcTileUI.x, srcTileUI.y, srcTileUI.width, srcTileUI.height);
+      } else if (moveType == MoveType.AGGRESSIVE_WIN) {
+        shapeRend.setColor(TILE_PREV_NORMAL_MOVE_COLOR);
+        shapeRend.rect(srcTileUI.x, srcTileUI.y, srcTileUI.width, srcTileUI.height);
+        shapeRend.setColor(TILE_PREV_AGGRESSIVE_MOVE_COLOR);
+      } else if (moveType == MoveType.AGGRESSIVE_LOSE) {
+        shapeRend.setColor(TILE_PREV_AGGRESSIVE_MOVE_COLOR);
+        shapeRend.rect(srcTileUI.x, srcTileUI.y, srcTileUI.width, srcTileUI.height);
+        shapeRend.setColor(TILE_PREV_NORMAL_MOVE_COLOR);
+      }
+    }
+
+    if (isHighlight && destTileUI != null && destTileUI.getTileId() != activeTileUI.getTileId()) {
       // Highlight destination Tile background based on move type
       if (board.getTile(destTileUI.getTileId()).isTileOccupied()) {
-        if (board.getTile(activeTileUI.getTileId()).getPiece().getAlliance() != // Aggressive move tile highlight
+        if (board.getTile(activeTileUI.getTileId()).getPiece().getAlliance() !=
             board.getTile(destTileUI.getTileId()).getPiece().getAlliance())
-          shapeRend.setColor(TILE_AGGRESSIVE_HIGHLIGHT_COLOR);
-        else                                                       // Invalid friendly-fire move tile highlight
-          shapeRend.setColor(TILE_INVALID_HIGHLIGHT_COLOR);
+          shapeRend.setColor(TILE_AGGRESSIVE_HIGHLIGHT_COLOR); // Aggressive move tile highlight
+        else
+          shapeRend.setColor(TILE_INVALID_HIGHLIGHT_COLOR);    // Invalid friendly-fire move tile highlight
       } else {
-        shapeRend.setColor(TILE_NORMAL_HIGHLIGHT_COLOR);                 // Normal move tile highlight
+        shapeRend.setColor(TILE_NORMAL_HIGHLIGHT_COLOR);       // Normal move tile highlight
       }
 
       shapeRend.rect(destTileUI.x, destTileUI.y, destTileUI.width, destTileUI.height);
     }
+
     shapeRend.end();
   }
 

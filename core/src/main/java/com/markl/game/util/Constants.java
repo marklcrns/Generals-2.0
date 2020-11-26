@@ -37,6 +37,8 @@ public class Constants {
   public static final Color TILE_BORDER_COLOR               = new Color(0x6f83a4ff); // Faded Steel Blue
   public static final Color TILE_ACTIVE_COLOR               = new Color(0xcbe6fbff); // Sky Blue
   public static final Color TILE_ACTIVE_PIECE_COLOR         = new Color(0xffd700ff); // Gold
+  public static final Color TILE_PREV_NORMAL_MOVE_COLOR     = new Color(0x0b53ffff); // Blue
+  public static final Color TILE_PREV_AGGRESSIVE_MOVE_COLOR = new Color(0xb03a42ff); // Maroon
   public static final Color TILE_AGGRESSIVE_HIGHLIGHT_COLOR = new Color(0xb03060ff); // MAROON
   public static final Color TILE_INVALID_HIGHLIGHT_COLOR    = new Color(0x7f7f7fff); // GRAY
   public static final Color TILE_NORMAL_HIGHLIGHT_COLOR     = new Color(0x0000bfff); // BLUE

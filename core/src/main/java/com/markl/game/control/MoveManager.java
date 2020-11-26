@@ -46,6 +46,7 @@ public class MoveManager {
       }
 
       gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
+      gameScreen.prevMove = newMove;
 
       if (gameScreen.gameMode == GameMode.ONLINE) {
         if (isUpdateServer)
