@@ -14,7 +14,7 @@ import com.markl.game.engine.board.Player;
 public class Private extends Piece {
 
   private final String rank = BoardUtils.PRIVATE_RANK;                  // Rank of the piece
-  private final int powerLevel = 2;                                     // Power level of the piece to compare ranks
+  private final int powerLevel = BoardUtils.PRIVATE_POW;                // Power level of the piece to compare ranks
   private final int legalPieceInstanceCount = BoardUtils.PRIVATE_COUNT; // Allowed amount of piece instance owned by a Player in a single game
 
   /**

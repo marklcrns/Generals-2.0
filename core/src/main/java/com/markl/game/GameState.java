@@ -92,7 +92,6 @@ public class GameState {
   public void endGame(Player winner) {
     this.gameWinner = winner;
     this.hasGameEnded = true;
-    this.currentTurnId = -1;
     this.currentTurnMaker = null;
   }
 

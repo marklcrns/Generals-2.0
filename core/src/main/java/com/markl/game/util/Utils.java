@@ -10,19 +10,35 @@ import java.util.Random;
  */
 public class Utils {
 
+  public static void main(String[] args) {
+    System.out.println(getRandomInt(0, 5));
+  }
+
+  private static Random rand = new Random();
+
   /**
-   * Generates random integer with exclusive of some numbers.
-   * @param start starting number to generate random numbers from.
-   * @param end end number to generate random numbers until.
-   * @param exlude int or int array number/numbers to exclude from being
+   * Generates random integer.
+   * @param min starting number to generate random numbers from.
+   * @param max end number to generate random numbers until.
+   * @return randomly generated int.
+   */
+  public static int getRandomInt(int min, int max) {
+    int random = rand.nextInt((max - min) + 1) + min;
+    return random;
+  }
+
+  /**
+   * Generates random integer exclusive of some numbers.
+   * @param min Min number to generate random numbers from.
+   * @param max Max number to generate random numbers until.
+   * @param exlude Int or int array number/numbers to exclude from being
    * generated.
    * @return randomly generated int.
    *
    * ref: https://stackoverflow.com/a/6443346/11850077
    */
-  public static int getRandomWithExclusion(int start, int end, int... exclude) {
-    Random rnd = new Random();
-    int random = start + rnd.nextInt(end - start + 1 - exclude.length);
+  public static int getRandomIntWithExclusion(int min, int max, int... exclude) {
+    int random = min + rand.nextInt(max - min + 1 - exclude.length);
     for (int ex : exclude) {
       if (random < ex) {
         break;

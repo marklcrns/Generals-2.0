@@ -38,6 +38,7 @@ public class PieceUIListener extends ClickListener {
 
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+    Gdx.app.log("PieceUIListener", "Piece clicked!!!");
     if (isPieceTouchable() && gameScreen.activeTileUI != pieceUI.tileUI) {
       makePieceUIActive();
     } else if (gameScreen.activeTileUI == pieceUI.tileUI){
@@ -121,7 +122,7 @@ public class PieceUIListener extends ClickListener {
     super.touchUp(event, x, y, pointer, button);
     if (isPieceTouchable()) {
       if (gameScreen.destTileUI != null) {
-        moveManager.makeMove(pieceUI.tileUI, gameScreen.destTileUI, true);
+        moveManager.makeMove(pieceUI.tileUI.getTileId(), gameScreen.destTileUI.getTileId(), true);
       } else {
         pieceUIManager.animatePieceUIMove(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
       }

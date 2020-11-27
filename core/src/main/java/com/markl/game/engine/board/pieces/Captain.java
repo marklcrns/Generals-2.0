@@ -14,7 +14,7 @@ import com.markl.game.engine.board.Player;
 public class Captain extends Piece {
 
   private final String rank = BoardUtils.CAPTAIN_RANK;                  // Rank of the piece
-  private final int powerLevel = 6;                                     // Power level of the piece to compare ranks
+  private final int powerLevel = BoardUtils.CAPTAIN_POW;                                     // Power level of the piece to compare ranks
   private final int legalPieceInstanceCount = BoardUtils.CAPTAIN_COUNT; // Allowed amount of piece instance owned by a Player in a single game
 
   /**

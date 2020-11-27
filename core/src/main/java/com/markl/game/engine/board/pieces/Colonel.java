@@ -14,7 +14,7 @@ import com.markl.game.engine.board.Player;
 public class Colonel extends Piece {
 
   private final String rank = BoardUtils.COLONEL_RANK;                  // Rank of the piece
-  private final int powerLevel = 9;                                     // Power level of the piece to compare ranks
+  private final int powerLevel = BoardUtils.COLONEL_POW;                // Power level of the piece to compare ranks
   private final int legalPieceInstanceCount = BoardUtils.COLONEL_COUNT; // Allowed amount of piece instance owned by a Player in a single game
 
   /**

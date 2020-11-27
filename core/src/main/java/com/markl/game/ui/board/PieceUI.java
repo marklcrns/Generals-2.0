@@ -17,7 +17,7 @@ public class PieceUI extends Actor {
   public TileUI tileUI;
   public String pieceRank;
   public Alliance alliance;
-  private Texture pieceTextCurrent;
+  private Texture pieceTexCurrent;
   private Texture pieceTexShow;
   private Texture pieceTexHidden;
   public boolean isHidden;
@@ -27,26 +27,26 @@ public class PieceUI extends Actor {
    */
   public PieceUI(TileUI tile, String pieceRank, Alliance alliance,
                  Texture pieceTexShow, Texture pieceTexHidden) {
-    this.tileUI = tile;
-    this.pieceRank = pieceRank;
-    this.alliance = alliance;
-    this.pieceTexShow = pieceTexShow;
-    this.pieceTexHidden = pieceTexHidden;
-
-    this.pieceTextCurrent = pieceTexShow;
-    this.isHidden = false;
+    this.tileUI           = tile;
+    this.pieceRank        = pieceRank;
+    this.alliance         = alliance;
+    this.pieceTexShow     = pieceTexShow;
+    this.pieceTexHidden   = pieceTexHidden;
+    // Set current Texture displayed
+    this.pieceTexCurrent = pieceTexShow;
+    this.isHidden         = false;
   }
 
   public void showPieceDisplay() {
     if (isHidden) {
-      pieceTextCurrent = pieceTexShow;
+      pieceTexCurrent = pieceTexShow;
       isHidden = false;
     }
   }
 
   public void hidePieceDisplay() {
     if (!isHidden) {
-      pieceTextCurrent = pieceTexHidden;
+      pieceTexCurrent = pieceTexHidden;
       isHidden = true;
     }
   }
@@ -55,6 +55,6 @@ public class PieceUI extends Actor {
   public void draw(Batch batch, float parentAlpha) {
     Color color = getColor();
     batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-    batch.draw(pieceTextCurrent, getX(), getY(), getWidth(), getHeight());
+    batch.draw(pieceTexCurrent, getX(), getY(), getWidth(), getHeight());
   }
 }

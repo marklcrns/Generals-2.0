@@ -24,41 +24,56 @@ public class MoveManager {
     this.gameScreen     = gameScreen;
   }
 
-  public void makeMove(TileUI srcTileUI, TileUI tgtTileUI, boolean isUpdateServer) {
-    final int srcTileUIId = srcTileUI.getTileId();
-    final int tgtTileUIId = tgtTileUI.getTileId();
+  public void makeMove(int srcTileId, int tgtTileId, boolean isUpdateServer) {
+    final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
+
     final PieceUI srcPieceUI = srcTileUI.getPieceUI();
-    final Move newMove = new Move(gameScreen.gameState.getCurrentTurnMaker(), gameScreen.board, srcTileUIId, tgtTileUIId);
+    final Move newMove = new Move(gameScreen.gameState.getCurrentTurnMaker(), gameScreen.board, srcTileId, tgtTileId);
     final int moveType = gameScreen.board.move(newMove);
 
     if (moveType != -1) {
       if (moveType == 0) {
-        gameScreen.pieceUIManager.removePieceUI(srcTileUIId);
-        gameScreen.pieceUIManager.removePieceUI(tgtTileUIId);
+        gameScreen.pieceUIManager.removePieceUI(srcTileId);
+        gameScreen.pieceUIManager.removePieceUI(tgtTileId);
       } else if (moveType == 1) {
-        gameScreen.pieceUIManager.movePieceUI(srcTileUIId, tgtTileUIId);
+        gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
       } else if (moveType == 2) {
-        gameScreen.pieceUIManager.removePieceUI(tgtTileUIId);
-        gameScreen.pieceUIManager.movePieceUI(srcTileUIId, tgtTileUIId);
+        gameScreen.pieceUIManager.removePieceUI(tgtTileId);
+        gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
       } else if (moveType == 3) {
         // TODO animate aggressive lose on the other client
-        gameScreen.pieceUIManager.removePieceUI(srcTileUIId);
+        gameScreen.pieceUIManager.removePieceUI(srcTileId);
       }
 
       gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
       gameScreen.prevMove = newMove;
 
+      Gdx.app.log("Move", "Update move by Player: " + newMove.getPlayer().getId());
+      Gdx.app.log("Move", newMove.toString());
+
       if (gameScreen.gameMode == GameMode.ONLINE) {
         if (isUpdateServer)
           gameScreen.serverSocket.updateMove(newMove);
       } else {
-        gameScreen.pieceUIManager.flipPieceUISetDisplay();
-      }
+        // gameScreen.pieceUIManager.flipPieceUISetDisplay();
 
-      Gdx.app.log("Move", "Update move by Player: " + newMove.getPlayer().getId());
+        // Make AI Move
+        if (gameScreen.gameState.isRunning()) {
+          if (gameScreen.gameState.getCurrentTurnMaker().getAlliance() ==
+              gameScreen.board.getAI().getAIAlliance())
+          {
+            Move aiMove = gameScreen.board.getAI().generateMove();
+            makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false);
+          }
+        }
+      }
     } else {
       // Move piece back to original position
       gameScreen.pieceUIManager.animatePieceUIMove(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
+    }
+
+    if (!gameScreen.gameState.isRunning()) {
+      gameScreen.pieceUIManager.showAllPieceUI();
     }
   }
 }

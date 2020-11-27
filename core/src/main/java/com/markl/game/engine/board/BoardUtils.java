@@ -30,13 +30,14 @@ public class BoardUtils {
   public static final int BOARD_TILES_ROW_COUNT = 8;
   public static final int TOTAL_BOARD_TILES = BOARD_TILES_COL_COUNT * BOARD_TILES_ROW_COUNT;
 
-  /* * Board anchors */
+  /** Board anchors */
   public static final int FIRST_ROW_INIT = 0;                                                  // First tile index of the first board row
   public static final int SECOND_ROW_INIT = FIRST_ROW_INIT + BOARD_TILES_COL_COUNT;            // First tile index of the second board row
   public static final int LAST_ROW_INIT = (BOARD_TILES_ROW_COUNT - 1) * BOARD_TILES_COL_COUNT; // First tile index of the last board row
   public static final int SECOND_TO_LAST_ROW_INIT = LAST_ROW_INIT - BOARD_TILES_COL_COUNT;     // First tile index of the second to las board row
 
   /** Pieces ranks string name */
+  public static final String SPY_RANK           = "Spy";
   public static final String GENERAL_FIVE_RANK  = "GeneralFive";
   public static final String GENERAL_FOUR_RANK  = "GeneralFour";
   public static final String GENERAL_THREE_RANK = "GeneralThree";
@@ -50,10 +51,27 @@ public class BoardUtils {
   public static final String LT_TWO_RANK        = "LtTwo";
   public static final String SERGEANT_RANK      = "Sergeant";
   public static final String PRIVATE_RANK       = "Private";
-  public static final String SPY_RANK           = "Spy";
   public static final String FLAG_RANK          = "Flag";
 
+  /** Pieces powerleve */
+  public static final int SPY_POW           = 999;
+  public static final int GENERAL_FIVE_POW  = 14;
+  public static final int GENERAL_FOUR_POW  = 13;
+  public static final int GENERAL_THREE_POW = 12;
+  public static final int GENERAL_TWO_POW   = 11;
+  public static final int GENERAL_ONE_POW   = 10;
+  public static final int COLONEL_POW       = 9;
+  public static final int LT_COLONEL_POW    = 8;
+  public static final int MAJOR_POW         = 7;
+  public static final int CAPTAIN_POW       = 6;
+  public static final int LT_ONE_POW        = 5;
+  public static final int LT_TWO_POW        = 4;
+  public static final int SERGEANT_POW      = 3;
+  public static final int PRIVATE_POW       = 2;
+  public static final int FLAG_POW          = 1;
+
   /** Individual pieces count */
+  public static final int SPY_COUNT           = 2;
   public static final int GENERAL_FIVE_COUNT  = 1;
   public static final int GENERAL_FOUR_COUNT  = 1;
   public static final int GENERAL_THREE_COUNT = 1;
@@ -67,7 +85,6 @@ public class BoardUtils {
   public static final int LT_TWO_COUNT        = 1;
   public static final int SERGEANT_COUNT      = 1;
   public static final int PRIVATE_COUNT       = 6;
-  public static final int SPY_COUNT           = 2;
   public static final int FLAG_COUNT          = 1;
 
   /**

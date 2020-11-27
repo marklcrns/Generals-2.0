@@ -14,7 +14,7 @@ import com.markl.game.engine.board.Player;
 public class Flag extends Piece {
 
   private final String rank = BoardUtils.FLAG_RANK;                  // Rank of the piece
-  private final int powerLevel = 1;                                  // Power level of the piece to compare ranks
+  private final int powerLevel = BoardUtils.FLAG_POW;                // Power level of the piece to compare ranks
   private final int legalPieceInstanceCount = BoardUtils.FLAG_COUNT; // Allowed amount of piece instance owned by a Player in a single game
 
   /**

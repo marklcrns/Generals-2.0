@@ -81,6 +81,16 @@ public class PieceUIManager {
     }
   }
 
+  public void showAllPieceUI() {
+    Iterator<TileUI> iterator = gameScreen.tilesUI.iterator();
+    while (iterator.hasNext()) {
+      TileUI tileUI = iterator.next();
+      if (tileUI.isTileUIOccupied()) {
+        tileUI.getPieceUI().showPieceDisplay();;
+      }
+    }
+  }
+
   public void flipPieceUISetDisplay() {
     Iterator<TileUI> iterator = gameScreen.tilesUI.iterator();
     while (iterator.hasNext()) {

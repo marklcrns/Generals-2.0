@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import com.markl.game.GameState;
+import com.markl.game.ai.minimax.AI;
 import com.markl.game.engine.board.pieces.Piece;
 
 /**
@@ -20,6 +21,7 @@ public class Board {
   private Player playerWhite;             // Player instance that all contains all infos on white pieces
   private int blackPiecesLeft;
   private int whitePiecesLeft;
+  private AI ai;
 
   /**
    * No argument constructor
@@ -81,6 +83,16 @@ public class Board {
       else
         this.addTile(i, Alliance.WHITE);
     }
+  }
+
+  public void addAI(AI ai, Alliance aiAlliance) {
+    ai.setBoard(this);
+    ai.setAIAlliance(aiAlliance);
+    this.ai = ai;
+  }
+
+  public AI getAI() {
+    return this.ai;
   }
 
   /**

@@ -343,7 +343,7 @@ public class BoardBuilder {
     int randomEmptyTile;
 
     while (pieceInstanceCounter < piece.getLegalPieceInstanceCount()) {
-      randomEmptyTile = Utils.getRandomWithExclusion(from, to, occupiedTiles);
+      randomEmptyTile = Utils.getRandomIntWithExclusion(from, to, occupiedTiles);
       pieceCopy.setPieceTileId(randomEmptyTile);
       // TODO: Fix to check if randomEmptyTile is empty
       if (setPiece(pieceCopy, false)) {

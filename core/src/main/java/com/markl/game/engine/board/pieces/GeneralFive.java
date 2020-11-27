@@ -14,7 +14,7 @@ import com.markl.game.engine.board.Player;
 public class GeneralFive extends Piece {
 
   private final String rank = BoardUtils.GENERAL_FIVE_RANK;                  // Rank of the piece
-  private final int powerLevel = 14;                                         // Power level of the piece to compare ranks
+  private final int powerLevel = BoardUtils.GENERAL_FIVE_POW;                // Power level of the piece to compare ranks
   private final int legalPieceInstanceCount = BoardUtils.GENERAL_FIVE_COUNT; // Allowed amount of piece instance owned by a Player in a single game
 
   /**

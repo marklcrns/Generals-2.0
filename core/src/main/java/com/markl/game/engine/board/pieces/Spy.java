@@ -14,7 +14,7 @@ import com.markl.game.engine.board.Player;
 public class Spy extends Piece {
 
   private final String rank = BoardUtils.SPY_RANK;                  // Rank of the piece
-  private final int powerLevel = 999;                               // Power level of the piece to compare ranks
+  private final int powerLevel = BoardUtils.SPY_POW;                // Power level of the piece to compare ranks
   private final int legalPieceInstanceCount = BoardUtils.SPY_COUNT; // Allowed amount of piece instance owned by a Player in a single game
 
   /**

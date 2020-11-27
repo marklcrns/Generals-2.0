@@ -40,6 +40,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.markl.game.GameState;
+import com.markl.game.ai.minimax.AIDumb;
 import com.markl.game.control.MoveManager;
 import com.markl.game.control.PieceUIManager;
 import com.markl.game.engine.board.Alliance;
@@ -115,8 +116,16 @@ public class GameScreen implements Screen {
       boardBuilder.createBoardRandomBuild();
       gameState.setMyPlayer(Alliance.WHITE, "white");
       gameState.setEnemyPlayer(Alliance.BLACK, "black");
+      board.addAI(new AIDumb(), Alliance.BLACK);
       initBoardUI();
       initGame();
+
+      // Make AI move if first move maker
+      if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.BLACK) {
+        Move aiMove = board.getAI().generateMove();
+        moveManager.makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false);
+      }
+
     } else if (gameMode == GameMode.LOCAL) {
       initEngine();
       boardBuilder.createBoardRandomBuild();
@@ -262,7 +271,7 @@ public class GameScreen implements Screen {
       }
     }
 
-    if (gameMode == GameMode.ONLINE) {
+    if (gameMode == GameMode.ONLINE || gameMode == GameMode.SINGLE) {
       if (gameState.getMyAlliance() == Alliance.WHITE)
         pieceUIManager.hidePieceUISet(Alliance.BLACK);
       else
@@ -271,7 +280,7 @@ public class GameScreen implements Screen {
       if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE)
         pieceUIManager.hidePieceUISet(Alliance.BLACK);
       else
-        pieceUIManager.hidePieceUISet(Alliance.WHITE);
+        pieceUIManager.hidePieceUISet(Alliance.BLACK);
     }
   }
 
