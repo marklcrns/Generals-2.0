@@ -17,9 +17,12 @@ import com.markl.game.engine.board.Tile;
  */
 public class AIMinimax extends AI {
 
+  private int depth;
   private Tree tree;
 
-  public AIMinimax() {}
+  public AIMinimax(int depth) {
+    this.depth = depth;
+  }
 
   public Map<Integer, Move> evalueateBoard(Board board) {
     Map<Integer, Move> boardValues = new HashMap<Integer, Move>();
@@ -35,9 +38,14 @@ public class AIMinimax extends AI {
     return boardValues;
   }
 
+  public Move minimax(LeafNode node, boolean isMax) {
+    // TODO Implement
+    return null;
+  }
+
   @Override
   public Move generateMove() {
-    // TODO Auto-generated method stub
+    // TODO Implement
     return null;
   }
 }

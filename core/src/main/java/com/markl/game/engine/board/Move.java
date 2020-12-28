@@ -180,8 +180,7 @@ public class Move {
     }
 
     // If successful, change execution status and return true.
-    this.isExecuted = true;
-    this.game.nextTurn();
+    isExecuted = true;
     return true;
   }
 
@@ -447,7 +446,57 @@ public class Move {
     if (!this.isExecuted)
       return false;
 
-    this.isExecuted = false;
+    switch (this.moveType.getValue()) {
+      case -1: // INVALID
+        System.out.println("undoExecution() E: Invalid move");
+        return false;
+
+      case 0: // DRAW
+        this.board.getTile(this.srcTileId).insertPiece(srcPieceOrigin);
+        this.board.getTile(this.tgtTileId).insertPiece(tgtPieceOrigin);
+        break;
+
+      case 1: // NORMAL
+        // Check if Flag has been maneuvered into the opposite end row of the board.
+        if (isFlagSucceeded()) {
+          // TODO: Implement //
+          // this.game.endGame(srcPieceOrigin.getPieceOwner());
+        }
+
+        this.board.movePiece(this.tgtTileId, this.srcTileId);
+        this.isExecuted = false;
+        break;
+
+      case 2: // AGGRESSIVE_WIN
+        this.board.movePiece(this.tgtTileId, this.srcTileId);
+        this.board.getTile(this.tgtTileId).insertPiece(tgtPieceOrigin);
+        this.eliminatedPiece = null;
+
+        // Check if source or target piece is Flag rank, then conclude the game.
+        if (isTargetPieceFlag()) {
+          // TODO: Implement //
+          // this.game.endGame(srcPieceOrigin.getPieceOwner());
+        }
+
+        this.isExecuted = false;
+        break;
+
+      case 3: // AGGRESSIVE_LOSE
+        this.board.getTile(this.srcTileId).insertPiece(srcPieceOrigin);
+        this.eliminatedPiece = null;
+
+        if (isSourcePieceFlag() && !isTargetPieceFlag()){
+          // TODO: Implement //
+          // this.game.endGame(tgtPieceOrigin.getPieceOwner());
+        }
+
+        this.isExecuted = false;
+        break;
+
+      default:
+        return false;
+    }
+
     return true;
   }
 
@@ -460,8 +509,7 @@ public class Move {
     if (this.isExecuted)
       return false;
 
-    this.isExecuted = true;
-    return true;
+    return execute();
   }
 
   /**

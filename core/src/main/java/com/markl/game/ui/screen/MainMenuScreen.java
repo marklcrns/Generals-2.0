@@ -44,13 +44,6 @@ public class MainMenuScreen implements Screen {
     Label online = new Label("Online", labelStyle);
     Label quit = new Label("Quit", labelStyle);
 
-    table.row();
-    table.add(singlePlayer).padBottom(25);
-    table.row();
-    table.add(online).padBottom(25);
-    table.row();
-    table.add(quit).padBottom(25);
-
     singlePlayer.addListener(new ClickListener() {
       @Override
       public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -111,6 +104,13 @@ public class MainMenuScreen implements Screen {
       }
     });
 
+    table.row();
+    table.add(singlePlayer).padBottom(25);
+    table.row();
+    table.add(online).padBottom(25);
+    table.row();
+    table.add(quit).padBottom(25);
+
     return table;
   }
 
@@ -119,9 +119,10 @@ public class MainMenuScreen implements Screen {
 
     stage.clear();
     Stack stack = new Stack();
-    stage.addActor(stack);
     stack.setSize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
     stack.add(controls);
+
+    stage.addActor(stack);
   }
 
   @Override

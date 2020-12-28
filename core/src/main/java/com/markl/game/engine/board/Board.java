@@ -1,8 +1,6 @@
 package com.markl.game.engine.board;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import com.markl.game.GameState;
 import com.markl.game.ai.minimax.AI;
@@ -16,7 +14,6 @@ public class Board {
 
   private GameState gameState;            // Game instance reference
   private LinkedList<Tile> tiles;         // List of all Tiles containing data of each piece
-  private Map<Integer, Move> moveHistory; // Move history
   private Player playerBlack;             // Player instance that all contains all infos on black pieces
   private Player playerWhite;             // Player instance that all contains all infos on white pieces
   private int blackPiecesLeft;
@@ -45,7 +42,6 @@ public class Board {
    */
   private void initBoard() {
     this.tiles = new LinkedList<Tile>();
-    this.moveHistory = new HashMap<Integer, Move>();
     this.playerBlack = new Player(Alliance.BLACK);
     this.playerWhite = new Player(Alliance.WHITE);
     clearBoard();
@@ -55,14 +51,25 @@ public class Board {
     this.gameState.setBoard(this);
   }
 
-  public int move(Move newMove) {
-    if (gameState.getCurrentTurnMaker().isMyPiece(getTile(newMove.getSrcTileId()).getPiece())) {
-      newMove.evaluate();
+  public int move(Move newMove, boolean isRedo) {
+    Player currTurnMaker = gameState.getCurrentTurnMaker();
+    int srcTileId = newMove.getSrcTileId();
+    int tgtTileId = newMove.getTgtTileId();
+
+    // Check if piece owned by current turn maker
+    if ((!isRedo && currTurnMaker.isMyPiece(getTile(srcTileId).getPiece())) ||
+        (isRedo ))
+    {
+      if (!isRedo)
+        newMove.evaluate();
+
       newMove.execute();
 
       // Record if valid move
-      if (newMove.getMoveType().getValue() != -1)
-        moveHistory.put(newMove.getTurnId(), newMove);
+      if (newMove.getMoveType().getValue() != -1) {
+        gameState.getMoveHistory().put(newMove.getTurnId(), newMove);
+        gameState.nextTurn();
+      }
 
       return newMove.getMoveType().getValue();
     }
@@ -242,13 +249,6 @@ public class Board {
     return this.playerWhite;
   }
 
-  public Map<Integer, Move> getMoveHistory() {
-    if (moveHistory != null)
-      return this.moveHistory;
-
-    return null;
-  }
-
   /**
    * Sets the required black Player instance.
    * @param player black Player instance.
@@ -275,11 +275,7 @@ public class Board {
 
   public GameState getGame() { return this.gameState; }
 
-  /**
-   * @return String representation of all current Tiles for debugging
-   */
-  @Override
-  public String toString() {
+  public String ascii() {
     String debugBoard = "\nBoard Debug Board\n";
     debugBoard += "    0 1 2 3 4 5 6 7 8\n";
     debugBoard += "    _________________\n";
@@ -344,4 +340,11 @@ public class Board {
     return debugBoard;
   }
 
+  /**
+   * @return String representation of all current Tiles for debugging
+   */
+  @Override
+  public String toString() {
+    return "Impelement board toString()";
+  }
 }

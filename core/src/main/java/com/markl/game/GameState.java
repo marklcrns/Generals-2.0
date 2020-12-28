@@ -1,7 +1,12 @@
 package com.markl.game;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.badlogic.gdx.Gdx;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
+import com.markl.game.engine.board.Move;
 import com.markl.game.engine.board.Player;
 
 /**
@@ -22,6 +27,7 @@ public class GameState {
   private Player currentTurnMaker;        // Current player to make move
   private String blackPlayerName = "";    // Black player's name assigned when game initialized
   private String whitePlayerName = "";    // White player's name assigned when game initialized
+  private Map<Integer, Move> moveHistory; // Move history
   private int currentTurnId;              // Current turn of the game
   private boolean hasGameStarted = false; // Turns true when game started
   private boolean hasGameEnded = false;   // Turns true when game started
@@ -48,6 +54,7 @@ public class GameState {
    */
   public void init() {
     this.currentTurnId = 0;
+    this.moveHistory = new HashMap<Integer, Move>();
   }
 
   /**
@@ -160,6 +167,62 @@ public class GameState {
     }
   }
 
+  public Map<Integer, Move> getMoveHistory() {
+    if (moveHistory != null)
+      return this.moveHistory;
+
+    return null;
+  }
+
+  public String printMoveHistory() {
+    String moveHistoryStr = "";
+
+    for (int i = 1; i < moveHistory.size() + 1; i++) {
+      if (i == currentTurnId)
+        moveHistoryStr += "\n-> " + moveHistory.get(i).toString();
+      else
+        moveHistoryStr += "\n" + moveHistory.get(i).toString();
+    }
+
+    return moveHistoryStr;
+  }
+
+  public Move undoMove() {
+    if (hasUndo()) {
+      Move lastMove = moveHistory.get(currentTurnId - 1);
+      Gdx.app.log("GameState.undoMove", lastMove.toString());
+      if (lastMove.getTurnId() == currentTurnId - 1 &&
+          lastMove.undoExecution()) {
+          prevTurn();
+        return lastMove;
+      }
+    }
+    return null;
+  }
+
+  public Move redoMove() {
+    if (hasRedo()) {
+      Move nextMove = moveHistory.get(currentTurnId);
+      Gdx.app.log("GameState.redoMove", nextMove.toString());
+      if (nextMove.getTurnId() == currentTurnId &&
+          nextMove.redoExecution()) {
+        return nextMove;
+      }
+    }
+    return null;
+  }
+
+  public void clearMoveHistoryForward() {
+    for (int i = moveHistory.size(); i >= currentTurnId; i--) {
+      Move removedMove = moveHistory.remove(i);
+      Gdx.app.log("Removed Move", removedMove.toString());
+    }
+  }
+
+  public void clearMoveHistoryBackward() {
+    // TODO: Implement //
+  }
+
   public void switchTurnMakerPlayer() {
     if (currentTurnMaker != null) {
       if (currentTurnMaker.getAlliance() == Alliance.BLACK)
@@ -171,6 +234,19 @@ public class GameState {
 
   public boolean isRunning() {
     if (this.hasGameStarted && !this.hasGameEnded)
+      return true;
+    return false;
+  }
+
+  public boolean hasUndo() {
+    if ((firstMoveMaker == myAlliance && currentTurnId > 1) ||
+        (firstMoveMaker != myAlliance && currentTurnId > 2))
+      return true;
+    return false;
+  }
+
+  public boolean hasRedo() {
+    if (moveHistory.size() >= currentTurnId)
       return true;
     return false;
   }

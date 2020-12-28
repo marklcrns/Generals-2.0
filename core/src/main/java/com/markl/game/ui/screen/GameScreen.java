@@ -19,8 +19,8 @@ import static com.markl.game.util.Constants.TILE_AGGRESSIVE_HIGHLIGHT_COLOR;
 import static com.markl.game.util.Constants.TILE_BORDER_COLOR;
 import static com.markl.game.util.Constants.TILE_INVALID_HIGHLIGHT_COLOR;
 import static com.markl.game.util.Constants.TILE_NORMAL_HIGHLIGHT_COLOR;
-import static com.markl.game.util.Constants.TILE_PREV_NORMAL_MOVE_COLOR;
 import static com.markl.game.util.Constants.TILE_PREV_AGGRESSIVE_MOVE_COLOR;
+import static com.markl.game.util.Constants.TILE_PREV_NORMAL_MOVE_COLOR;
 import static com.markl.game.util.Constants.TILE_SIZE;
 import static com.markl.game.util.Constants.VIEWPORT_HEIGHT;
 import static com.markl.game.util.Constants.VIEWPORT_WIDTH;
@@ -47,13 +47,11 @@ import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
 import com.markl.game.engine.board.Move;
-import com.markl.game.engine.board.Player;
 import com.markl.game.engine.board.Move.MoveType;
+import com.markl.game.engine.board.Player;
 import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.network.ServerSocket;
 import com.markl.game.ui.Application;
-import com.markl.game.ui.board.PieceUI;
-import com.markl.game.ui.board.PieceUIListener;
 import com.markl.game.ui.board.TileUI;
 
 /**
@@ -66,8 +64,8 @@ public class GameScreen implements Screen {
     SINGLE, LOCAL, ONLINE;
   }
 
-  private Stage stage;
-  private ShapeRenderer shapeRend;
+  public Stage stage;
+  public ShapeRenderer shapeRend;
 
   public Application app;
   public GameMode gameMode;
@@ -93,6 +91,8 @@ public class GameScreen implements Screen {
   public Piece activeSrcPiece;
   public Move prevMove;
 
+  public GameScreenHUD hud;
+
   // Network
   public ServerSocket serverSocket;
 
@@ -101,11 +101,13 @@ public class GameScreen implements Screen {
     this.gameMode = gameMode;
     this.shapeRend = new ShapeRenderer();
     this.stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
+    this.hud = new GameScreenHUD(this);
   }
 
   @Override
   public void show() {
     Gdx.app.log("GameScreen", "show " + gameMode);
+    hud.rebuildGameHUD();
     getAssetImages();
 
     this.tilesUI = new LinkedList<TileUI>();
@@ -243,31 +245,12 @@ public class GameScreen implements Screen {
 
   public void populateTilesUI() {
     Iterator<TileUI> iterator = tilesUI.iterator();
-    Texture hiddenBlackPiece = blackPiecesTex.get("Hidden");
-    Texture hiddenWhitePiece = whitePiecesTex.get("Hidden");
 
     while (iterator.hasNext()) {
       TileUI tileUI = iterator.next();
       // Create PieceUI as stage actor if tile is occupied
       if (board.getTile(tileUI.getTileId()).isTileOccupied()) {
-        Alliance alliance = board.getTile(tileUI.getTileId()).getPiece().getAlliance();
-        String pieceRank = board.getTile(tileUI.getTileId()).getPiece().getRank();
-
-        PieceUI pieceUI;
-        if (alliance == Alliance.BLACK) {
-          pieceUI = new PieceUI(tileUI, pieceRank, alliance,
-              blackPiecesTex.get(pieceRank), hiddenBlackPiece);
-        } else {
-          pieceUI = new PieceUI(tileUI, pieceRank, alliance,
-              whitePiecesTex.get(pieceRank), hiddenWhitePiece);
-        }
-        pieceUI.setWidth(tileUI.width);
-        pieceUI.setHeight(tileUI.height);
-        pieceUI.setPosition(tileUI.x, tileUI.y);
-        pieceUI.addListener(new PieceUIListener(pieceUI, this));
-
-        stage.addActor(pieceUI);
-        tileUI.setPieceUI(pieceUI);
+        pieceUIManager.generatePieceUI(tileUI.getTileId());
       }
     }
 
@@ -409,6 +392,7 @@ public class GameScreen implements Screen {
     }
 
     shapeRend.begin(ShapeType.Filled);
+    // Draw previous move target tile
     if (prevMove != null) {
       TileUI tgtTileUI = tilesUI.get(prevMove.getTgtTileId());
       MoveType moveType = prevMove.getMoveType();
@@ -432,12 +416,13 @@ public class GameScreen implements Screen {
     shapeRend.end();
 
     shapeRend.begin(ShapeType.Line);
-
+    // Draw active tile highlight
     if (activeTileUI != null) {
       shapeRend.setColor(TILE_ACTIVE_PIECE_COLOR);
       shapeRend.rect(activeTileUI.x, activeTileUI.y, activeTileUI.width, activeTileUI.height);
     }
 
+    // Draw previous move source tile
     if (prevMove != null) {
       TileUI srcTileUI = tilesUI.get(prevMove.getSrcTileId());
       MoveType moveType = prevMove.getMoveType();
@@ -560,11 +545,7 @@ public class GameScreen implements Screen {
     whitePiecesTex.put("Hidden", app.assets.get(getPieceImagePath("white", "Hidden"), Texture.class));
   }
 
-  /**
-   * @return String representation of all current TilesUI for debugging
-   */
-  @Override
-  public String toString() {
+  public String ascii() {
     String debugBoard = "\nGameScreen Debug Board\n";
     debugBoard += "    0 1 2 3 4 5 6 7 8\n";
     debugBoard += "    _________________\n";
@@ -627,5 +608,13 @@ public class GameScreen implements Screen {
     }
 
     return debugBoard;
+  }
+
+  /**
+   * @return String representation of all current TilesUI for debugging
+   */
+  @Override
+  public String toString() {
+    return "Implement GameScreen toString()";
   }
 }

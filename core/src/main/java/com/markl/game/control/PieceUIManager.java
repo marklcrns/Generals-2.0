@@ -4,12 +4,15 @@ import static com.markl.game.util.Constants.PIECE_UI_ANIMATION_SPEED;
 
 import java.util.Iterator;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.ui.board.PieceUI;
+import com.markl.game.ui.board.PieceUIListener;
 import com.markl.game.ui.board.TileUI;
 import com.markl.game.ui.screen.GameScreen;
+import com.markl.game.ui.screen.GameScreen.GameMode;
 
 /**
  * TODO Class Description.
@@ -23,6 +26,37 @@ public class PieceUIManager {
 
   public PieceUIManager(GameScreen gameScreen) {
     this.gameScreen = gameScreen;
+  }
+
+  public boolean generatePieceUI(int tileId) {
+    TileUI tileUI = gameScreen.tilesUI.get(tileId);
+    Texture hiddenBlackPiece = gameScreen.blackPiecesTex.get("Hidden");
+    Texture hiddenWhitePiece = gameScreen.whitePiecesTex.get("Hidden");
+
+    // Make sure tile is occupied by Piece but missing PieceUI
+    if (gameScreen.board.getTile(tileUI.getTileId()).isTileOccupied() &&
+        tileUI.getPieceUI() == null) {
+      Alliance alliance = gameScreen.board.getTile(tileUI.getTileId()).getPiece().getAlliance();
+      String pieceRank = gameScreen.board.getTile(tileUI.getTileId()).getPiece().getRank();
+
+      PieceUI pieceUI;
+      if (alliance == Alliance.BLACK) {
+        pieceUI = new PieceUI(tileUI, pieceRank, alliance,
+            gameScreen.blackPiecesTex.get(pieceRank), hiddenBlackPiece);
+      } else {
+        pieceUI = new PieceUI(tileUI, pieceRank, alliance,
+            gameScreen.whitePiecesTex.get(pieceRank), hiddenWhitePiece);
+      }
+      pieceUI.setWidth(tileUI.width);
+      pieceUI.setHeight(tileUI.height);
+      pieceUI.setPosition(tileUI.x, tileUI.y);
+      pieceUI.addListener(new PieceUIListener(pieceUI, gameScreen));
+
+      gameScreen.stage.addActor(pieceUI);
+      tileUI.setPieceUI(pieceUI);
+      return true;
+    }
+    return false;
   }
 
   public boolean movePieceUI(int srcPieceUITileId, int tgtPieceUITileId) {

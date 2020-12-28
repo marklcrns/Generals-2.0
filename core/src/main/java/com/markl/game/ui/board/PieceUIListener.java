@@ -38,7 +38,6 @@ public class PieceUIListener extends ClickListener {
 
   @Override
   public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-    Gdx.app.log("PieceUIListener", "Piece clicked!!!");
     if (isPieceTouchable() && gameScreen.activeTileUI != pieceUI.tileUI) {
       makePieceUIActive();
     } else if (gameScreen.activeTileUI == pieceUI.tileUI){
