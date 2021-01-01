@@ -4,13 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.markl.game.ui.Application;
-
-import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
 
 /**
  * TODO Class Description.
@@ -31,41 +29,7 @@ public class LoadingScreen implements Screen {
   }
 
   private void queueAssets() {
-    // Load black pieces
-    app.assets.load(getPieceImagePath("black", "GeneralFive"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "GeneralFour"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "GeneralThree"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "GeneralTwo"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "GeneralOne"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "Colonel"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "LtCol"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "Major"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "Captain"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "LtOne"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "LtTwo"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "Sergeant"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "Private"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "Spy"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "Flag"), Texture.class);
-    app.assets.load(getPieceImagePath("black", "Hidden"), Texture.class);
-
-    // Load white pieces
-    app.assets.load(getPieceImagePath("white", "GeneralFive"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "GeneralFour"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "GeneralThree"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "GeneralTwo"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "GeneralOne"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "Colonel"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "LtCol"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "Major"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "Captain"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "LtOne"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "LtTwo"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "Sergeant"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "Private"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "Spy"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "Flag"), Texture.class);
-    app.assets.load(getPieceImagePath("white", "Hidden"), Texture.class);
+    app.assets.load(app.PIECE_ATLAS, TextureAtlas.class);
     app.assets.finishLoading();
   }
 

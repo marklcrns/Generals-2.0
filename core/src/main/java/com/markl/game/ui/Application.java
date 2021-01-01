@@ -1,5 +1,8 @@
 package com.markl.game.ui;
 
+import static com.markl.game.util.Constants.VIEWPORT_HEIGHT;
+import static com.markl.game.util.Constants.VIEWPORT_WIDTH;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -9,17 +12,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.markl.game.ui.screen.GameScreen;
+import com.markl.game.ui.screen.GameScreen.GameMode;
 import com.markl.game.ui.screen.LoadingScreen;
 import com.markl.game.ui.screen.MainMenuScreen;
 import com.markl.game.ui.screen.SplashScreen;
-import com.markl.game.ui.screen.GameScreen.GameMode;
-
-import static com.markl.game.util.Constants.VIEWPORT_WIDTH;
-import static com.markl.game.util.Constants.VIEWPORT_HEIGHT;
 
 public class Application extends Game {
 
   public static final String TITLE = "Game of The Generals";
+  public static final String VERSION = "0.1";
+
+  public static final String PIECE_ATLAS = "pieces/piecesTex.atlas";
 
   public SpriteBatch batch;
   public BitmapFont font;

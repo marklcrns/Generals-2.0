@@ -1,8 +1,8 @@
 package com.markl.game.ui.board;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.markl.game.engine.board.Alliance;
 
@@ -17,16 +17,16 @@ public class PieceUI extends Actor {
   public TileUI tileUI;
   public String pieceRank;
   public Alliance alliance;
-  private Texture pieceTexCurrent;
-  private Texture pieceTexShow;
-  private Texture pieceTexHidden;
+  private AtlasRegion pieceTexCurrent;
+  private AtlasRegion pieceTexShow;
+  private AtlasRegion pieceTexHidden;
   public boolean isHidden;
 
   /**
    * No-args constructor
    */
   public PieceUI(TileUI tile, String pieceRank, Alliance alliance,
-                 Texture pieceTexShow, Texture pieceTexHidden) {
+                 AtlasRegion pieceTexShow, AtlasRegion pieceTexHidden) {
     this.tileUI           = tile;
     this.pieceRank        = pieceRank;
     this.alliance         = alliance;

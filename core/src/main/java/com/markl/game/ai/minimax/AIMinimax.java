@@ -24,7 +24,7 @@ public class AIMinimax extends AI {
     this.depth = depth;
   }
 
-  public Map<Integer, Move> evalueateBoard(Board board) {
+  public Map<Integer, Move> evaluateBoard(Board board) {
     Map<Integer, Move> boardValues = new HashMap<Integer, Move>();
     LinkedList<Tile> tiles         = board.getAllTiles();
     ListIterator<Tile> iterator    = tiles.listIterator();
@@ -33,7 +33,6 @@ public class AIMinimax extends AI {
     while(iterator.hasNext()) {
       currTile = iterator.next();
     }
-
 
     return boardValues;
   }

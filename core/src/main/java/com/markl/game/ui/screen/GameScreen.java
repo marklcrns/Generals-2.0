@@ -2,7 +2,6 @@ package com.markl.game.ui.screen;
 
 import static com.markl.game.engine.board.BoardUtils.BOARD_TILES_ROW_COUNT;
 import static com.markl.game.engine.board.BoardUtils.TOTAL_BOARD_TILES;
-import static com.markl.game.engine.board.BoardUtils.getPieceImagePath;
 import static com.markl.game.engine.board.BoardUtils.getTileColNum;
 import static com.markl.game.engine.board.BoardUtils.getTileRowNum;
 import static com.markl.game.util.Constants.BOARD_ACTIVE_COLOR;
@@ -34,10 +33,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.markl.game.GameState;
 import com.markl.game.ai.minimax.AIDumb;
@@ -77,8 +78,8 @@ public class GameScreen implements Screen {
   public Player playerBlack;
   public Player playerWhite;
   public LinkedList<TileUI> tilesUI;  // List of all Tiles containing data of each piece
-  public Map<String, Texture> blackPiecesTex = new HashMap<>();
-  public Map<String, Texture> whitePiecesTex = new HashMap<>();
+  public Map<String, AtlasRegion> blackPiecesTex = new HashMap<>();
+  public Map<String, AtlasRegion> whitePiecesTex = new HashMap<>();
   public boolean isBoardInverted;
 
   // TODO: Debug
@@ -92,6 +93,7 @@ public class GameScreen implements Screen {
   public Move prevMove;
 
   public GameScreenHUD hud;
+  public Window aiDebuggerWin;
 
   // Network
   public ServerSocket serverSocket;
@@ -99,14 +101,15 @@ public class GameScreen implements Screen {
   public GameScreen(final Application app, GameMode gameMode) {
     this.app = app;
     this.gameMode = gameMode;
-    this.shapeRend = new ShapeRenderer();
-    this.stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
-    this.hud = new GameScreenHUD(this);
   }
 
   @Override
   public void show() {
     Gdx.app.log("GameScreen", "show " + gameMode);
+    this.shapeRend = new ShapeRenderer();
+    this.stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
+    this.hud = new GameScreenHUD(this);
+
     hud.rebuildGameHUD();
     getAssetImages();
 
@@ -208,8 +211,8 @@ public class GameScreen implements Screen {
   @Override
   public void dispose() {
     System.out.println("GameScreen dispose");
-    this.shapeRend.dispose();
     this.stage.dispose();
+    this.shapeRend.dispose();
   }
 
   public void initEngine() {
@@ -508,41 +511,43 @@ public class GameScreen implements Screen {
   }
 
   private void getAssetImages() {
+    TextureAtlas atlas = app.assets.get(app.PIECE_ATLAS, TextureAtlas.class);
+
     // Get black pieces
-    blackPiecesTex.put("GeneralFive", app.assets.get(getPieceImagePath("black", "GeneralFive"), Texture.class));
-    blackPiecesTex.put("GeneralFour", app.assets.get(getPieceImagePath("black", "GeneralFour"), Texture.class));
-    blackPiecesTex.put("GeneralThree", app.assets.get(getPieceImagePath("black", "GeneralThree"), Texture.class));
-    blackPiecesTex.put("GeneralTwo", app.assets.get(getPieceImagePath("black", "GeneralTwo"), Texture.class));
-    blackPiecesTex.put("GeneralOne", app.assets.get(getPieceImagePath("black", "GeneralOne"), Texture.class));
-    blackPiecesTex.put("Colonel", app.assets.get(getPieceImagePath("black", "Colonel"), Texture.class));
-    blackPiecesTex.put("LtCol", app.assets.get(getPieceImagePath("black", "LtCol"), Texture.class));
-    blackPiecesTex.put("Major", app.assets.get(getPieceImagePath("black", "Major"), Texture.class));
-    blackPiecesTex.put("Captain", app.assets.get(getPieceImagePath("black", "Captain"), Texture.class));
-    blackPiecesTex.put("LtOne", app.assets.get(getPieceImagePath("black", "LtOne"), Texture.class));
-    blackPiecesTex.put("LtTwo", app.assets.get(getPieceImagePath("black", "LtTwo"), Texture.class));
-    blackPiecesTex.put("Sergeant", app.assets.get(getPieceImagePath("black", "Sergeant"), Texture.class));
-    blackPiecesTex.put("Private", app.assets.get(getPieceImagePath("black", "Private"), Texture.class));
-    blackPiecesTex.put("Spy", app.assets.get(getPieceImagePath("black", "Spy"), Texture.class));
-    blackPiecesTex.put("Flag", app.assets.get(getPieceImagePath("black", "Flag"), Texture.class));
-    blackPiecesTex.put("Hidden", app.assets.get(getPieceImagePath("black", "Hidden"), Texture.class));
+    blackPiecesTex.put("GeneralFive", atlas.findRegion("black/GeneralFive"));
+    blackPiecesTex.put("GeneralFour", atlas.findRegion("black/GeneralFour"));
+    blackPiecesTex.put("GeneralThree", atlas.findRegion("black/GeneralThree"));
+    blackPiecesTex.put("GeneralTwo", atlas.findRegion("black/GeneralTwo"));
+    blackPiecesTex.put("GeneralOne", atlas.findRegion("black/GeneralOne"));
+    blackPiecesTex.put("Colonel", atlas.findRegion("black/Colonel"));
+    blackPiecesTex.put("LtCol", atlas.findRegion("black/LtCol"));
+    blackPiecesTex.put("Major", atlas.findRegion("black/Major"));
+    blackPiecesTex.put("Captain", atlas.findRegion("black/Captain"));
+    blackPiecesTex.put("LtOne", atlas.findRegion("black/LtOne"));
+    blackPiecesTex.put("LtTwo", atlas.findRegion("black/LtTwo"));
+    blackPiecesTex.put("Sergeant", atlas.findRegion("black/Sergeant"));
+    blackPiecesTex.put("Private", atlas.findRegion("black/Private"));
+    blackPiecesTex.put("Spy", atlas.findRegion("black/Spy"));
+    blackPiecesTex.put("Flag", atlas.findRegion("black/Flag"));
+    blackPiecesTex.put("Hidden", atlas.findRegion("black/Hidden"));
 
     // Get white pieces
-    whitePiecesTex.put("GeneralFive", app.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class));
-    whitePiecesTex.put("GeneralFour", app.assets.get(getPieceImagePath("white", "GeneralFour"), Texture.class));
-    whitePiecesTex.put("GeneralThree", app.assets.get(getPieceImagePath("white", "GeneralThree"), Texture.class));
-    whitePiecesTex.put("GeneralTwo", app.assets.get(getPieceImagePath("white", "GeneralTwo"), Texture.class));
-    whitePiecesTex.put("GeneralOne", app.assets.get(getPieceImagePath("white", "GeneralOne"), Texture.class));
-    whitePiecesTex.put("Colonel", app.assets.get(getPieceImagePath("white", "Colonel"), Texture.class));
-    whitePiecesTex.put("LtCol", app.assets.get(getPieceImagePath("white", "LtCol"), Texture.class));
-    whitePiecesTex.put("Major", app.assets.get(getPieceImagePath("white", "Major"), Texture.class));
-    whitePiecesTex.put("Captain", app.assets.get(getPieceImagePath("white", "Captain"), Texture.class));
-    whitePiecesTex.put("LtOne", app.assets.get(getPieceImagePath("white", "LtOne"), Texture.class));
-    whitePiecesTex.put("LtTwo", app.assets.get(getPieceImagePath("white", "LtTwo"), Texture.class));
-    whitePiecesTex.put("Sergeant", app.assets.get(getPieceImagePath("white", "Sergeant"), Texture.class));
-    whitePiecesTex.put("Private", app.assets.get(getPieceImagePath("white", "Private"), Texture.class));
-    whitePiecesTex.put("Spy", app.assets.get(getPieceImagePath("white", "Spy"), Texture.class));
-    whitePiecesTex.put("Flag", app.assets.get(getPieceImagePath("white", "Flag"), Texture.class));
-    whitePiecesTex.put("Hidden", app.assets.get(getPieceImagePath("white", "Hidden"), Texture.class));
+    whitePiecesTex.put("GeneralFive", atlas.findRegion("white/GeneralFive"));
+    whitePiecesTex.put("GeneralFour", atlas.findRegion("white/GeneralFour"));
+    whitePiecesTex.put("GeneralThree", atlas.findRegion("white/GeneralThree"));
+    whitePiecesTex.put("GeneralTwo", atlas.findRegion("white/GeneralTwo"));
+    whitePiecesTex.put("GeneralOne", atlas.findRegion("white/GeneralOne"));
+    whitePiecesTex.put("Colonel", atlas.findRegion("white/Colonel"));
+    whitePiecesTex.put("LtCol", atlas.findRegion("white/LtCol"));
+    whitePiecesTex.put("Major", atlas.findRegion("white/Major"));
+    whitePiecesTex.put("Captain", atlas.findRegion("white/Captain"));
+    whitePiecesTex.put("LtOne", atlas.findRegion("white/LtOne"));
+    whitePiecesTex.put("LtTwo", atlas.findRegion("white/LtTwo"));
+    whitePiecesTex.put("Sergeant", atlas.findRegion("white/Sergeant"));
+    whitePiecesTex.put("Private", atlas.findRegion("white/Private"));
+    whitePiecesTex.put("Spy", atlas.findRegion("white/Spy"));
+    whitePiecesTex.put("Flag", atlas.findRegion("white/Flag"));
+    whitePiecesTex.put("Hidden", atlas.findRegion("white/Hidden"));
   }
 
   public String ascii() {

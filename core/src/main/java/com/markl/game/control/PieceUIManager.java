@@ -5,6 +5,7 @@ import static com.markl.game.util.Constants.PIECE_UI_ANIMATION_SPEED;
 import java.util.Iterator;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.markl.game.engine.board.Alliance;
@@ -12,7 +13,6 @@ import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.PieceUIListener;
 import com.markl.game.ui.board.TileUI;
 import com.markl.game.ui.screen.GameScreen;
-import com.markl.game.ui.screen.GameScreen.GameMode;
 
 /**
  * TODO Class Description.
@@ -30,8 +30,10 @@ public class PieceUIManager {
 
   public boolean generatePieceUI(int tileId) {
     TileUI tileUI = gameScreen.tilesUI.get(tileId);
-    Texture hiddenBlackPiece = gameScreen.blackPiecesTex.get("Hidden");
-    Texture hiddenWhitePiece = gameScreen.whitePiecesTex.get("Hidden");
+    // Texture hiddenBlackPiece = gameScreen.blackPiecesTex.get("Hidden");
+    // Texture hiddenWhitePiece = gameScreen.whitePiecesTex.get("Hidden");
+    AtlasRegion hiddenBlackPiece = gameScreen.blackPiecesTex.get("Hidden");
+    AtlasRegion hiddenWhitePiece = gameScreen.whitePiecesTex.get("Hidden");
 
     // Make sure tile is occupied by Piece but missing PieceUI
     if (gameScreen.board.getTile(tileUI.getTileId()).isTileOccupied() &&

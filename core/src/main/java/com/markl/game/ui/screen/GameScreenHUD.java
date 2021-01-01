@@ -9,8 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.markl.game.engine.board.Move;
-import com.markl.game.engine.board.Move.MoveType;
 import com.markl.game.util.Constants;
 
 /**

@@ -1,0 +1,230 @@
+
+piecesTex.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+black/Captain
+  rotate: false
+  xy: 1, 1
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/Colonel
+  rotate: false
+  xy: 303, 1
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/Flag
+  rotate: false
+  xy: 605, 1
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/GeneralFive
+  rotate: false
+  xy: 1, 152
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/GeneralFour
+  rotate: false
+  xy: 303, 152
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/GeneralOne
+  rotate: false
+  xy: 605, 152
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/GeneralThree
+  rotate: false
+  xy: 1, 303
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/GeneralTwo
+  rotate: false
+  xy: 303, 303
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/Hidden
+  rotate: false
+  xy: 605, 303
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/LtCol
+  rotate: false
+  xy: 1, 454
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/LtOne
+  rotate: false
+  xy: 303, 454
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/LtTwo
+  rotate: false
+  xy: 605, 454
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/Major
+  rotate: false
+  xy: 1, 605
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/Private
+  rotate: false
+  xy: 303, 605
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/Sergeant
+  rotate: false
+  xy: 605, 605
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+black/Spy
+  rotate: false
+  xy: 1, 756
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/Captain
+  rotate: false
+  xy: 152, 1
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/Colonel
+  rotate: false
+  xy: 454, 1
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/Flag
+  rotate: false
+  xy: 756, 1
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/GeneralFive
+  rotate: false
+  xy: 152, 152
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/GeneralFour
+  rotate: false
+  xy: 454, 152
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/GeneralOne
+  rotate: false
+  xy: 756, 152
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/GeneralThree
+  rotate: false
+  xy: 152, 303
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/GeneralTwo
+  rotate: false
+  xy: 454, 303
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/Hidden
+  rotate: false
+  xy: 756, 303
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/LtCol
+  rotate: false
+  xy: 152, 454
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/LtOne
+  rotate: false
+  xy: 454, 454
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/LtTwo
+  rotate: false
+  xy: 756, 454
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/Major
+  rotate: false
+  xy: 152, 605
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/Private
+  rotate: false
+  xy: 454, 605
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/Sergeant
+  rotate: false
+  xy: 756, 605
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+white/Spy
+  rotate: false
+  xy: 152, 756
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
