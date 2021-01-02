@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.markl.game.ui.Application;
+import com.markl.game.util.Constants;
 
 /**
  * TODO Class Description.
@@ -29,8 +31,15 @@ public class LoadingScreen implements Screen {
   }
 
   private void queueAssets() {
-    app.assets.load(app.PIECE_ATLAS, TextureAtlas.class);
+    app.assets.load(Constants.UI_SKIN_JSON_PATH, Skin.class);
+    app.assets.load(Constants.PIECE_ATLAS_PATH, TextureAtlas.class);
     app.assets.finishLoading();
+
+  }
+
+  private void getAssets() {
+    // TODO: Replace. For testing ONLY
+    app.uiskin = app.assets.get(Constants.UI_SKIN_JSON_PATH, Skin.class);
   }
 
   @Override
@@ -39,6 +48,7 @@ public class LoadingScreen implements Screen {
     shapeRend.setProjectionMatrix(app.camera.combined);
     this.progress = 0f;
     queueAssets();
+    getAssets();
   }
 
   public void update(float delta) {

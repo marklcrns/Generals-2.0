@@ -4,10 +4,15 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.markl.game.ui.Application;
+import com.markl.game.util.Constants;
 
 public class DesktopLauncher {
   public static void main (String[] arg) {
     LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+
+    config.width = Constants.VIEWPORT_WIDTH;
+    config.height = Constants.VIEWPORT_HEIGHT;
+
     new LwjglApplication(new Application(), config);
 
     // TODO: DELETE BEFORE RELEASING //
@@ -21,6 +26,7 @@ public class DesktopLauncher {
     settings.grid = true;
     // settings.maxWidth = 2048;
     // settings.maxHeight = 2048;
+    // TexturePacker.process(settings, "pieces/original", "./pieces", "piecesTex");
     TexturePacker.process(settings, "pieces/50", "./pieces", "piecesTex");
   }
 }

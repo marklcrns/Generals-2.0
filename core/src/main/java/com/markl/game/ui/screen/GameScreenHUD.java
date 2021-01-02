@@ -3,6 +3,8 @@ package com.markl.game.ui.screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -21,6 +23,7 @@ public class GameScreenHUD {
 
   private Label undoLbl;
   private Label redoLbl;
+  private Label aiDebugLbl;
 
   private GameScreen gameScreen;
 
@@ -33,6 +36,7 @@ public class GameScreenHUD {
     LabelStyle labelStyle = new LabelStyle(gameScreen.app.font, Color.WHITE);
     undoLbl = new Label("UNDO", labelStyle);
     redoLbl = new Label("REDO", labelStyle);
+    aiDebugLbl = new Label("AI DEBUG", labelStyle);
 
     undoLbl.setAlignment(Align.center);
     redoLbl.setAlignment(Align.center);
@@ -78,9 +82,36 @@ public class GameScreenHUD {
         super.touchUp(event, x, y, pointer, button);
       }
     });
+
+    aiDebugLbl.addListener(new ClickListener() {
+
+      @Override
+      public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+        aiDebugLbl.setColor(Color.YELLOW);
+        super.enter(event, x, y, pointer, fromActor);
+      }
+
+      @Override
+      public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+        aiDebugLbl.setColor(Color.WHITE);
+        super.exit(event, x, y, pointer, toActor);
+      }
+
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        Stage stage = gameScreen.stage;
+        if (!stage.getActors().contains(gameScreen.aiDebuggerWin, true))
+          gameScreen.stage.addActor(gameScreen.aiDebuggerWin);
+        else
+          gameScreen.aiDebuggerWin.addAction(Actions.removeActor());
+        super.touchUp(event, x, y, pointer, button);
+      }
+    });
+
     table.row();
     table.add(undoLbl).padRight(10).fillX();
     table.add(redoLbl).padRight(10).fillX();
+    table.add(aiDebugLbl).padRight(10).fillX();
 
     return table;
   }

@@ -13,11 +13,12 @@ import com.badlogic.gdx.graphics.Color;
  */
 public class Constants {
 
+  public static final String TITLE = "Game of The Generals";
   public static final float VERSION = 0.1f;
 
   // Window
-  public static final int VIEWPORT_WIDTH = 800;
-  public static final int VIEWPORT_HEIGHT = 600;
+  public static final int VIEWPORT_WIDTH = 1280;
+  public static final int VIEWPORT_HEIGHT = 800;
 
   // Game board UI
   public static final float TILE_SIZE          = 60f;
@@ -42,6 +43,12 @@ public class Constants {
   public static final Color TILE_AGGRESSIVE_HIGHLIGHT_COLOR = new Color(0xb03060ff); // MAROON
   public static final Color TILE_INVALID_HIGHLIGHT_COLOR    = new Color(0x7f7f7fff); // GRAY
   public static final Color TILE_NORMAL_HIGHLIGHT_COLOR     = new Color(0x0000bfff); // BLUE
+
+  // Resources
+  public static final String PIECE_ATLAS_PATH = "pieces/piecesTex.atlas";
+  public static final String UI_SKIN_ATLAS_PATH = "skin/uiskin.atlas";
+  public static final String UI_SKIN_JSON_PATH = "skin/uiskin.json";
+
 
   /**
    * Constructor method that ensures this Utils Constants cannot be instantiated.

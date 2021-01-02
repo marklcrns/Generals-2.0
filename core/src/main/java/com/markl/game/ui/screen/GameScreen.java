@@ -54,6 +54,7 @@ import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.network.ServerSocket;
 import com.markl.game.ui.Application;
 import com.markl.game.ui.board.TileUI;
+import com.markl.game.util.Constants;
 
 /**
  * @author Mark Lucernas
@@ -106,9 +107,16 @@ public class GameScreen implements Screen {
   @Override
   public void show() {
     Gdx.app.log("GameScreen", "show " + gameMode);
+    Gdx.graphics.setContinuousRendering(false);
     this.shapeRend = new ShapeRenderer();
     this.stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
     this.hud = new GameScreenHUD(this);
+
+    // TODO: Delete. For testing only!
+    aiDebuggerWin = new Window("Test", app.uiskin);
+    aiDebuggerWin.setZIndex(9999);
+    aiDebuggerWin.setWidth(VIEWPORT_WIDTH - (VIEWPORT_WIDTH / 5));
+    aiDebuggerWin.setHeight(VIEWPORT_HEIGHT - (VIEWPORT_HEIGHT / 5));
 
     hud.rebuildGameHUD();
     getAssetImages();
@@ -511,7 +519,7 @@ public class GameScreen implements Screen {
   }
 
   private void getAssetImages() {
-    TextureAtlas atlas = app.assets.get(app.PIECE_ATLAS, TextureAtlas.class);
+    TextureAtlas atlas = app.assets.get(Constants.PIECE_ATLAS_PATH, TextureAtlas.class);
 
     // Get black pieces
     blackPiecesTex.put("GeneralFive", atlas.findRegion("black/GeneralFive"));

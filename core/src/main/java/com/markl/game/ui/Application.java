@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.markl.game.ui.screen.GameScreen;
 import com.markl.game.ui.screen.GameScreen.GameMode;
 import com.markl.game.ui.screen.LoadingScreen;
@@ -19,15 +20,11 @@ import com.markl.game.ui.screen.SplashScreen;
 
 public class Application extends Game {
 
-  public static final String TITLE = "Game of The Generals";
-  public static final String VERSION = "0.1";
-
-  public static final String PIECE_ATLAS = "pieces/piecesTex.atlas";
-
   public SpriteBatch batch;
   public BitmapFont font;
   public OrthographicCamera camera;
   public AssetManager assets;
+  public Skin uiskin;
 
   // Screens
   public LoadingScreen loadingScreen;
