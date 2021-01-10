@@ -156,7 +156,7 @@ public class PieceUIListener extends ClickListener {
 
   public boolean isOwnedByTurnMakerPlayer() {
     if (gameScreen.gameState.isRunning())
-      if (gameScreen.gameState.getCurrentTurnMaker().isMyPiece(gameScreen.board.getPiece(pieceUI.tileUI.getTileId())))
+      if (gameScreen.gameState.getCurrTurnMakerPlayer().isMyPiece(gameScreen.board.getPiece(pieceUI.tileUI.getTileId())))
         return true;
 
     return false;
@@ -164,7 +164,7 @@ public class PieceUIListener extends ClickListener {
 
   public boolean isCurrentTurnMaker() {
     if (gameScreen.gameState.isRunning())
-      if (gameScreen.gameState.getCurrentTurnMaker().getAlliance() ==
+      if (gameScreen.gameState.getCurrTurnMakerPlayer().getAlliance() ==
           gameScreen.gameState.getMyAlliance())
         return true;
 

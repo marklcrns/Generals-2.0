@@ -1,6 +1,5 @@
 package com.markl.game.engine.board;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.markl.game.Gog;
@@ -13,12 +12,8 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-  private Gog gameState;          // Game instance reference
+  private Gog gog;          // Game instance reference
   private LinkedList<Tile> tiles; // List of all Tiles containing data of each piece
-  private Player playerBlack;     // Player instance that all contains all infos on black pieces
-  private Player playerWhite;     // Player instance that all contains all infos on white pieces
-  private int blackPiecesLeft;
-  private int whitePiecesLeft;
   private AI ai;
 
   /**
@@ -34,7 +29,7 @@ public class Board {
    */
   public Board(Gog gameState) {
     gameState.setBoard(this);
-    this.gameState = gameState;
+    this.gog = gameState;
     this.initBoard();
   }
 
@@ -43,19 +38,16 @@ public class Board {
    */
   private void initBoard() {
     this.tiles = new LinkedList<Tile>();
-    this.playerBlack = new Player(Alliance.BLACK);
-    this.playerWhite = new Player(Alliance.WHITE);
     clearBoard();
   }
 
   public void initGame() {
-    this.gameState.setBoard(this);
+    this.gog.setBoard(this);
   }
 
   public int move(Move newMove, boolean isRedo) {
-    Player currTurnMaker = gameState.getCurrentTurnMaker();
+    Player currTurnMaker = gog.getCurrTurnMakerPlayer();
     int srcTileId = newMove.getSrcTileId();
-    int tgtTileId = newMove.getTgtTileId();
 
     // Check if piece owned by current turn maker
     if ((!isRedo && currTurnMaker.isMyPiece(getTile(srcTileId).getPiece())) ||
@@ -68,8 +60,8 @@ public class Board {
 
       // Record if valid move
       if (newMove.getMoveType().getValue() != -1) {
-        gameState.getMoveHistory().put(newMove.getTurnId(), newMove);
-        gameState.nextTurn();
+        gog.getMoveHistory().put(newMove.getTurnId(), newMove);
+        gog.nextTurn();
       }
 
       return newMove.getMoveType().getValue();
@@ -228,7 +220,6 @@ public class Board {
     return null;
   }
 
-
   /**
    * Gets current board state.
    * @return List<Tile> gameBoard field.
@@ -237,44 +228,7 @@ public class Board {
     return this.tiles;
   }
 
-  /**
-   * Gets specific Player currently registered in this Board based on the
-   * alliance.
-   * @param alliance Alliance of the Player.
-   * @return Player based on the alliance param.
-   */
-  public Player getPlayer(final Alliance alliance) {
-    if (alliance == Alliance.BLACK)
-      return this.playerBlack;
-
-    return this.playerWhite;
-  }
-
-  /**
-   * Sets the required black Player instance.
-   * @param player black Player instance.
-   */
-  public void setPlayerBlack(final Player player) {
-    this.playerBlack = player;
-  }
-
-  /**
-   * Sets the required white Player instance.
-   * @param player white Player instance.
-   */
-  public void setPlayerWhite(final Player player) {
-    this.playerWhite = player;
-  }
-
-  public void setBlackPiecesLeft(int blackPiecesLeft) {
-    this.blackPiecesLeft = blackPiecesLeft;
-  }
-
-  public void setWhitePiecesLeft(int whitePiecesLeft) {
-    this.whitePiecesLeft = whitePiecesLeft;
-  }
-
-  public Gog getGame() { return this.gameState; }
+  public Gog getGame() { return this.gog; }
 
   public String ascii() {
     String debugBoard = "\nBoard Debug Board\n";

@@ -182,9 +182,9 @@ public class ServerSocket {
                 Alliance alliance;
 
                 if (piece.getJSONObject(1).getString("owner").equals("WHITE"))
-                  owner = gameScreen.board.getPlayer(Alliance.WHITE);
+                  owner = gameScreen.gameState.getPlayer(Alliance.WHITE);
                 else
-                  owner = gameScreen.board.getPlayer(Alliance.BLACK);
+                  owner = gameScreen.gameState.getPlayer(Alliance.BLACK);
 
                 if (piece.getJSONObject(1).getString("alliance").equals("WHITE"))
                   alliance = Alliance.WHITE;

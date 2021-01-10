@@ -134,7 +134,7 @@ public class GameScreen implements Screen {
       initGame();
 
       // Make AI move if first move maker
-      if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.BLACK) {
+      if (gameState.getCurrTurnMakerPlayer().getAlliance() == Alliance.BLACK) {
         Move aiMove = board.getAI().generateMove();
         moveManager.makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false);
       }
@@ -176,7 +176,7 @@ public class GameScreen implements Screen {
       // Draw game peripherals
       app.batch.begin();
       if (gameState.isRunning())
-        currTurnMaker = gameState.getCurrentTurnMaker().getAlliance().name();
+        currTurnMaker = gameState.getCurrTurnMakerPlayer().getAlliance().name();
       else
         currTurnMaker = "WAITING";
       currTurn = gameState.getCurrTurn();
@@ -271,7 +271,7 @@ public class GameScreen implements Screen {
       else
         pieceUIManager.hidePieceUISet(Alliance.WHITE);
     } else {
-      if (gameState.getCurrentTurnMaker().getAlliance() == Alliance.WHITE)
+      if (gameState.getCurrTurnMakerPlayer().getAlliance() == Alliance.WHITE)
         pieceUIManager.hidePieceUISet(Alliance.BLACK);
       else
         pieceUIManager.hidePieceUISet(Alliance.BLACK);
@@ -327,7 +327,7 @@ public class GameScreen implements Screen {
         TileUI tileUI = iterator.next();
 
         if (tileUI.isTileUIOccupied()) {
-          if (tileUI.getPieceUI().alliance == gameState.getCurrentTurnMaker().getAlliance()) {
+          if (tileUI.getPieceUI().alliance == gameState.getCurrTurnMakerPlayer().getAlliance()) {
             shapeRend.setColor(TILE_ACTIVE_COLOR);
             shapeRend.rect(tileUI.x, tileUI.y, tileUI.width, tileUI.height);
           }

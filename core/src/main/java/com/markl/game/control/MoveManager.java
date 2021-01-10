@@ -31,7 +31,7 @@ public class MoveManager {
     final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
 
     final PieceUI srcPieceUI = srcTileUI.getPieceUI();
-    final Move newMove = new Move(gameScreen.gameState.getCurrentTurnMaker(), gameScreen.board, srcTileId, tgtTileId);
+    final Move newMove = new Move(gameScreen.gameState.getCurrTurnMakerPlayer(), gameScreen.board, srcTileId, tgtTileId);
     final int moveType = gameScreen.board.move(newMove, false);
 
     if (moveType != -1) {
@@ -60,7 +60,7 @@ public class MoveManager {
       } else {
         // Make AI Move
         if (gameScreen.gameState.isRunning()) {
-          if (gameScreen.gameState.getCurrentTurnMaker().getAlliance() ==
+          if (gameScreen.gameState.getCurrTurnMakerPlayer().getAlliance() ==
               gameScreen.board.getAI().getAIAlliance())
           {
             Move aiMove = gameScreen.board.getAI().generateMove();

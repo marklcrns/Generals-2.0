@@ -44,8 +44,8 @@ public class BoardBuilder {
     this.boardConfig = new LinkedHashMap<Integer, Piece>();
     this.blackPiecesCount = 0;
     this.whitePiecesCount = 0;
-    this.playerBlack = board.getPlayer(Alliance.BLACK);
-    this.playerWhite = board.getPlayer(Alliance.WHITE);
+    this.playerBlack = board.getGame().getPlayer(Alliance.BLACK);
+    this.playerWhite = board.getGame().getPlayer(Alliance.WHITE);
   }
 
   // TODO: For debugging ONLY. Removed later  <07-10-20, yourname> //
@@ -277,8 +277,8 @@ public class BoardBuilder {
         tiles.get(entry.getKey()).insertPiece(entry.getValue());
       }
     };
-    this.board.setBlackPiecesLeft(this.blackPiecesCount);
-    this.board.setWhitePiecesLeft(this.whitePiecesCount); }
+    this.board.getGame().setBlackPiecesLeft(this.blackPiecesCount);
+    this.board.getGame().setWhitePiecesLeft(this.whitePiecesCount); }
 
   /**
    * Sets piece in designated Tile id.
