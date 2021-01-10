@@ -37,6 +37,10 @@ public class AIMinimax extends AI {
     return boardValues;
   }
 
+  public LinkedList<Tile> fetchBoard(Board board) {
+    return board.getAllTiles();
+  }
+
   public Move minimax(LeafNode node, boolean isMax) {
     // TODO Implement
     return null;

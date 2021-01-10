@@ -38,9 +38,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.markl.game.GameState;
+import com.markl.game.Gog;
 import com.markl.game.ai.minimax.AIDumb;
 import com.markl.game.control.MoveManager;
 import com.markl.game.control.PieceUIManager;
@@ -54,6 +53,7 @@ import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.network.ServerSocket;
 import com.markl.game.ui.Application;
 import com.markl.game.ui.board.TileUI;
+import com.markl.game.ui.screen.window.AiDebuggerWindow;
 import com.markl.game.util.Constants;
 
 /**
@@ -71,7 +71,7 @@ public class GameScreen implements Screen {
 
   public Application app;
   public GameMode gameMode;
-  public GameState gameState;
+  public Gog gameState;
   public Board board;
   public PieceUIManager pieceUIManager;
   public MoveManager moveManager;
@@ -94,7 +94,7 @@ public class GameScreen implements Screen {
   public Move prevMove;
 
   public GameScreenHUD hud;
-  public Window aiDebuggerWin;
+  public AiDebuggerWindow aiDebuggerWin;
 
   // Network
   public ServerSocket serverSocket;
@@ -113,10 +113,10 @@ public class GameScreen implements Screen {
     this.hud = new GameScreenHUD(this);
 
     // TODO: Delete. For testing only!
-    aiDebuggerWin = new Window("Test", app.uiskin);
-    aiDebuggerWin.setZIndex(9999);
+    aiDebuggerWin = new AiDebuggerWindow("Test", app.uiskin, this);
     aiDebuggerWin.setWidth(VIEWPORT_WIDTH - (VIEWPORT_WIDTH / 5));
     aiDebuggerWin.setHeight(VIEWPORT_HEIGHT - (VIEWPORT_HEIGHT / 5));
+    aiDebuggerWin.setZIndex(9999);
 
     hud.rebuildGameHUD();
     getAssetImages();
@@ -225,7 +225,7 @@ public class GameScreen implements Screen {
 
   public void initEngine() {
     // Initialize GoG game engine
-    this.gameState = new GameState();
+    this.gameState = new Gog();
     this.board = new Board(gameState);
     this.boardBuilder = new BoardBuilder(board);
     if (gameMode == GameMode.ONLINE)

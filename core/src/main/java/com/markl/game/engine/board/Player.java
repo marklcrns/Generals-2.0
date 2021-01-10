@@ -41,4 +41,11 @@ public class Player {
       return true;
     return false;
   }
+
+  @Override
+  protected Player clone() throws CloneNotSupportedException {
+    Player playerClone = new Player(this.alliance);
+    playerClone.setId(playerId);
+    return playerClone;
+  }
 }

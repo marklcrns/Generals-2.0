@@ -16,11 +16,10 @@ import com.markl.game.engine.board.Player;
  * @author Mark Lucernas
  * Date: Sep 27, 2020
  */
-public class GameState {
+public class Gog {
 
   private Board board;                    // Board instance
   private Alliance firstMoveMaker;        // First Player to make a move
-  private Player gameWinner;              // Game winner
   private Alliance myAlliance;            // My Player alliance for TileUI orientation
   private Player myPlayer;                // My Player
   private Player enemyPlayer;             // Enemy Player
@@ -28,14 +27,15 @@ public class GameState {
   private String blackPlayerName = "";    // Black player's name assigned when game initialized
   private String whitePlayerName = "";    // White player's name assigned when game initialized
   private Map<Integer, Move> moveHistory; // Move history
-  private int currentTurnId;              // Current turn of the game
+  private Player gameWinner;              // Game winner
   private boolean hasGameStarted = false; // Turns true when game started
   private boolean hasGameEnded = false;   // Turns true when game started
+  private int currentTurnId;              // Current turn of the game
 
   /**
    * No-constructor function
    */
-  public GameState() {
+  public Gog() {
     init();
   }
 
@@ -44,7 +44,7 @@ public class GameState {
    *
    * @param board {@link Board} instance.
    */
-  public GameState(Board board) {
+  public Gog(Board board) {
     this.board = board;
     init();
   }
@@ -269,4 +269,14 @@ public class GameState {
   public void setBoard(Board board)           { this.board = board; }
   public void setBlackPlayerName(String name) { this.blackPlayerName = name; }
   public void setWhitePlayerName(String name) { this.whitePlayerName = name; }
+
+  @Override
+  protected Object clone() throws CloneNotSupportedException {
+    Gog newGameState = new Gog();
+
+    newGameState.setFirstMoveMaker(firstMoveMaker);
+    newGameState.setMyAlliance(myAlliance);
+
+    return super.clone();
+  }
 }

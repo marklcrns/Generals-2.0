@@ -1,8 +1,9 @@
 package com.markl.game.engine.board;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
-import com.markl.game.GameState;
+import com.markl.game.Gog;
 import com.markl.game.ai.minimax.AI;
 import com.markl.game.engine.board.pieces.Piece;
 
@@ -12,10 +13,10 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-  private GameState gameState;            // Game instance reference
-  private LinkedList<Tile> tiles;         // List of all Tiles containing data of each piece
-  private Player playerBlack;             // Player instance that all contains all infos on black pieces
-  private Player playerWhite;             // Player instance that all contains all infos on white pieces
+  private Gog gameState;          // Game instance reference
+  private LinkedList<Tile> tiles; // List of all Tiles containing data of each piece
+  private Player playerBlack;     // Player instance that all contains all infos on black pieces
+  private Player playerWhite;     // Player instance that all contains all infos on white pieces
   private int blackPiecesLeft;
   private int whitePiecesLeft;
   private AI ai;
@@ -29,9 +30,9 @@ public class Board {
 
   /**
    * Constructor function that takes in Game as a parameter
-   * @param game {@link GameState} instance.
+   * @param game {@link Gog} instance.
    */
-  public Board(GameState gameState) {
+  public Board(Gog gameState) {
     gameState.setBoard(this);
     this.gameState = gameState;
     this.initBoard();
@@ -273,7 +274,7 @@ public class Board {
     this.whitePiecesLeft = whitePiecesLeft;
   }
 
-  public GameState getGame() { return this.gameState; }
+  public Gog getGame() { return this.gameState; }
 
   public String ascii() {
     String debugBoard = "\nBoard Debug Board\n";
@@ -339,6 +340,18 @@ public class Board {
 
     return debugBoard;
   }
+
+  // @Override
+  // protected Board clone() throws CloneNotSupportedException {
+  //   LinkedList<Tile> newTiles = new LinkedList<Tile>();
+  //
+  //   Iterator<Tile> iterator = this.tiles.iterator();
+  //
+  //   while (iterator.hasNext()) {
+  //     newTiles.add(iterator.next().clone());
+  //   }
+  //
+  // }
 
   /**
    * @return String representation of all current Tiles for debugging

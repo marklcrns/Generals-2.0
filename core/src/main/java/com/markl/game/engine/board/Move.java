@@ -1,6 +1,6 @@
 package com.markl.game.engine.board;
 
-import com.markl.game.GameState;
+import com.markl.game.Gog;
 import com.markl.game.engine.board.pieces.Piece;
 
 /**
@@ -38,7 +38,7 @@ public class Move {
 
   private int turnId;                 // Turn ID that serves as reference.
   private final Board board;          // Reference to the Board to execute the move in
-  private final GameState game;       // Reference to the Game
+  private final Gog game;       // Reference to the Game
   private final Player player;        // Reference to the Player that owns the Piece to be moved.
   private final int srcTileId;        // Location of the occupied Tile in which the piece to be moved.
   private final int tgtTileId;        // Location of the Tile to where the source piece will potentially move into
