@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.markl.game.ai.minimax.AI;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.BoardBuilder;
@@ -33,6 +34,7 @@ public class Gog {
   private BoardBuilder boardBuilder;
   private Player blackPlayer;             // Player instance that all contains all infos on black pieces
   private Player whitePlayer;             // Player instance that all contains all infos on white pieces
+  private AI ai;
   private boolean hasGameStarted = false; // Turns true when game started
   private boolean hasGameEnded = false;   // Turns true when game started
   private int currentTurnId = 0;              // Current turn of the game
@@ -300,7 +302,15 @@ public class Gog {
   public void setWhitePiecesLeft(int whitePiecesLeft) {
     this.whitePiecesLeft = whitePiecesLeft;
   }
+  public void addAI(AI ai, Alliance aiAlliance) {
+    ai.setBoard(this.board);
+    ai.setAIAlliance(aiAlliance);
+    this.ai = ai;
+  }
 
+  public AI getAI() {
+    return this.ai;
+  }
 
   public void decrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId--; }
   public void incrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId++; }

@@ -3,7 +3,6 @@ package com.markl.game.engine.board;
 import java.util.LinkedList;
 
 import com.markl.game.Gog;
-import com.markl.game.ai.minimax.AI;
 import com.markl.game.engine.board.pieces.Piece;
 
 /**
@@ -14,7 +13,6 @@ public class Board {
 
   private Gog gog;          // Game instance reference
   private LinkedList<Tile> tiles; // List of all Tiles containing data of each piece
-  private AI ai;
 
   /**
    * No argument constructor
@@ -82,16 +80,6 @@ public class Board {
       else
         this.addTile(i, Alliance.WHITE);
     }
-  }
-
-  public void addAI(AI ai, Alliance aiAlliance) {
-    ai.setBoard(this);
-    ai.setAIAlliance(aiAlliance);
-    this.ai = ai;
-  }
-
-  public AI getAI() {
-    return this.ai;
   }
 
   /**

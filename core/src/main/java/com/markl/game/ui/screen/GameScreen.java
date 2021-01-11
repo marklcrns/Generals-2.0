@@ -129,13 +129,13 @@ public class GameScreen implements Screen {
       boardBuilder.createBoardRandomBuild();
       gog.setMyPlayer(Alliance.WHITE, "white");
       gog.setEnemyPlayer(Alliance.BLACK, "black");
-      board.addAI(new AIDumb(), Alliance.BLACK);
+      gog.addAI(new AIDumb(), Alliance.BLACK);
       initBoardUI();
       initGame();
 
       // Make AI move if first move maker
       if (gog.getCurrTurnMakerPlayer().getAlliance() == Alliance.BLACK) {
-        Move aiMove = board.getAI().generateMove();
+        Move aiMove = gog.getAI().generateMove();
         moveManager.makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false);
       }
 
