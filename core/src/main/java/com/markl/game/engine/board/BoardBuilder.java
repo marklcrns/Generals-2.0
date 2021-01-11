@@ -38,14 +38,13 @@ public class BoardBuilder {
   private int whitePiecesCount;                  // White pieces counter
   private final LinkedHashMap<Integer, Piece> boardConfig; // HashMap of board configuration that contains all designated pieces
 
-  /** No argument constructor that initializes all class fields. */
   public BoardBuilder(Board board) {
     this.board = board;
     this.boardConfig = new LinkedHashMap<Integer, Piece>();
     this.blackPiecesCount = 0;
     this.whitePiecesCount = 0;
-    this.playerBlack = board.getGame().getPlayer(Alliance.BLACK);
-    this.playerWhite = board.getGame().getPlayer(Alliance.WHITE);
+    this.playerBlack = board.getGog().getPlayer(Alliance.BLACK);
+    this.playerWhite = board.getGog().getPlayer(Alliance.WHITE);
   }
 
   // TODO: For debugging ONLY. Removed later  <07-10-20, yourname> //
@@ -277,8 +276,8 @@ public class BoardBuilder {
         tiles.get(entry.getKey()).insertPiece(entry.getValue());
       }
     };
-    this.board.getGame().setBlackPiecesLeft(this.blackPiecesCount);
-    this.board.getGame().setWhitePiecesLeft(this.whitePiecesCount); }
+    this.board.getGog().setBlackPiecesLeft(this.blackPiecesCount);
+    this.board.getGog().setWhitePiecesLeft(this.whitePiecesCount); }
 
   /**
    * Sets piece in designated Tile id.

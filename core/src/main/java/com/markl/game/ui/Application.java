@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.markl.game.Gog;
 import com.markl.game.ui.screen.GameScreen;
 import com.markl.game.ui.screen.GameScreen.GameMode;
 import com.markl.game.ui.screen.LoadingScreen;
@@ -25,6 +26,9 @@ public class Application extends Game {
   public OrthographicCamera camera;
   public AssetManager assets;
   public Skin uiskin;
+
+  // Game
+  public Gog gog;
 
   // Screens
   public LoadingScreen loadingScreen;
@@ -42,6 +46,8 @@ public class Application extends Game {
     camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
     font = new BitmapFont();
     font.setColor(Color.YELLOW);
+
+    this.gog = new Gog();
 
     loadingScreen = new LoadingScreen(this);
     splashScreen = new SplashScreen(this);

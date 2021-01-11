@@ -151,26 +151,26 @@ public class ServerSocket {
               if (player.getString("id").equals(mySocketId)) {
                 Gdx.app.log("SocketIO", "My player id: " + player.getString("id") + "; alliance: " + player.getString("alliance"));
                 if (player.getString("alliance").equals("WHITE")) {
-                  gameScreen.gameState.setMyPlayer(Alliance.WHITE, player.getString("id"));
+                  gameScreen.gog.setMyPlayer(Alliance.WHITE, player.getString("id"));
                   gameScreen.isBoardInverted = false;
                 } else {
-                  gameScreen.gameState.setMyPlayer(Alliance.BLACK, player.getString("id"));
+                  gameScreen.gog.setMyPlayer(Alliance.BLACK, player.getString("id"));
                   gameScreen.isBoardInverted = true;
                 }
               // Set enemy player
               } else if (player.getString("id").equals(otherPlayersSocketId.get(0))) {
                 Gdx.app.log("SocketIO", "Enemy player id: " + player.getString("id") + "; alliance: " + player.getString("alliance"));
                 if (player.getString("alliance").equals("WHITE")) {
-                  gameScreen.gameState.setEnemyPlayer(Alliance.WHITE, player.getString("id"));
+                  gameScreen.gog.setEnemyPlayer(Alliance.WHITE, player.getString("id"));
                 } else {
-                  gameScreen.gameState.setEnemyPlayer(Alliance.BLACK, player.getString("id"));
+                  gameScreen.gog.setEnemyPlayer(Alliance.BLACK, player.getString("id"));
                 }
               }
             }
 
             // Check if both players are set
-            if (gameScreen.gameState.getMyPlayer() != null &&
-                gameScreen.gameState.getEnemyPlayer() != null) {
+            if (gameScreen.gog.getMyPlayer() != null &&
+                gameScreen.gog.getEnemyPlayer() != null) {
 
               Gdx.app.log("SocketIO", "Board Config: " + boardConfig.length());
               for (int i = 0; i < boardConfig.length(); i++) {
@@ -182,9 +182,9 @@ public class ServerSocket {
                 Alliance alliance;
 
                 if (piece.getJSONObject(1).getString("owner").equals("WHITE"))
-                  owner = gameScreen.gameState.getPlayer(Alliance.WHITE);
+                  owner = gameScreen.gog.getPlayer(Alliance.WHITE);
                 else
-                  owner = gameScreen.gameState.getPlayer(Alliance.BLACK);
+                  owner = gameScreen.gog.getPlayer(Alliance.BLACK);
 
                 if (piece.getJSONObject(1).getString("alliance").equals("WHITE"))
                   alliance = Alliance.WHITE;
@@ -210,9 +210,9 @@ public class ServerSocket {
                 gameScreen.initGame(Alliance.BLACK);
 
               Gdx.app.log("SocketIO", "Game Started! First Move: " + firstMoveMaker);
-              Gdx.app.log("Game", "myAlliance: " + gameScreen.gameState.getMyAlliance());
-              Gdx.app.log("Game", "mySocketId: " + gameScreen.gameState.getMyPlayer().getId());
-              Gdx.app.log("Game", "enemySocketId: " + gameScreen.gameState.getEnemyPlayer().getId());
+              Gdx.app.log("Game", "myAlliance: " + gameScreen.gog.getMyAlliance());
+              Gdx.app.log("Game", "mySocketId: " + gameScreen.gog.getMyPlayer().getId());
+              Gdx.app.log("Game", "enemySocketId: " + gameScreen.gog.getEnemyPlayer().getId());
 
             } else {
               Gdx.app.log("Game", "Game initialization failed. Missing player");

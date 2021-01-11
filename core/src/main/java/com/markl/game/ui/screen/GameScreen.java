@@ -71,7 +71,7 @@ public class GameScreen implements Screen {
 
   public Application app;
   public GameMode gameMode;
-  public Gog gameState;
+  public Gog gog;
   public Board board;
   public PieceUIManager pieceUIManager;
   public MoveManager moveManager;
@@ -127,14 +127,14 @@ public class GameScreen implements Screen {
     if (gameMode == GameMode.SINGLE) {
       initEngine();
       boardBuilder.createBoardRandomBuild();
-      gameState.setMyPlayer(Alliance.WHITE, "white");
-      gameState.setEnemyPlayer(Alliance.BLACK, "black");
+      gog.setMyPlayer(Alliance.WHITE, "white");
+      gog.setEnemyPlayer(Alliance.BLACK, "black");
       board.addAI(new AIDumb(), Alliance.BLACK);
       initBoardUI();
       initGame();
 
       // Make AI move if first move maker
-      if (gameState.getCurrTurnMakerPlayer().getAlliance() == Alliance.BLACK) {
+      if (gog.getCurrTurnMakerPlayer().getAlliance() == Alliance.BLACK) {
         Move aiMove = board.getAI().generateMove();
         moveManager.makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false);
       }
@@ -172,14 +172,14 @@ public class GameScreen implements Screen {
     String currTurnMaker;
     int currTurn;
 
-    if (gameState != null) {
+    if (gog != null) {
       // Draw game peripherals
       app.batch.begin();
-      if (gameState.isRunning())
-        currTurnMaker = gameState.getCurrTurnMakerPlayer().getAlliance().name();
+      if (gog.isRunning())
+        currTurnMaker = gog.getCurrTurnMakerPlayer().getAlliance().name();
       else
         currTurnMaker = "WAITING";
-      currTurn = gameState.getCurrTurn();
+      currTurn = gog.getCurrTurn();
       app.font.draw(app.batch, "PLAYER: " + currTurnMaker, 0, VIEWPORT_HEIGHT);
       app.font.draw(app.batch, "TURN: " + currTurn, BOARD_X_OFFSET, BOARD_Y_OFFSET);
       app.batch.end();
@@ -225,9 +225,9 @@ public class GameScreen implements Screen {
 
   public void initEngine() {
     // Initialize GoG game engine
-    this.gameState = new Gog();
-    this.board = new Board(gameState);
-    this.boardBuilder = new BoardBuilder(board);
+    this.gog = app.gog;
+    this.board = gog.getBoard();
+    this.boardBuilder = gog.getBoardBuilder();
     if (gameMode == GameMode.ONLINE)
       this.moveManager = new MoveManager(this);
     else
@@ -266,12 +266,12 @@ public class GameScreen implements Screen {
     }
 
     if (gameMode == GameMode.ONLINE || gameMode == GameMode.SINGLE) {
-      if (gameState.getMyAlliance() == Alliance.WHITE)
+      if (gog.getMyAlliance() == Alliance.WHITE)
         pieceUIManager.hidePieceUISet(Alliance.BLACK);
       else
         pieceUIManager.hidePieceUISet(Alliance.WHITE);
     } else {
-      if (gameState.getCurrTurnMakerPlayer().getAlliance() == Alliance.WHITE)
+      if (gog.getCurrTurnMakerPlayer().getAlliance() == Alliance.WHITE)
         pieceUIManager.hidePieceUISet(Alliance.BLACK);
       else
         pieceUIManager.hidePieceUISet(Alliance.BLACK);
@@ -282,8 +282,8 @@ public class GameScreen implements Screen {
     // Create initial board arrangement and start game
     boardBuilder.build(true);
     board.initGame();
-    gameState.setRandomFirstMoveMaker();
-    gameState.start();
+    gog.setRandomFirstMoveMaker();
+    gog.start();
     populateTilesUI();
   }
 
@@ -291,8 +291,8 @@ public class GameScreen implements Screen {
     // Create initial board arrangement with firstMoveMaker and start game
     boardBuilder.build(true);
     board.initGame();
-    gameState.setFirstMoveMaker(firstMoveMaker);
-    gameState.start();
+    gog.setFirstMoveMaker(firstMoveMaker);
+    gog.start();
     populateTilesUI();
   }
 
@@ -308,7 +308,7 @@ public class GameScreen implements Screen {
     while (iterator.hasNext()) {
       TileUI tileUI = iterator.next();
 
-      if (gameState.isRunning()) {
+      if (gog.isRunning()) {
         shapeRend.setColor(BOARD_ACTIVE_COLOR);
       } else {
         shapeRend.setColor(BOARD_INACTIVE_COLOR);
@@ -320,14 +320,14 @@ public class GameScreen implements Screen {
     shapeRend.end();
 
     // Draw active pieces tile borders
-    if (gameState.isRunning()) {
+    if (gog.isRunning()) {
       shapeRend.begin(ShapeType.Filled);
       iterator = tilesUI.iterator();
       while (iterator.hasNext()) {
         TileUI tileUI = iterator.next();
 
         if (tileUI.isTileUIOccupied()) {
-          if (tileUI.getPieceUI().alliance == gameState.getCurrTurnMakerPlayer().getAlliance()) {
+          if (tileUI.getPieceUI().alliance == gog.getCurrTurnMakerPlayer().getAlliance()) {
             shapeRend.setColor(TILE_ACTIVE_COLOR);
             shapeRend.rect(tileUI.x, tileUI.y, tileUI.width, tileUI.height);
           }

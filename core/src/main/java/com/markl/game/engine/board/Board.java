@@ -27,9 +27,8 @@ public class Board {
    * Constructor function that takes in Game as a parameter
    * @param game {@link Gog} instance.
    */
-  public Board(Gog gameState) {
-    gameState.setBoard(this);
-    this.gog = gameState;
+  public Board(Gog gog) {
+    this.gog = gog;
     this.initBoard();
   }
 
@@ -228,7 +227,8 @@ public class Board {
     return this.tiles;
   }
 
-  public Gog getGame() { return this.gog; }
+  public Gog getGog() { return this.gog; }
+  public void setGog(Gog gog) { this.gog = gog; }
 
   public String ascii() {
     String debugBoard = "\nBoard Debug Board\n";

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.markl.game.engine.board.Alliance;
 import com.markl.game.engine.board.Board;
+import com.markl.game.engine.board.BoardBuilder;
 import com.markl.game.engine.board.Move;
 import com.markl.game.engine.board.Player;
 
@@ -18,29 +19,31 @@ import com.markl.game.engine.board.Player;
  */
 public class Gog {
 
-  private Board board;                    // Board instance
   private Alliance firstMoveMaker;        // First Player to make a move
   private Alliance myAlliance;            // My Player alliance for TileUI orientation
   private Player myPlayer;                // My Player
   private Player enemyPlayer;             // Enemy Player
-  private Alliance currentTurnMaker;        // Current player to make move
+  private Alliance currentTurnMaker;      // Current player to make move
   private String blackPlayerName = "";    // Black player's name assigned when game initialized
   private String whitePlayerName = "";    // White player's name assigned when game initialized
   private Map<Integer, Move> moveHistory; // Move history
   private Player gameWinner;              // Game winner
-  private boolean hasGameStarted = false; // Turns true when game started
-  private boolean hasGameEnded = false;   // Turns true when game started
-  private int currentTurnId;              // Current turn of the game
 
+  private Board board;                    // Board instance
+  private BoardBuilder boardBuilder;
   private Player blackPlayer;             // Player instance that all contains all infos on black pieces
   private Player whitePlayer;             // Player instance that all contains all infos on white pieces
-  private int blackPiecesLeft;
-  private int whitePiecesLeft;
+  private boolean hasGameStarted = false; // Turns true when game started
+  private boolean hasGameEnded = false;   // Turns true when game started
+  private int currentTurnId = 0;              // Current turn of the game
+  private int blackPiecesLeft = 0;
+  private int whitePiecesLeft = 0;
 
   /**
    * No-constructor function
    */
   public Gog() {
+    this.board = new Board(this);
     init();
   }
 
@@ -51,6 +54,7 @@ public class Gog {
    */
   public Gog(Board board) {
     this.board = board;
+    board.setGog(this);
     init();
   }
 
@@ -58,10 +62,10 @@ public class Gog {
    * Initialize game.
    */
   public void init() {
-    this.currentTurnId = 0;
     this.moveHistory = new HashMap<Integer, Move>();
     this.blackPlayer = new Player(Alliance.BLACK);
     this.whitePlayer = new Player(Alliance.WHITE);
+    this.boardBuilder = new BoardBuilder(board);
   }
 
   /**
@@ -302,15 +306,17 @@ public class Gog {
   public void incrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId++; }
 
   /** Accessor methods */
-  public Alliance getMyAlliance()     { return this.myAlliance; }
-  public Alliance getFirstMoveMaker() { return this.firstMoveMaker; }
-  public Player getPlayerWinner()     { if (this.hasGameEnded) return this.gameWinner; else return null; }
-  public Player getMyPlayer()         { return this.myPlayer; }
-  public Player getEnemyPlayer()      { return this.enemyPlayer; }
-  public String getBlackPlayerName()  { return this.blackPlayerName; }
-  public String getWhitePlayerName()  { return this.whitePlayerName; }
+  public int getCurrTurn()               { return this.currentTurnId; }
+  public Alliance getMyAlliance()        { return this.myAlliance; }
+  public Alliance getFirstMoveMaker()    { return this.firstMoveMaker; }
+  public Player getPlayerWinner()        { if (this.hasGameEnded) return this.gameWinner; else return null; }
+  public Player getMyPlayer()            { return this.myPlayer; }
+  public Player getEnemyPlayer()         { return this.enemyPlayer; }
+  public String getBlackPlayerName()     { return this.blackPlayerName; }
+  public String getWhitePlayerName()     { return this.whitePlayerName; }
   public Player getCurrTurnMakerPlayer() { return getPlayer(this.currentTurnMaker); }
-  public int getCurrTurn()            { return this.currentTurnId; }
+  public Board getBoard()                { return this.board; }
+  public BoardBuilder getBoardBuilder()  { return this.boardBuilder; }
 
   /** Modifier methods */
   public void setBoard(Board board)           { this.board = board; }

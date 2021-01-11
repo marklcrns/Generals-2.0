@@ -62,7 +62,7 @@ public class Move {
   {
     this.player    = player;
     this.board     = board;
-    this.game      = board.getGame();
+    this.game      = board.getGog();
     this.turnId    = this.game.getCurrTurn();
     this.srcTileId = srcTileId;
     this.tgtTileId = tgtTileId;
