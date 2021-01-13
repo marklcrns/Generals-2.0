@@ -20,17 +20,17 @@ public class GeneralTwo extends Piece {
   /**
    * Constructor that takes in the owner Player, and Alliance of this piece.
    */
-  public GeneralTwo(final Board board, final Player owner, final Alliance alliance) {
-    super(board, owner, alliance);
+  public GeneralTwo(int pieceId, final Board board, final Player owner, final Alliance alliance) {
+    super(pieceId, board, owner, alliance);
   }
 
   /**
    * Constructor that takes in the owner Player, Alliance and coordinates of
    * this Piece.
    */
-  public GeneralTwo(final Board board, final Player owner,
+  public GeneralTwo(int pieceId, final Board board, final Player owner,
       final Alliance alliance, final int tileId) {
-    super(board, owner, alliance, tileId);
+    super(pieceId, board, owner, alliance, tileId);
   }
 
   /**
@@ -76,7 +76,7 @@ public class GeneralTwo extends Piece {
   @Override
   public final Piece clone() {
     final GeneralTwo copy = new GeneralTwo(
-        this.board, this.owner, this.alliance, this.tileId);
+        this.pieceId, this.board, this.owner, this.alliance, this.tileId);
     return copy;
   }
 

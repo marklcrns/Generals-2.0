@@ -38,7 +38,7 @@ public class Move {
 
   private int turnId;                 // Turn ID that serves as reference.
   private final Board board;          // Reference to the Board to execute the move in
-  private final Gog game;       // Reference to the Game
+  private final Gog gog;              // Reference to the Game
   private final Player player;        // Reference to the Player that owns the Piece to be moved.
   private final int srcTileId;        // Location of the occupied Tile in which the piece to be moved.
   private final int tgtTileId;        // Location of the Tile to where the source piece will potentially move into
@@ -62,8 +62,8 @@ public class Move {
   {
     this.player    = player;
     this.board     = board;
-    this.game      = board.getGog();
-    this.turnId    = this.game.getCurrTurn();
+    this.gog      = board.getGog();
+    this.turnId    = this.gog.getCurrTurn();
     this.srcTileId = srcTileId;
     this.tgtTileId = tgtTileId;
   }
@@ -137,18 +137,18 @@ public class Move {
         break;
 
       case 1: // NORMAL
+        // Move Tile normally
+        this.board.movePiece(this.srcTileId, this.tgtTileId);
+        this.isExecuted = true;
+
         // Check if Flag has been maneuvered into the opposite end row of the board.
         if (isFlagSucceeded()) {
           System.out.println(
               "\n" + this.srcPieceOrigin.getAlliance() +
               " player WON!\n");
 
-          this.game.endGame(srcPieceOrigin.getPieceOwner());
+          this.gog.endGame(srcPieceOrigin.getPieceOwner());
         }
-
-        // Move Tile normally
-        this.board.movePiece(this.srcTileId, this.tgtTileId);
-        this.isExecuted = true;
         break;
 
       case 2: // AGGRESSIVE_WIN
@@ -158,7 +158,7 @@ public class Move {
 
         // Check if source or target piece is Flag rank, then conclude the game.
         if (isTargetPieceFlag()) {
-          this.game.endGame(srcPieceOrigin.getPieceOwner());
+          this.gog.endGame(srcPieceOrigin.getPieceOwner());
           System.out.println("\n" + this.srcPieceOrigin.getAlliance() +
                              " player WON!\n");
         }
@@ -169,7 +169,7 @@ public class Move {
         this.eliminatedPiece = this.srcPieceOrigin;
 
         if (isSourcePieceFlag() && !isTargetPieceFlag()){
-          this.game.endGame(tgtPieceOrigin.getPieceOwner());
+          this.gog.endGame(tgtPieceOrigin.getPieceOwner());
           System.out.println("\n" + this.tgtPieceOrigin.getAlliance() +
                              " player WON!\n");
         }
@@ -458,37 +458,32 @@ public class Move {
 
       case 1: // NORMAL
         // Check if Flag has been maneuvered into the opposite end row of the board.
-        if (isFlagSucceeded()) {
-          // TODO: Implement //
-          // this.game.endGame(srcPieceOrigin.getPieceOwner());
-        }
+        if (isFlagSucceeded())
+          this.board.getGog().restoreGame();
 
         this.board.movePiece(this.tgtTileId, this.srcTileId);
         this.isExecuted = false;
+
+
         break;
 
       case 2: // AGGRESSIVE_WIN
-        this.board.movePiece(this.tgtTileId, this.srcTileId);
-        this.board.getTile(this.tgtTileId).insertPiece(tgtPieceOrigin);
-        this.eliminatedPiece = null;
+        if (isTargetPieceFlag())
+          this.board.getGog().restoreGame();
 
-        // Check if source or target piece is Flag rank, then conclude the game.
-        if (isTargetPieceFlag()) {
-          // TODO: Implement //
-          // this.game.endGame(srcPieceOrigin.getPieceOwner());
-        }
+        this.board.movePiece(this.tgtTileId, this.srcTileId);
+        this.board.getTile(this.tgtTileId).insertPiece(this.eliminatedPiece);
+        this.eliminatedPiece = null;
 
         this.isExecuted = false;
         break;
 
       case 3: // AGGRESSIVE_LOSE
-        this.board.getTile(this.srcTileId).insertPiece(srcPieceOrigin);
-        this.eliminatedPiece = null;
+        if (isSourcePieceFlag() && !isTargetPieceFlag())
+          this.board.getGog().restoreGame();
 
-        if (isSourcePieceFlag() && !isTargetPieceFlag()){
-          // TODO: Implement //
-          // this.game.endGame(tgtPieceOrigin.getPieceOwner());
-        }
+        this.board.getTile(this.srcTileId).insertPiece(this.eliminatedPiece);
+        this.eliminatedPiece = null;
 
         this.isExecuted = false;
         break;

@@ -20,18 +20,17 @@ public class GeneralFour extends Piece {
   /**
    * Constructor that takes in the owner Player, and Alliance of this piece.
    */
-  public GeneralFour(final Board board, final Player owner,
-      final Alliance alliance) {
-    super(board, owner, alliance);
+  public GeneralFour(int pieceId, final Board board, final Player owner, final Alliance alliance) {
+    super(pieceId, board, owner, alliance);
   }
 
   /**
    * Constructor that takes in the owner Player, Alliance and coordinates of
    * this Piece.
    */
-  public GeneralFour(final Board board, final Player owner,
+  public GeneralFour(int pieceId, final Board board, final Player owner,
       final Alliance alliance, final int tileId) {
-    super(board, owner, alliance, tileId);
+    super(pieceId, board, owner, alliance, tileId);
   }
 
   /**
@@ -77,7 +76,7 @@ public class GeneralFour extends Piece {
   @Override
   public final Piece clone() {
     final GeneralFour copy = new GeneralFour(
-        this.board, this.owner, this.alliance, this.tileId);
+        this.pieceId, this.board, this.owner, this.alliance, this.tileId);
     return copy;
   }
 

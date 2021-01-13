@@ -20,17 +20,17 @@ public class Sergeant extends Piece {
   /**
    * Constructor that takes in the owner Player, and Alliance of this piece.
    */
-  public Sergeant(final Board board, final Player owner, final Alliance alliance) {
-    super(board, owner, alliance);
+  public Sergeant(int pieceId, final Board board, final Player owner, final Alliance alliance) {
+    super(pieceId, board, owner, alliance);
   }
 
   /**
    * Constructor that takes in the owner Player, Alliance and coordinates of
    * this Piece.
    */
-  public Sergeant(final Board board, final Player owner,
+  public Sergeant(int pieceId, final Board board, final Player owner,
       final Alliance alliance, final int tileId) {
-    super(board, owner, alliance, tileId);
+    super(pieceId, board, owner, alliance, tileId);
   }
 
   /**
@@ -76,7 +76,7 @@ public class Sergeant extends Piece {
   @Override
   public final Piece clone() {
     final Sergeant copy = new Sergeant(
-        this.board, this.owner, this.alliance, this.tileId);
+        this.pieceId, this.board, this.owner, this.alliance, this.tileId);
     return copy;
   }
 

@@ -1,10 +1,7 @@
 package com.markl.game.control;
 
-import static com.markl.game.util.Constants.PIECE_UI_ANIMATION_SPEED;
-
 import java.util.Iterator;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
@@ -13,6 +10,7 @@ import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.PieceUIListener;
 import com.markl.game.ui.board.TileUI;
 import com.markl.game.ui.screen.GameScreen;
+import com.markl.game.util.Constants;
 
 /**
  * TODO Class Description.
@@ -23,6 +21,7 @@ import com.markl.game.ui.screen.GameScreen;
 public class PieceUIManager {
 
   private GameScreen gameScreen;
+  public float pieceAnimationDuration = Constants.DEFAULT_PIECE_ANIMATION_SPEED;
 
   public PieceUIManager(GameScreen gameScreen) {
     this.gameScreen = gameScreen;
@@ -97,7 +96,7 @@ public class PieceUIManager {
     MoveToAction mta = new MoveToAction();
     mta.setX(destX);
     mta.setY(destY);
-    mta.setDuration(PIECE_UI_ANIMATION_SPEED);
+    mta.setDuration(pieceAnimationDuration);
     pieceUI.addAction(mta);
     pieceUI.setZIndex(999);   // Always on top of any pieces
     pieceUI.getColor().a = alpha; // Remove transparency
@@ -139,5 +138,9 @@ public class PieceUIManager {
           pieceUI.hidePieceDisplay();
       }
     }
+  }
+
+  public void setPieceAnimationDuration(float duration) {
+    this.pieceAnimationDuration = duration;
   }
 }

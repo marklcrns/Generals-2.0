@@ -1,13 +1,16 @@
 package com.markl.game.ai.minimax;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.List;
 
-import com.markl.game.engine.board.Board;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
+import com.markl.game.Gog;
 import com.markl.game.engine.board.Move;
 import com.markl.game.engine.board.Tile;
+import com.markl.game.engine.board.pieces.Piece;
+import com.markl.game.ui.screen.GameScreen;
 
 /**
  * Single player AI using minimax algorithm
@@ -17,38 +20,107 @@ import com.markl.game.engine.board.Tile;
  */
 public class AIMinimax extends AI {
 
+  private int nodeCount = 0;
   private int depth;
-  private Tree tree;
+  private GameScreen gameScreen;
 
-  public AIMinimax(int depth) {
+  public AIMinimax(int depth, GameScreen gameScreen) {
     this.depth = depth;
+    this.gameScreen = gameScreen;
   }
 
-  public Map<Integer, Move> evaluateBoard(Board board) {
-    Map<Integer, Move> boardValues = new HashMap<Integer, Move>();
-    LinkedList<Tile> tiles         = board.getAllTiles();
-    ListIterator<Tile> iterator    = tiles.listIterator();
-    Tile currTile;
+  public int evaluateBoard() {
+    int score = 0;
+    Iterator<Tile> iter = gog.getBoard().getAllTiles().iterator();
 
-    while(iterator.hasNext()) {
-      currTile = iterator.next();
+    // Evaluate ally pieces rank
+    while (iter.hasNext()) {
+      Tile tile = iter.next();
+      if (tile.isTileOccupied()) {
+        Piece piece = tile.getPiece();
+        if (piece.getAlliance() == gog.getCurrTurnMaker())
+          score += piece.getPowerLevel();
+      }
     }
 
-    return boardValues;
+    // Evaluate enemy pieces count
+    return score;
   }
 
-  public LinkedList<Tile> fetchBoard(Board board) {
-    return board.getAllTiles();
+  public Move minimaxRoot(Gog gog, GameScreen gs, int depth, boolean isMaximizing) {
+    this.nodeCount = 0;
+    int bestScore = -9999;
+    Move bestMove = null;
+
+    List<Move> legalMoves = gog.getBoard().getLegalMoves();
+    Gdx.app.log("AIMinimax", "legalMoves: " + legalMoves.size());
+
+    for (int i = 0; i < legalMoves.size(); i++) {
+      this.nodeCount++;
+      Move nextMove = legalMoves.get(i);
+      Gdx.app.log("AiMinimax", nextMove.toString());
+      // Gdx.app.log("AiMinimax", gog.getBoard().ascii());
+      gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false);
+      if (gog.isRunning()) {
+        int value = minimax(gog, gs, depth - 1, isMaximizing);
+        if (value >= bestScore) {
+          bestScore = value;
+          bestMove = nextMove;
+        }
+      }
+      gs.moveManager.undoLastMove();
+    }
+
+    // TODO: If null, return random legal move //
+    return bestMove;
   }
 
-  public Move minimax(LeafNode node, boolean isMax) {
-    // TODO Implement
-    return null;
+  public int minimax(Gog gog, GameScreen gs, int depth, boolean isMaximizing) {
+    float delay = 0.1f;
+    Timer.schedule(new Task() {
+      @Override
+      public void run() {}
+    }, delay);
+
+    Gdx.app.log("AIMinimax", "Depth: " + depth);
+
+    if (depth == 0)
+      return -evaluateBoard();
+
+    List<Move> legalMoves = gog.getBoard().getLegalMoves();
+
+    if (isMaximizing) {
+      int max = -9999;
+      for (int i = 0; i < legalMoves.size(); i++) {
+        this.nodeCount++;
+        Move nextMove = legalMoves.get(i);
+        Gdx.app.log("AiMinimax", nextMove.toString());
+        gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false);
+        if (gog.isRunning()) {
+          max = Math.max(max, minimax(gog, gs, depth - 1, !isMaximizing));
+        }
+        gs.moveManager.undoLastMove();
+      }
+      return max;
+    } else {
+      int min = 9999;
+      for (int i = 0; i < legalMoves.size(); i++) {
+        this.nodeCount++;
+        Move nextMove = legalMoves.get(i);
+        Gdx.app.log("AiMinimax", nextMove.toString());
+        gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false);
+        if (gog.isRunning()) {
+          min = Math.min(min, minimax(gog, gs, depth - 1, isMaximizing));
+        }
+        gs.moveManager.undoLastMove();
+      }
+      return min;
+    }
   }
 
   @Override
   public Move generateMove() {
-    // TODO Implement
-    return null;
+    Gdx.app.log("AiMinimax", "Node Count: " + this.nodeCount);
+    return minimaxRoot(gog, gameScreen, this.depth, true);
   }
 }

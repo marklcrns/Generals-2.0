@@ -1,6 +1,11 @@
 package com.markl.game.engine.board;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import com.markl.game.Gog;
 import com.markl.game.engine.board.pieces.Piece;
@@ -11,8 +16,11 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-  private Gog gog;          // Game instance reference
+  private Gog gog;                // Game instance reference
   private LinkedList<Tile> tiles; // List of all Tiles containing data of each piece
+
+  // TODO: MOVE into AiMinimax //
+  private HashMap<Integer, Integer> bountyMap = new HashMap<Integer, Integer>();
 
   /**
    * No argument constructor
@@ -48,15 +56,59 @@ public class Board {
 
     // Check if piece owned by current turn maker
     if ((!isRedo && currTurnMaker.isMyPiece(getTile(srcTileId).getPiece())) ||
-        (isRedo ))
-    {
-      if (!isRedo)
+        (isRedo )) {
+      if (!isRedo) {
+        // TODO: DELETE after //
+        // Gdx.app.log("Board", "BEFORE: Evaluate Score " + gog.getCurrTurnMaker() + ": " + evaluateBoard());
         newMove.evaluate();
+      }
 
       newMove.execute();
 
       // Record if valid move
       if (newMove.getMoveType().getValue() != -1) {
+
+        // // TODO: DELETE after //
+        // // Place bounty if AGGRESSIVE_LOSE
+        // if (newMove.getMoveType().getValue() == 3) {
+        //   int eliminatedPiecePowerLevel = newMove.getSrcPieceOrigin().getPowerLevel();
+        //   int winningPieceId = newMove.getTgtPieceOrigin().getPieceId();
+        //   int predictedRank;
+        //   // Assume winning piece 2 ranks above
+        //   if (eliminatedPiecePowerLevel >= 13)
+        //     predictedRank = 999;
+        //   else
+        //     predictedRank = eliminatedPiecePowerLevel + 2;
+        //   bountyMap.put(winningPieceId, predictedRank);
+        // // Remove from bounty map if piece(s) eliminated
+        // } else if (newMove.getMoveType().getValue() == 2) {
+        //   int eliminatedPieceId = newMove.getEliminatedPiece().getPieceId();
+        //   if (bountyMap.containsKey(eliminatedPieceId))
+        //     bountyMap.remove(eliminatedPieceId);
+        // } else if (newMove.getMoveType().getValue() == 0) {
+        //   int srcPieceId = newMove.getSrcPieceOrigin().getPieceId();
+        //   int tgtPieceId = newMove.getTgtPieceOrigin().getPieceId();
+        //   if (bountyMap.containsKey(srcPieceId))
+        //     bountyMap.remove(srcPieceId);
+        //   if (bountyMap.containsKey(tgtPieceId))
+        //     bountyMap.remove(tgtPieceId);
+        // }
+        // // Gdx.app.log("Board", "AFTER: Evaluate Score " + gog.getCurrTurnMaker() + ": " + evaluateBoard());
+        // // System.out.println("");
+        //
+        // // Print pieces with bounty
+        // Gdx.app.log("Bounty", "Bounty Count: " + bountyMap.size());
+        // Iterator<Tile> iter = tiles.iterator();
+        // while (iter.hasNext()) {
+        //   Tile tile = iter.next();
+        //   if (tile.isTileOccupied()) {
+        //     Piece piece = tile.getPiece();
+        //     if (bountyMap.containsKey(piece.getPieceId())) {
+        //       Gdx.app.log("Bounty", piece.getPieceId() + " " + piece.getAlliance() + " " + piece.getRank() + " has a bounty of " + bountyMap.get(piece.getPieceId()));
+        //     }
+        //   }
+        // }
+
         gog.getMoveHistory().put(newMove.getTurnId(), newMove);
         gog.nextTurn();
       }
@@ -215,13 +267,39 @@ public class Board {
     return this.tiles;
   }
 
+  public List<Move> getLegalMoves() {
+    List<Move> legalMoves = new ArrayList<Move>();
+    Iterator<Tile> iter = tiles.iterator();
+    Map<Integer, Move> candidateMoves;
+
+    // Loop over tiles
+    while (iter.hasNext()) {
+      Tile tile = iter.next();
+      if (tile.isTileOccupied()) {
+        Piece piece = tile.getPiece();
+        if (gog.getCurrTurnMaker() == piece.getAlliance()) {
+          // Loop over candidate moves
+          candidateMoves = piece.evaluateMoves();
+          for (int i = 0; i < candidateMoves.size(); i++) {
+            Move move = candidateMoves.get(i);
+            if (move != null && move.getMoveType().getValue() >= 0) {
+              legalMoves.add(move);
+            }
+          }
+        }
+      }
+    }
+
+    return legalMoves;
+  }
+
   public Gog getGog() { return this.gog; }
   public void setGog(Gog gog) { this.gog = gog; }
 
   public String ascii() {
     String debugBoard = "\nBoard Debug Board\n";
     debugBoard += "    0 1 2 3 4 5 6 7 8\n";
-    debugBoard += "    _________________\n";
+    debugBoard += "    +-----------------\n";
     for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES / 2; i += 9) {
       if (i < 10)
         debugBoard += " " + i + " |";
@@ -229,7 +307,7 @@ public class Board {
         debugBoard += i + " |";
       for (int j = i; j < i + 9; j++) {
         if (this.getTile(j).isTileEmpty()) {
-          debugBoard += "-";
+          debugBoard += ".";
         } else {
           final String rank = this.getTile(j).getPiece().getRank();
           if (rank == "GeneralOne")
@@ -259,7 +337,7 @@ public class Board {
         debugBoard += i + " |";
       for (int j = i; j < i + 9; j++) {
         if (this.getTile(j).isTileEmpty()) {
-          debugBoard += "-";
+          debugBoard += ".";
         } else {
           final String rank = this.getTile(j).getPiece().getRank();
           if (rank == "GeneralOne")

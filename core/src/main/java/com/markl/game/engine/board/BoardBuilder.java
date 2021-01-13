@@ -55,11 +55,13 @@ public class BoardBuilder {
 
     // Black territory
     int boardOffset = 0;
-    setPiece(new GeneralFour(this.board, playerBlack, black, boardOffset + row[3] + 4), false);
+    setPiece(new GeneralFour(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[3] + 4), false);
 
     // White territory
     boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
-    setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[0] + 4), false);
+    setPiece(new Flag(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[0] + 4), false);
   }
 
   /**
@@ -74,58 +76,100 @@ public class BoardBuilder {
     // Black territory
     int boardOffset = 0;
     // row 0
-    setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 0), false);
-    setPiece(new LtTwo(this.board, playerBlack, black, boardOffset + row[0] + 1), false);
-    setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 3), false);
-    setPiece(new LtOne(this.board, playerBlack, black, boardOffset + row[0] + 4), false);
-    setPiece(new Sergeant(this.board, playerBlack, black, boardOffset + row[0] + 5), false);
-    setPiece(new Private(this.board, playerBlack, black, boardOffset + row[0] + 6), false);
-    setPiece(new Major(this.board, playerBlack, black, boardOffset + row[0] + 7), false);
-    setPiece(new GeneralTwo(this.board, playerBlack, black, boardOffset + row[0] + 8), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[0] + 0), false);
+    setPiece(new LtTwo(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[0] + 1), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[0] + 3), false);
+    setPiece(new LtOne(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[0] + 4), false);
+    setPiece(new Sergeant(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[0] + 5), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[0] + 6), false);
+    setPiece(new Major(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[0] + 7), false);
+    setPiece(new GeneralTwo(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[0] + 8), false);
     // row 1
-    setPiece(new LtCol(this.board, playerBlack, black, boardOffset + row[1] + 1), false);
-    setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 2), false);
-    setPiece(new Colonel(this.board, playerBlack, black, boardOffset + row[1] + 3), false);
-    setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 4), false);
-    setPiece(new Captain(this.board, playerBlack, black, boardOffset + row[1] + 5), false);
-    setPiece(new Private(this.board, playerBlack, black, boardOffset + row[1] + 7), false);
-    setPiece(new Spy(this.board, playerBlack, black, boardOffset + row[1] + 8), false);
+    setPiece(new LtCol(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[1] + 1), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[1] + 2), false);
+    setPiece(new Colonel(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[1] + 3), false);
+    setPiece(new Spy(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[1] + 4), false);
+    setPiece(new Captain(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[1] + 5), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[1] + 7), false);
+    setPiece(new Spy(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[1] + 8), false);
     // row 2
-    setPiece(new GeneralThree(this.board, playerBlack, black, boardOffset + row[2] + 9), false);
+    setPiece(new GeneralThree(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[2] + 9), false);
     // row 3
-    setPiece(new GeneralFive(this.board, playerBlack, black, boardOffset + row[3] + 2), false);
-    setPiece(new GeneralOne(this.board, playerBlack, black, boardOffset + row[3] + 3), false);
-    setPiece(new GeneralFour(this.board, playerBlack, black, boardOffset + row[3] + 4), false);
-    setPiece(new Private(this.board, playerBlack, black, boardOffset + row[3] + 5), false);
+    setPiece(new GeneralFive(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[3] + 2), false);
+    setPiece(new GeneralOne(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[3] + 3), false);
+    setPiece(new GeneralFour(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[3] + 4), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[3] + 5), false);
 
     // White territory
     boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
     // row 0
-    setPiece(new GeneralFive(this.board, playerWhite, white, boardOffset + row[0] + 1), false);
-    setPiece(new Colonel(this.board, playerWhite, white, boardOffset + row[0] + 2), false);
-    setPiece(new GeneralOne(this.board, playerWhite, white, boardOffset + row[0] + 3), false);
-    setPiece(new Flag(this.board, playerWhite, white, boardOffset + row[0] + 4), false);
-    setPiece(new GeneralTwo(this.board, playerWhite, white, boardOffset + row[0] + 7), false);
+    setPiece(new GeneralFive(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[0] + 1), false);
+    setPiece(new Colonel(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[0] + 2), false);
+    setPiece(new GeneralOne(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[0] + 3), false);
+    setPiece(new Flag(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[0] + 4), false);
+    setPiece(new GeneralTwo(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[0] + 7), false);
     // row 1
-    setPiece(new GeneralFour(this.board, playerWhite, white, boardOffset + row[1] + 5), false);
-    setPiece(new Private(this.board, playerWhite, white, boardOffset + row[1] + 6), false);
-    setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[1] + 7), false);
-    setPiece(new GeneralThree(this.board, playerWhite, white, boardOffset + row[1] + 8), false);
+    setPiece(new GeneralFour(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[1] + 5), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[1] + 6), false);
+    setPiece(new Spy(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[1] + 7), false);
+    setPiece(new GeneralThree(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[1] + 8), false);
     // row 2
-    setPiece(new LtCol(this.board, playerWhite, white, boardOffset + row[2] + 1), false);
-    setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 2), false);
-    setPiece(new Spy(this.board, playerWhite, white, boardOffset + row[2] + 4), false);
-    setPiece(new Captain(this.board, playerWhite, white, boardOffset + row[2] + 5), false);
-    setPiece(new Private(this.board, playerWhite, white, boardOffset + row[2] + 7), false);
-    setPiece(new Flag(this.board, playerBlack, black, boardOffset + row[2] + 9), true);
+    setPiece(new LtCol(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[2] + 1), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[2] + 2), false);
+    setPiece(new Spy(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[2] + 4), false);
+    setPiece(new Captain(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[2] + 5), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[2] + 7), false);
+    setPiece(new Flag(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, black, boardOffset + row[2] + 9), true);
     // row 3
-    setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 1), false);
-    setPiece(new LtTwo(this.board, playerWhite, white, boardOffset + row[3] + 2), false);
-    setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 4), false);
-    setPiece(new LtOne(this.board, playerWhite, white, boardOffset + row[3] + 5), false);
-    setPiece(new Sergeant(this.board, playerWhite, white, boardOffset + row[3] + 6), false);
-    setPiece(new Private(this.board, playerWhite, white, boardOffset + row[3] + 7), false);
-    setPiece(new Major(this.board, playerWhite, white, boardOffset + row[3] + 8), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[3] + 1), false);
+    setPiece(new LtTwo(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[3] + 2), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[3] + 4), false);
+    setPiece(new LtOne(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[3] + 5), false);
+    setPiece(new Sergeant(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[3] + 6), false);
+    setPiece(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[3] + 7), false);
+    setPiece(new Major(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, white, boardOffset + row[3] + 8), false);
   }
 
   /**
@@ -139,21 +183,36 @@ public class BoardBuilder {
     final int[] blackTerritoryBounds = {0, (BoardUtils.TOTAL_BOARD_TILES / 2) - 1};
     final List<Piece> tmpBlackPiecesList = new ArrayList<>();
 
-    tmpBlackPiecesList.add(new GeneralFive(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new GeneralFour(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new GeneralThree(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new GeneralTwo(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new GeneralOne(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new Colonel(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new LtCol(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new Major(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new Captain(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new LtOne(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new LtTwo(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new Sergeant(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new Private(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new Flag(this.board, playerBlack, Alliance.BLACK));
-    tmpBlackPiecesList.add(new Spy(this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new GeneralFive(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new GeneralFour(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new GeneralThree(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new GeneralTwo(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new GeneralOne(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new Colonel(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new LtCol(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new Major(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new Captain(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new LtOne(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new LtTwo(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new Sergeant(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new Flag(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
+    tmpBlackPiecesList.add(new Spy(blackPiecesCount+whitePiecesCount++,
+          this.board, playerBlack, Alliance.BLACK));
 
     // Sets black pieces randomly excluding already occupied tiles.
     for (final Piece piece : tmpBlackPiecesList) {
@@ -166,21 +225,36 @@ public class BoardBuilder {
       (BoardUtils.TOTAL_BOARD_TILES) - 1};
     final List<Piece> tmpWhitePiecesList = new ArrayList<>();
 
-    tmpWhitePiecesList.add(new GeneralFive(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new GeneralFour(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new GeneralThree(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new GeneralTwo(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new GeneralOne(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new Colonel(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new LtCol(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new Major(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new Captain(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new LtOne(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new LtTwo(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new Sergeant(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new Private(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new Flag(this.board, playerWhite, Alliance.WHITE));
-    tmpWhitePiecesList.add(new Spy(this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new GeneralFive(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new GeneralFour(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new GeneralThree(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new GeneralTwo(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new GeneralOne(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new Colonel(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new LtCol(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new Major(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new Captain(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new LtOne(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new LtTwo(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new Sergeant(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new Private(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new Flag(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
+    tmpWhitePiecesList.add(new Spy(blackPiecesCount+whitePiecesCount++,
+          this.board, playerWhite, Alliance.WHITE));
 
     // Sets white pieces randomly excluding already occupied tiles.
     for (final Piece piece : tmpWhitePiecesList) {
@@ -201,21 +275,36 @@ public class BoardBuilder {
       final int[] blackTerritoryBounds = {0, (BoardUtils.TOTAL_BOARD_TILES / 2) - 1};
       final List<Piece> tmpBlackPiecesList = new ArrayList<>();
 
-      tmpBlackPiecesList.add(new GeneralFive(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new GeneralFour(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new GeneralThree(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new GeneralTwo(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new GeneralOne(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new Colonel(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new LtCol(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new Major(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new Captain(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new LtOne(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new LtTwo(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new Sergeant(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new Private(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new Flag(this.board, playerBlack, Alliance.BLACK));
-      tmpBlackPiecesList.add(new Spy(this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralFive(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralFour(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralThree(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralTwo(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new GeneralOne(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Colonel(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new LtCol(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Major(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Captain(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new LtOne(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new LtTwo(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Sergeant(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Private(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Flag(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
+      tmpBlackPiecesList.add(new Spy(blackPiecesCount+whitePiecesCount++,
+            this.board, playerBlack, Alliance.BLACK));
 
       // Sets black pieces randomly excluding already occupied tiles.
       for (final Piece piece : tmpBlackPiecesList) {
@@ -228,21 +317,36 @@ public class BoardBuilder {
         (BoardUtils.TOTAL_BOARD_TILES) - 1};
       final List<Piece> tmpWhitePiecesList = new ArrayList<>();
 
-      tmpWhitePiecesList.add(new GeneralFive(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new GeneralFour(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new GeneralThree(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new GeneralTwo(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new GeneralOne(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new Colonel(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new LtCol(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new Major(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new Captain(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new LtOne(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new LtTwo(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new Sergeant(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new Private(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new Flag(this.board, playerWhite, Alliance.WHITE));
-      tmpWhitePiecesList.add(new Spy(this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralFive(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralFour(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralThree(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralTwo(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new GeneralOne(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Colonel(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new LtCol(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Major(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Captain(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new LtOne(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new LtTwo(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Sergeant(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Private(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Flag(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
+      tmpWhitePiecesList.add(new Spy(blackPiecesCount+whitePiecesCount++,
+            this.board, playerWhite, Alliance.WHITE));
 
       // Sets white pieces randomly excluding already occupied tiles.
       for (final Piece piece : tmpWhitePiecesList) {
@@ -276,8 +380,8 @@ public class BoardBuilder {
         tiles.get(entry.getKey()).insertPiece(entry.getValue());
       }
     };
-    this.board.getGog().setBlackPiecesLeft(this.blackPiecesCount);
-    this.board.getGog().setWhitePiecesLeft(this.whitePiecesCount); }
+    this.board.getGog().setBlackPiecesCount(this.blackPiecesCount);
+    this.board.getGog().setWhitePiecesCount(this.whitePiecesCount); }
 
   /**
    * Sets piece in designated Tile id.
@@ -286,29 +390,33 @@ public class BoardBuilder {
    */
   public boolean setPiece(final Piece piece, boolean isSkipTerritoryCheck) {
     if (!isPieceWithinBounds(piece)) {
-      System.out.println("setPiece() FAILED: " + piece.getAlliance() +
-          " " + piece.getRank() +
-          " at " + piece.getPieceTileId() +
-          ". Piece out of bounds.");
+      // TODO: DELETE ME //
+      // System.out.println("setPiece() FAILED: " + piece.getAlliance() +
+      //     " " + piece.getRank() +
+      //     " at " + piece.getPieceTileId() +
+      //     ". Piece out of bounds.");
       return false;
     } else if (!isPieceInCorrectTerritory(piece) && !isSkipTerritoryCheck) {
-      System.out.println("setPiece() FAILED: " + piece.getAlliance() +
-          " " + piece.getRank() +
-          " at " + piece.getPieceTileId() +
-          ". Piece not in correct territory.");
+      // TODO: DELETE ME //
+      // System.out.println("setPiece() FAILED: " + piece.getAlliance() +
+      //     " " + piece.getRank() +
+      //     " at " + piece.getPieceTileId() +
+      //     ". Piece not in correct territory.");
       return false;
     } else if (!isLegalPieceInstanceChecker(piece)) {
-      System.out.println("setPiece() FAILED: " + piece.getAlliance() +
-          " " + piece.getRank() +
-          " at " + piece.getPieceTileId() +
-          ". Piece instance over limit " +
-          piece.getLegalPieceInstanceCount() + ".");
+      // TODO: DELETE ME //
+      // System.out.println("setPiece() FAILED: " + piece.getAlliance() +
+      //     " " + piece.getRank() +
+      //     " at " + piece.getPieceTileId() +
+      //     ". Piece instance over limit " +
+      //     piece.getLegalPieceInstanceCount() + ".");
       return false;
     } else if (!isTileEmpty(piece.getPieceTileId())) {
-      System.out.println("setPiece() FAILED: " + piece.getAlliance() +
-          " " + piece.getRank() +
-          " at " + piece.getPieceTileId() +
-          ". Tile not empty.");
+      // TODO: DELETE ME //
+      // System.out.println("setPiece() FAILED: " + piece.getAlliance() +
+      //     " " + piece.getRank() +
+      //     " at " + piece.getPieceTileId() +
+      //     ". Tile not empty.");
       return false;
     }
 

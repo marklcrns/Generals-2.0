@@ -16,17 +16,17 @@ public class DesktopLauncher {
     new LwjglApplication(new Application(), config);
 
     // TODO: DELETE BEFORE RELEASING //
-    TexturePacker.Settings settings = new TexturePacker.Settings();
-    settings.pot = true;
-    settings.fast = true;
-    settings.combineSubdirectories = true;
-    settings.paddingX = 1;
-    settings.paddingY = 1;
-    settings.edgePadding = true;
-    settings.grid = true;
-    // settings.maxWidth = 2048;
-    // settings.maxHeight = 2048;
-    // TexturePacker.process(settings, "pieces/original", "./pieces", "piecesTex");
-    TexturePacker.process(settings, "pieces/50", "./pieces", "piecesTex");
+    // TexturePacker.Settings settings = new TexturePacker.Settings();
+    // settings.pot = true;
+    // settings.fast = true;
+    // settings.combineSubdirectories = true;
+    // settings.paddingX = 1;
+    // settings.paddingY = 1;
+    // settings.edgePadding = true;
+    // settings.grid = true;
+    // // settings.maxWidth = 2048;
+    // // settings.maxHeight = 2048;
+    // // TexturePacker.process(settings, "pieces/original", "./pieces", "piecesTex");
+    // TexturePacker.process(settings, "pieces/50", "./pieces", "piecesTex");
   }
 }

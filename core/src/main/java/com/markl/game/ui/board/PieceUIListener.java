@@ -121,7 +121,7 @@ public class PieceUIListener extends ClickListener {
     super.touchUp(event, x, y, pointer, button);
     if (isPieceTouchable()) {
       if (gameScreen.destTileUI != null) {
-        moveManager.makeMove(pieceUI.tileUI.getTileId(), gameScreen.destTileUI.getTileId(), true);
+        moveManager.makeMove(pieceUI.tileUI.getTileId(), gameScreen.destTileUI.getTileId(), true, true);
       } else {
         pieceUIManager.animatePieceUIMove(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
       }
@@ -134,7 +134,7 @@ public class PieceUIListener extends ClickListener {
   }
 
   public boolean isPieceTouchable() {
-    if (isOwnedByTurnMakerPlayer()) {
+    if (isOwnedByTurnMakerPlayer() && gameScreen.gog.isRunning()) {
       if (gameScreen.gameMode == GameMode.ONLINE)
         return isCurrentTurnMaker();
       else
@@ -155,18 +155,16 @@ public class PieceUIListener extends ClickListener {
   }
 
   public boolean isOwnedByTurnMakerPlayer() {
-    if (gameScreen.gog.isRunning())
-      if (gameScreen.gog.getCurrTurnMakerPlayer().isMyPiece(gameScreen.board.getPiece(pieceUI.tileUI.getTileId())))
-        return true;
+    if (gameScreen.gog.getCurrTurnMakerPlayer().isMyPiece(gameScreen.board.getPiece(pieceUI.tileUI.getTileId())))
+      return true;
 
     return false;
   }
 
   public boolean isCurrentTurnMaker() {
-    if (gameScreen.gog.isRunning())
-      if (gameScreen.gog.getCurrTurnMakerPlayer().getAlliance() ==
-          gameScreen.gog.getMyAlliance())
-        return true;
+    if (gameScreen.gog.getCurrTurnMakerPlayer().getAlliance() ==
+        gameScreen.gog.getMyAlliance())
+      return true;
 
     return false;
   }

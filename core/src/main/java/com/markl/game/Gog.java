@@ -38,8 +38,8 @@ public class Gog {
   private boolean hasGameStarted = false; // Turns true when game started
   private boolean hasGameEnded = false;   // Turns true when game started
   private int currentTurnId = 0;              // Current turn of the game
-  private int blackPiecesLeft = 0;
-  private int whitePiecesLeft = 0;
+  private int blackPiecesCount = 0;
+  private int whitePiecesCount = 0;
 
   /**
    * No-constructor function
@@ -112,7 +112,11 @@ public class Gog {
   public void endGame(Player winner) {
     this.gameWinner = winner;
     this.hasGameEnded = true;
-    this.currentTurnMaker = null;
+  }
+
+  public void restoreGame() {
+    this.gameWinner = null;
+    this.hasGameEnded = false;
   }
 
   public void setMyAlliance(Alliance myAlliance) {
@@ -167,17 +171,13 @@ public class Gog {
   }
 
   public void nextTurn() {
-    if (isRunning()) {
-      switchTurnMakerPlayer();
-      incrementTurnId();
-    }
+    switchTurnMakerPlayer();
+    incrementTurnId();
   }
 
   public void prevTurn() {
-    if (isRunning()) {
-      switchTurnMakerPlayer();
-      decrementTurnId();
-    }
+    switchTurnMakerPlayer();
+    decrementTurnId();
   }
 
   public Map<Integer, Move> getMoveHistory() {
@@ -203,10 +203,11 @@ public class Gog {
   public Move undoMove() {
     if (hasUndo()) {
       Move lastMove = moveHistory.get(currentTurnId - 1);
-      Gdx.app.log("GameState.undoMove", lastMove.toString());
+      Gdx.app.log("Gog", "undoMove(): " + lastMove.toString());
       if (lastMove.getTurnId() == currentTurnId - 1 &&
           lastMove.undoExecution()) {
           prevTurn();
+          // Gdx.app.log("Gog", board.ascii());
         return lastMove;
       }
     }
@@ -216,7 +217,7 @@ public class Gog {
   public Move redoMove() {
     if (hasRedo()) {
       Move nextMove = moveHistory.get(currentTurnId);
-      Gdx.app.log("GameState.redoMove", nextMove.toString());
+      Gdx.app.log("Gog", "redoMove(): " + nextMove.toString());
       if (nextMove.getTurnId() == currentTurnId &&
           nextMove.redoExecution()) {
         return nextMove;
@@ -228,7 +229,8 @@ public class Gog {
   public void clearMoveHistoryForward() {
     for (int i = moveHistory.size(); i >= currentTurnId; i--) {
       Move removedMove = moveHistory.remove(i);
-      Gdx.app.log("Removed Move", removedMove.toString());
+      // TODO: DELETE ME //
+      // Gdx.app.log("Removed Move", removedMove.toString());
     }
   }
 
@@ -295,15 +297,52 @@ public class Gog {
     this.whitePlayer = player;
   }
 
-  public void setBlackPiecesLeft(int blackPiecesLeft) {
-    this.blackPiecesLeft = blackPiecesLeft;
+  public void incBlackPiecesCount() {
+    this.blackPiecesCount++;
   }
 
-  public void setWhitePiecesLeft(int whitePiecesLeft) {
-    this.whitePiecesLeft = whitePiecesLeft;
+  public void incWhitePiecesCount() {
+    this.whitePiecesCount++;
   }
+
+  public void decWhitePiecesCount() {
+    if (this.whitePiecesCount > 0)
+      this.whitePiecesCount--;
+  }
+
+  public void decBlackPiecesCount() {
+    if (this.blackPiecesCount > 0)
+      this.blackPiecesCount--;
+  }
+
+  public int incTotalPiecesCount(Alliance alliance) {
+    if (alliance == Alliance.WHITE)
+      incWhitePiecesCount();
+    else if (alliance == Alliance.BLACK)
+      incBlackPiecesCount();
+
+    return this.whitePiecesCount + this.blackPiecesCount;
+  }
+
+  public int decTotalPiecesCount(Alliance alliance) {
+    if (alliance == Alliance.WHITE)
+      decWhitePiecesCount();
+    else if (alliance == Alliance.BLACK)
+      decBlackPiecesCount();
+
+    return this.whitePiecesCount + this.blackPiecesCount;
+  }
+
+  public void setBlackPiecesCount(int blackPiecesCount) {
+    this.blackPiecesCount = blackPiecesCount;
+  }
+
+  public void setWhitePiecesCount(int whitePiecesCount) {
+    this.whitePiecesCount = whitePiecesCount;
+  }
+
   public void addAI(AI ai, Alliance aiAlliance) {
-    ai.setBoard(this.board);
+    ai.setGog(this);
     ai.setAIAlliance(aiAlliance);
     this.ai = ai;
   }
@@ -324,6 +363,7 @@ public class Gog {
   public Player getEnemyPlayer()         { return this.enemyPlayer; }
   public String getBlackPlayerName()     { return this.blackPlayerName; }
   public String getWhitePlayerName()     { return this.whitePlayerName; }
+  public Alliance getCurrTurnMaker()     { return this.currentTurnMaker; }
   public Player getCurrTurnMakerPlayer() { return getPlayer(this.currentTurnMaker); }
   public Board getBoard()                { return this.board; }
   public BoardBuilder getBoardBuilder()  { return this.boardBuilder; }

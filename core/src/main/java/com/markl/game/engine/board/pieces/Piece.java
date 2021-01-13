@@ -20,8 +20,9 @@ public abstract class Piece {
 
   public String rank;                 // Rank of the piece
   public Board board;                 // Reference to game's Board
-  public int powerLevel;              // Power level of the piece to compare ranks
+  public int pieceId;                 // Piece unique identification
   public int tileId;                  // Coordinates of this Piece instance
+  public int powerLevel;              // Power level of the piece to compare ranks
   public int legalPieceInstanceCount; // Allowed amount of piece instance owned by a Player in a single game
   public final Player owner;          // Player that owns this Piece
   public final Alliance alliance;     // Piece alliance of this Piece
@@ -31,7 +32,8 @@ public abstract class Piece {
    * Constructor that takes in the owner Player, and Alliance of this piece.
    * Sets pieceTileId to -1 temporarily.
    */
-  public Piece(final Board board, final Player owner, final Alliance alliance) {
+  public Piece(int pieceId, final Board board, final Player owner, final Alliance alliance) {
+    this.pieceId = pieceId;
     this.board = board;
     this.owner = owner;
     this.alliance = alliance;
@@ -42,13 +44,22 @@ public abstract class Piece {
    * Constructor that takes in the owner Player, Alliance and coordinates of this
    * Piece.
    */
-  public Piece(final Board board, final Player owner,
+  public Piece(int pieceId, final Board board, final Player owner,
       final Alliance alliance, final int tileId)
   {
+    this.pieceId = pieceId;
     this.board = board;
     this.owner = owner;
     this.alliance = alliance;
     this.tileId = tileId;
+  }
+
+  /**
+   * Gets the piece ID this Piece.
+   * @return int pieceId field.
+   */
+  public int getPieceId() {
+    return this.pieceId;
   }
 
   /**

@@ -20,17 +20,17 @@ public class Colonel extends Piece {
   /**
    * Constructor that takes in the owner Player, and Alliance of this piece.
    */
-  public Colonel(final Board board, final Player owner, final Alliance alliance) {
-    super(board, owner, alliance);
+  public Colonel(int pieceId, final Board board, final Player owner, final Alliance alliance) {
+    super(pieceId, board, owner, alliance);
   }
 
   /**
    * Constructor that takes in the owner Player, Alliance and coordinates of
    * this Piece.
    */
-  public Colonel(final Board board, final Player owner,
+  public Colonel(int pieceId, final Board board, final Player owner,
       final Alliance alliance, final int tileId) {
-    super(board, owner, alliance, tileId);
+    super(pieceId, board, owner, alliance, tileId);
   }
 
   /**
@@ -76,7 +76,7 @@ public class Colonel extends Piece {
   @Override
   public final Piece clone() {
     final Colonel copy = new Colonel(
-        this.board, this.owner, this.alliance, this.tileId);
+        this.pieceId, this.board, this.owner, this.alliance, this.tileId);
     return copy;
   }
 

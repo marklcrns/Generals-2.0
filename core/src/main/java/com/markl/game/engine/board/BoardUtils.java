@@ -1,5 +1,6 @@
 package com.markl.game.engine.board;
 
+import com.markl.game.Gog;
 import com.markl.game.engine.board.pieces.Captain;
 import com.markl.game.engine.board.pieces.Colonel;
 import com.markl.game.engine.board.pieces.Flag;
@@ -53,7 +54,7 @@ public class BoardUtils {
   public static final String PRIVATE_RANK       = "Private";
   public static final String FLAG_RANK          = "Flag";
 
-  /** Pieces powerleve */
+  /** Pieces powerlevel */
   public static final int SPY_POW           = 999;
   public static final int GENERAL_FIVE_POW  = 14;
   public static final int GENERAL_FOUR_POW  = 13;
@@ -94,41 +95,41 @@ public class BoardUtils {
    * @param alliance        Alliance of the piece.
    * @return the Piece created. Null unsuccessful.
    */
-  public static Piece pieceInstanceCreator(final Board board, final String pieceRankName,
+  public static Piece pieceInstanceCreator(final Gog gog, final String pieceRankName,
       final Player owner, final Alliance alliance)
   {
     Piece piece = null;
 
     if (pieceRankName.contains(GENERAL_FIVE_RANK))
-      piece = new GeneralFive(board, owner, alliance);
+      piece = new GeneralFive(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(GENERAL_FOUR_RANK))
-      piece = new GeneralFour(board, owner, alliance);
+      piece = new GeneralFour(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(GENERAL_THREE_RANK))
-      piece = new GeneralThree(board, owner, alliance);
+      piece = new GeneralThree(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(GENERAL_TWO_RANK))
-      piece = new GeneralTwo(board, owner, alliance);
+      piece = new GeneralTwo(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(GENERAL_ONE_RANK))
-      piece = new GeneralOne(board, owner, alliance);
+      piece = new GeneralOne(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(COLONEL_RANK))
-      piece = new Colonel(board, owner, alliance);
+      piece = new Colonel(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(LT_COLONEL_RANK))
-      piece = new LtCol(board, owner, alliance);
+      piece = new LtCol(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(MAJOR_RANK))
-      piece = new Major(board, owner, alliance);
+      piece = new Major(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(CAPTAIN_RANK))
-      piece = new Captain(board, owner, alliance);
+      piece = new Captain(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(LT_ONE_RANK))
-      piece = new LtOne(board, owner, alliance);
+      piece = new LtOne(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(LT_TWO_RANK))
-      piece = new LtTwo(board, owner, alliance);
+      piece = new LtTwo(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(SERGEANT_RANK))
-      piece = new Sergeant(board, owner, alliance);
+      piece = new Sergeant(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(PRIVATE_RANK))
-      piece = new Private(board, owner, alliance);
+      piece = new Private(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(FLAG_RANK))
-      piece = new Flag(board, owner, alliance);
+      piece = new Flag(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
     else if (pieceRankName.contains(SPY_RANK))
-      piece = new Spy(board, owner, alliance);
+      piece = new Spy(gog.incTotalPiecesCount(alliance), gog.getBoard(), owner, alliance);
 
     return piece;
   }

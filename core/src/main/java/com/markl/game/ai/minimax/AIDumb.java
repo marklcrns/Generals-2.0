@@ -21,7 +21,7 @@ public class AIDumb extends AI {
   public AIDumb() {}
 
   public Move createRandomMove() {
-    LinkedList<Tile> tiles = board.getAllTiles();
+    LinkedList<Tile> tiles = gog.getBoard().getAllTiles();
     List<Integer> myPiecesCoords = new ArrayList<Integer>();
 
     // Get all pieces owned

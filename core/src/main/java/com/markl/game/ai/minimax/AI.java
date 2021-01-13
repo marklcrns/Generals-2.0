@@ -1,7 +1,7 @@
 package com.markl.game.ai.minimax;
 
+import com.markl.game.Gog;
 import com.markl.game.engine.board.Alliance;
-import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.Move;
 
 /**
@@ -12,12 +12,12 @@ import com.markl.game.engine.board.Move;
  */
 public abstract class AI {
 
-  protected Board board;
+  protected Gog gog;
   protected Alliance aiAlliance;
 
   public AI() {}
 
-  public void setBoard(Board board)              { this.board = board; }
+  public void setGog(Gog gog)                    { this.gog = gog; }
   public void setAIAlliance(Alliance aiAlliance) { this.aiAlliance = aiAlliance; }
   public Alliance getAIAlliance()                { return this.aiAlliance; }
 

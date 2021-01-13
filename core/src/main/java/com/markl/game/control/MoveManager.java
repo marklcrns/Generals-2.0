@@ -9,6 +9,7 @@ import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.TileUI;
 import com.markl.game.ui.screen.GameScreen;
 import com.markl.game.ui.screen.GameScreen.GameMode;
+import com.markl.game.util.Constants;
 
 /**
  * Controls movement of {@link Piece} in {@link Board} and Updates
@@ -25,7 +26,7 @@ public class MoveManager {
     this.gameScreen     = gameScreen;
   }
 
-  public void makeMove(int srcTileId, int tgtTileId, boolean isUpdateServer) {
+  public void makeMove(int srcTileId, int tgtTileId, boolean isUpdateServer, boolean isAiMove) {
     gameScreen.gog.clearMoveHistoryForward();
 
     final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
@@ -35,6 +36,12 @@ public class MoveManager {
     final int moveType = gameScreen.board.move(newMove, false);
 
     if (moveType != -1) {
+
+      if (isAiMove)
+        gameScreen.pieceUIManager.setPieceAnimationDuration(0f);
+      else
+        gameScreen.pieceUIManager.setPieceAnimationDuration(Constants.DEFAULT_PIECE_ANIMATION_SPEED);
+
       if (moveType == 0) {
         gameScreen.pieceUIManager.removePieceUI(srcTileId);
         gameScreen.pieceUIManager.removePieceUI(tgtTileId);
@@ -52,19 +59,19 @@ public class MoveManager {
       gameScreen.prevMove = newMove;
 
       // TODO: Delete later //
-      Gdx.app.log("Move", "" + gameScreen.gog.printMoveHistory());
+      // Gdx.app.log("MoveManager", gameScreen.gog.printMoveHistory());
 
       if (gameScreen.gameMode == GameMode.ONLINE) {
         if (isUpdateServer)
           gameScreen.serverSocket.updateMove(newMove);
       } else {
         // Make AI Move
-        if (gameScreen.gog.isRunning()) {
+        if (gameScreen.gog.isRunning() && isAiMove) {
           if (gameScreen.gog.getCurrTurnMakerPlayer().getAlliance() ==
               gameScreen.gog.getAI().getAIAlliance())
           {
             Move aiMove = gameScreen.gog.getAI().generateMove();
-            makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false);
+            makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, false);
           }
         }
       }
@@ -73,9 +80,10 @@ public class MoveManager {
       gameScreen.pieceUIManager.animatePieceUIMove(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
     }
 
-    if (!gameScreen.gog.isRunning()) {
-      gameScreen.pieceUIManager.showAllPieceUI();
-    }
+    // TODO: Improve //
+    // if (!gameScreen.gog.isRunning()) {
+    //   gameScreen.pieceUIManager.showAllPieceUI();
+    // }
   }
 
   public boolean undoLastMove() {
@@ -103,7 +111,7 @@ public class MoveManager {
       }
 
       // TODO: Delete later //
-      Gdx.app.log("Move", "" + gameScreen.gog.printMoveHistory());
+      // Gdx.app.log("MoveManager", "" + gameScreen.gog.printMoveHistory());
     }
 
     // Remove old origin TileUI highlight
@@ -144,7 +152,7 @@ public class MoveManager {
       gameScreen.prevMove = nextMove;
 
       // TODO: Delete later //
-      Gdx.app.log("Move", "" + gameScreen.gog.printMoveHistory());
+      // Gdx.app.log("MoveManager", "" + gameScreen.gog.printMoveHistory());
 
       if (!gameScreen.gog.isRunning()) {
         gameScreen.pieceUIManager.showAllPieceUI();

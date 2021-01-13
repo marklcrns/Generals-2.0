@@ -191,7 +191,7 @@ public class ServerSocket {
                 else
                   alliance = Alliance.BLACK;
 
-                Piece newPiece = pieceInstanceCreator(gameScreen.board, rank, owner, alliance);
+                Piece newPiece = pieceInstanceCreator(gameScreen.gog, rank, owner, alliance);
                 newPiece.setPieceTileId(tileId);
 
                 gameScreen.boardBuilder.setPiece(newPiece, false);
@@ -231,7 +231,7 @@ public class ServerSocket {
             int turnId = data.getInt("turnId");
             int srcTileId = data.getInt("srcTileId");
             int tgtTileId = data.getInt("tgtTileId");
-            gameScreen.moveManager.makeMove(srcTileId, tgtTileId, false);
+            gameScreen.moveManager.makeMove(srcTileId, tgtTileId, false, false);
           } catch (JSONException e) {
             Gdx.app.log("SocketIO", "Error getting makeTurnMove data");
           }
