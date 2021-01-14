@@ -74,7 +74,7 @@ public class PieceUIListener extends ClickListener {
         mousePos.y = boardBottomBorder + pieceUI.getHeight() * 0.5f;
 
       // Follow mouse pointer when the PieceUI is dragged
-      pieceUIManager.animatePieceUIMove(pieceUI,
+      pieceUIManager.animateFollow(pieceUI,
           mousePos.x - pieceUI.getWidth() * 0.5f,
           mousePos.y - pieceUI.getHeight() * 0.5f,
           0.5f); // Make piece transparent
@@ -121,9 +121,9 @@ public class PieceUIListener extends ClickListener {
     super.touchUp(event, x, y, pointer, button);
     if (isPieceTouchable()) {
       if (gameScreen.destTileUI != null) {
-        moveManager.makeMove(pieceUI.tileUI.getTileId(), gameScreen.destTileUI.getTileId(), true, true);
+        moveManager.makeMove(pieceUI.tileUI.getTileId(), gameScreen.destTileUI.getTileId(), true, true, true);
       } else {
-        pieceUIManager.animatePieceUIMove(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
+        pieceUIManager.animateFollow(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
       }
       clearSnapTileHighlights();
       // Clear destination tile and active piece

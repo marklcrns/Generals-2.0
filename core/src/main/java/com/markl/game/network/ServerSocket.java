@@ -231,7 +231,7 @@ public class ServerSocket {
             int turnId = data.getInt("turnId");
             int srcTileId = data.getInt("srcTileId");
             int tgtTileId = data.getInt("tgtTileId");
-            gameScreen.moveManager.makeMove(srcTileId, tgtTileId, false, false);
+            gameScreen.moveManager.makeMove(srcTileId, tgtTileId, false, false, true);
           } catch (JSONException e) {
             Gdx.app.log("SocketIO", "Error getting makeTurnMove data");
           }

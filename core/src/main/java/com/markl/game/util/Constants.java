@@ -28,7 +28,7 @@ public class Constants {
   public static final float BOARD_Y_OFFSET     = (VIEWPORT_HEIGHT - BOARD_HEIGHT) / 2;
 
   // Game PieceUI
-  public static final float DEFAULT_PIECE_ANIMATION_SPEED = 0.08f;
+  public static final float DEFAULT_PIECEUI_ANIMATION_DURATION = 0.15f;
 
   // Game board colorcheme
   public static final float BOARD_OUTLINE_THICKNESS         = 3;

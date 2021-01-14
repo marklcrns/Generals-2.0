@@ -57,7 +57,7 @@ public class GameScreenHUD {
 
       @Override
       public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        gameScreen.moveManager.undoLastMove();
+        gameScreen.moveManager.undoLastMove(true);
         super.touchUp(event, x, y, pointer, button);
       }
     });
@@ -78,7 +78,7 @@ public class GameScreenHUD {
 
       @Override
       public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-        gameScreen.moveManager.redoNextMove();
+        gameScreen.moveManager.redoNextMove(true);
         super.touchUp(event, x, y, pointer, button);
       }
     });

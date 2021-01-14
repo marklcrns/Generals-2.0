@@ -21,7 +21,7 @@ import com.markl.game.util.Constants;
 public class PieceUIManager {
 
   private GameScreen gameScreen;
-  public float pieceAnimationDuration = Constants.DEFAULT_PIECE_ANIMATION_SPEED;
+  public float pieceAnimationDuration = Constants.DEFAULT_PIECEUI_ANIMATION_DURATION;
 
   public PieceUIManager(GameScreen gameScreen) {
     this.gameScreen = gameScreen;
@@ -29,8 +29,6 @@ public class PieceUIManager {
 
   public boolean generatePieceUI(int tileId) {
     TileUI tileUI = gameScreen.tilesUI.get(tileId);
-    // Texture hiddenBlackPiece = gameScreen.blackPiecesTex.get("Hidden");
-    // Texture hiddenWhitePiece = gameScreen.whitePiecesTex.get("Hidden");
     AtlasRegion hiddenBlackPiece = gameScreen.blackPiecesTex.get("Hidden");
     AtlasRegion hiddenWhitePiece = gameScreen.whitePiecesTex.get("Hidden");
 
@@ -60,12 +58,25 @@ public class PieceUIManager {
     return false;
   }
 
+  public boolean pieceUIFollow(int srcPieceUITileId, int tgtPieceUITileId) {
+    TileUI srcTileUI = gameScreen.tilesUI.get(srcPieceUITileId);
+    TileUI tgtTileUI = gameScreen.tilesUI.get(tgtPieceUITileId);
+    if (srcTileUI.getPieceUI() != null && tgtTileUI.getPieceUI() == null) {
+      // Make target TileUI the tile for source PieceUI
+      animateFollow(srcTileUI.getPieceUI(), tgtTileUI.x, tgtTileUI.y, 1);
+      tgtTileUI.setPieceUI(srcTileUI.getPieceUI());
+      srcTileUI.clearPieceUI();
+      return true;
+    }
+    return false;
+  }
+
   public boolean movePieceUI(int srcPieceUITileId, int tgtPieceUITileId) {
     TileUI srcTileUI = gameScreen.tilesUI.get(srcPieceUITileId);
     TileUI tgtTileUI = gameScreen.tilesUI.get(tgtPieceUITileId);
     if (srcTileUI.getPieceUI() != null && tgtTileUI.getPieceUI() == null) {
       // Make target TileUI the tile for source PieceUI
-      animatePieceUIMove(srcTileUI.getPieceUI(), tgtTileUI.x, tgtTileUI.y, 1);
+      animateMove(srcTileUI.getPieceUI(), tgtTileUI.x, tgtTileUI.y, 1);
       tgtTileUI.setPieceUI(srcTileUI.getPieceUI());
       srcTileUI.clearPieceUI();
       return true;
@@ -92,12 +103,30 @@ public class PieceUIManager {
     srcTileUI.setPieceUI(tmpTileUI.getPieceUI());
   }
 
-  public void animatePieceUIMove(PieceUI pieceUI, float destX, float destY, float alpha) {
-    MoveToAction mta = new MoveToAction();
-    mta.setX(destX);
-    mta.setY(destY);
-    mta.setDuration(pieceAnimationDuration);
-    pieceUI.addAction(mta);
+  public void animateMove(PieceUI pieceUI, float destX, float destY, float alpha) {
+    MoveToAction mtaLift = new MoveToAction();
+    mtaLift.setX(pieceUI.getX());
+    mtaLift.setY(pieceUI.getY() + 10);
+    mtaLift.setDuration(pieceAnimationDuration);
+
+    MoveToAction mtaTravel = new MoveToAction();
+    mtaTravel.setX(destX);
+    mtaTravel.setY(destY);
+    mtaTravel.setDuration(pieceAnimationDuration);
+
+    pieceUI.addAction(Actions.sequence(mtaLift, mtaTravel));
+
+    pieceUI.setZIndex(999);   // Always on top of any pieces
+    pieceUI.getColor().a = alpha; // Remove transparency
+  }
+
+  public void animateFollow(PieceUI pieceUI, float destX, float destY, float alpha) {
+    MoveToAction mtaTravel = new MoveToAction();
+    mtaTravel.setX(destX);
+    mtaTravel.setY(destY);
+    mtaTravel.setDuration(0.02f);
+    pieceUI.addAction(mtaTravel);
+
     pieceUI.setZIndex(999);   // Always on top of any pieces
     pieceUI.getColor().a = alpha; // Remove transparency
   }

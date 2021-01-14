@@ -60,7 +60,7 @@ public class AIMinimax extends AI {
       Move nextMove = legalMoves.get(i);
       Gdx.app.log("AiMinimax", nextMove.toString());
       // Gdx.app.log("AiMinimax", gog.getBoard().ascii());
-      gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false);
+      gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false, false);
       if (gog.isRunning()) {
         int value = minimax(gog, gs, depth - 1, isMaximizing);
         if (value >= bestScore) {
@@ -68,7 +68,7 @@ public class AIMinimax extends AI {
           bestMove = nextMove;
         }
       }
-      gs.moveManager.undoLastMove();
+      gs.moveManager.undoLastMove(false);
     }
 
     // TODO: If null, return random legal move //
@@ -95,11 +95,11 @@ public class AIMinimax extends AI {
         this.nodeCount++;
         Move nextMove = legalMoves.get(i);
         Gdx.app.log("AiMinimax", nextMove.toString());
-        gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false);
+        gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false, false);
         if (gog.isRunning()) {
           max = Math.max(max, minimax(gog, gs, depth - 1, !isMaximizing));
         }
-        gs.moveManager.undoLastMove();
+        gs.moveManager.undoLastMove(false);
       }
       return max;
     } else {
@@ -108,11 +108,11 @@ public class AIMinimax extends AI {
         this.nodeCount++;
         Move nextMove = legalMoves.get(i);
         Gdx.app.log("AiMinimax", nextMove.toString());
-        gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false);
+        gs.moveManager.makeMove(nextMove.getSrcTileId(), nextMove.getTgtTileId(), false, false, false);
         if (gog.isRunning()) {
           min = Math.min(min, minimax(gog, gs, depth - 1, isMaximizing));
         }
-        gs.moveManager.undoLastMove();
+        gs.moveManager.undoLastMove(false);
       }
       return min;
     }

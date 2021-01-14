@@ -40,6 +40,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.markl.game.Gog;
+import com.markl.game.ai.minimax.AIDumb;
 import com.markl.game.ai.minimax.AIMinimax;
 import com.markl.game.control.MoveManager;
 import com.markl.game.control.PieceUIManager;
@@ -130,13 +131,14 @@ public class GameScreen implements Screen {
       gog.setMyPlayer(Alliance.WHITE, "white");
       gog.setEnemyPlayer(Alliance.BLACK, "black");
       gog.addAI(new AIMinimax(2, this), Alliance.BLACK);
+      // gog.addAI(new AIDumb(), Alliance.BLACK);
       initBoardUI();
       initGame();
 
       // Make AI move if first move maker
       if (gog.getCurrTurnMakerPlayer().getAlliance() == Alliance.BLACK) {
         Move aiMove = gog.getAI().generateMove();
-        moveManager.makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, true);
+        moveManager.makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, true, true);
       }
 
     } else if (gameMode == GameMode.LOCAL) {

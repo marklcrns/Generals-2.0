@@ -1,15 +1,12 @@
 package com.markl.game.control;
 
-import com.badlogic.gdx.Gdx;
 import com.markl.game.engine.board.Board;
 import com.markl.game.engine.board.Move;
-import com.markl.game.engine.board.Move.MoveType;
 import com.markl.game.engine.board.pieces.Piece;
 import com.markl.game.ui.board.PieceUI;
 import com.markl.game.ui.board.TileUI;
 import com.markl.game.ui.screen.GameScreen;
 import com.markl.game.ui.screen.GameScreen.GameMode;
-import com.markl.game.util.Constants;
 
 /**
  * Controls movement of {@link Piece} in {@link Board} and Updates
@@ -26,7 +23,8 @@ public class MoveManager {
     this.gameScreen     = gameScreen;
   }
 
-  public void makeMove(int srcTileId, int tgtTileId, boolean isUpdateServer, boolean isAiMove) {
+  public void makeMove(int srcTileId, int tgtTileId, boolean isUpdateServer,
+                       boolean isAiMove, boolean isAnimate) {
     gameScreen.gog.clearMoveHistoryForward();
 
     final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
@@ -37,26 +35,23 @@ public class MoveManager {
 
     if (moveType != -1) {
 
-      if (isAiMove)
-        gameScreen.pieceUIManager.setPieceAnimationDuration(0f);
-      else
-        gameScreen.pieceUIManager.setPieceAnimationDuration(Constants.DEFAULT_PIECE_ANIMATION_SPEED);
+      if (isAnimate) {
+        if (moveType == 0) {
+          gameScreen.pieceUIManager.removePieceUI(srcTileId);
+          gameScreen.pieceUIManager.removePieceUI(tgtTileId);
+        } else if (moveType == 1) {
+          gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
+        } else if (moveType == 2) {
+          gameScreen.pieceUIManager.removePieceUI(tgtTileId);
+          gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
+        } else if (moveType == 3) {
+          // TODO animate aggressive lose on the other client
+          gameScreen.pieceUIManager.removePieceUI(srcTileId);
+        }
 
-      if (moveType == 0) {
-        gameScreen.pieceUIManager.removePieceUI(srcTileId);
-        gameScreen.pieceUIManager.removePieceUI(tgtTileId);
-      } else if (moveType == 1) {
-        gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
-      } else if (moveType == 2) {
-        gameScreen.pieceUIManager.removePieceUI(tgtTileId);
-        gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
-      } else if (moveType == 3) {
-        // TODO animate aggressive lose on the other client
-        gameScreen.pieceUIManager.removePieceUI(srcTileId);
+        gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
+        gameScreen.prevMove = newMove;
       }
-
-      gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
-      gameScreen.prevMove = newMove;
 
       // TODO: Delete later //
       // Gdx.app.log("MoveManager", gameScreen.gog.printMoveHistory());
@@ -68,16 +63,15 @@ public class MoveManager {
         // Make AI Move
         if (gameScreen.gog.isRunning() && isAiMove) {
           if (gameScreen.gog.getCurrTurnMakerPlayer().getAlliance() ==
-              gameScreen.gog.getAI().getAIAlliance())
-          {
+              gameScreen.gog.getAI().getAIAlliance()) {
             Move aiMove = gameScreen.gog.getAI().generateMove();
-            makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, false);
+            makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, false, true);
           }
         }
       }
     } else {
       // Move piece back to original position
-      gameScreen.pieceUIManager.animatePieceUIMove(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
+      gameScreen.pieceUIManager.animateFollow(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
     }
 
     // TODO: Improve //
@@ -86,44 +80,45 @@ public class MoveManager {
     // }
   }
 
-  public boolean undoLastMove() {
+  public boolean undoLastMove(boolean isAnimate) {
     Move lastMove = gameScreen.gog.undoMove();
     if (lastMove == null)
       return false;
 
-    MoveType moveType = lastMove.getMoveType();
+    int moveType = lastMove.getMoveType().getValue();
     int srcTileId = lastMove.getSrcTileId();
     int tgtTileId = lastMove.getTgtTileId();
 
-    if (moveType != MoveType.INVALID) {
-      if (moveType == MoveType.DRAW) {
+    if (moveType != -1 && isAnimate) {
+      if (moveType == 0) {
         gameScreen.pieceUIManager.generatePieceUI(srcTileId);
         gameScreen.pieceUIManager.generatePieceUI(tgtTileId);
         gameScreen.tilesUI.get(tgtTileId).getPieceUI().hidePieceDisplay();
-      } else if (moveType == MoveType.NORMAL) {
+      } else if (moveType == 1) {
         gameScreen.pieceUIManager.movePieceUI(tgtTileId, srcTileId);
-      } else if (moveType == MoveType.AGGRESSIVE_WIN) {
+      } else if (moveType == 2) {
         gameScreen.pieceUIManager.movePieceUI(tgtTileId, srcTileId);
         gameScreen.pieceUIManager.generatePieceUI(tgtTileId);
         gameScreen.tilesUI.get(tgtTileId).getPieceUI().hidePieceDisplay();
-      } else if (moveType == MoveType.AGGRESSIVE_LOSE) {
+      } else if (moveType == 3) {
         gameScreen.pieceUIManager.generatePieceUI(srcTileId);
       }
 
       // TODO: Delete later //
       // Gdx.app.log("MoveManager", "" + gameScreen.gog.printMoveHistory());
+
+      // Remove old origin TileUI highlight
+      gameScreen.activeTileUI = null;
+      gameScreen.activeSrcPiece = null;
+      // Assign prior move to undoMove into prevMove
+      gameScreen.prevMove = gameScreen.gog.getMoveHistory().get(lastMove.getTurnId() - 1);
     }
 
-    // Remove old origin TileUI highlight
-    gameScreen.activeTileUI = null;
-    gameScreen.activeSrcPiece = null;
-    // Assign prior move to undoMove into prevMove
-    gameScreen.prevMove = gameScreen.gog.getMoveHistory().get(lastMove.getTurnId() - 1);
 
     return true;
   }
 
-  public boolean redoNextMove() {
+  public boolean redoNextMove(boolean isAnimate) {
     Move nextMove = gameScreen.gog.redoMove();
     if (nextMove == null)
       return false;
@@ -134,7 +129,8 @@ public class MoveManager {
 
     final int moveType = gameScreen.board.move(nextMove, true);
 
-    if (moveType != -1) {
+
+    if (moveType != -1 && isAnimate) {
       if (moveType == 0) {
         gameScreen.pieceUIManager.removePieceUI(srcTileId);
         gameScreen.pieceUIManager.removePieceUI(tgtTileId);
