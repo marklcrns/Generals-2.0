@@ -164,7 +164,7 @@ public class BoardUtils {
   public static boolean areTwoPiecesEqual(Piece pieceOne, Piece pieceTwo) {
     if (pieceOne.getRank().equals(pieceTwo.getRank()) &&
         pieceOne.getAlliance() == pieceTwo.getAlliance() &&
-        pieceOne.getPowerLevel() == pieceTwo.getPowerLevel() &&
+        pieceOne.getPowLvl() == pieceTwo.getPowLvl() &&
         pieceOne.getPieceOwner() == pieceTwo.getPieceOwner())
       return true;
 

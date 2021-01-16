@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.markl.game.Gog;
 import com.markl.game.engine.board.pieces.Piece;
 
@@ -54,6 +55,9 @@ public class Board {
     Player currTurnMaker = gog.getCurrTurnMakerPlayer();
     int srcTileId = newMove.getSrcTileId();
 
+    // TODO: DELETE ME //
+    Gdx.app.log("Board", ascii());
+
     // Check if piece owned by current turn maker
     if ((!isRedo && currTurnMaker.isMyPiece(getTile(srcTileId).getPiece())) ||
         (isRedo )) {
@@ -67,48 +71,6 @@ public class Board {
 
       // Record if valid move
       if (newMove.getMoveType().getValue() != -1) {
-
-        // // TODO: DELETE after //
-        // // Place bounty if AGGRESSIVE_LOSE
-        // if (newMove.getMoveType().getValue() == 3) {
-        //   int eliminatedPiecePowerLevel = newMove.getSrcPieceOrigin().getPowerLevel();
-        //   int winningPieceId = newMove.getTgtPieceOrigin().getPieceId();
-        //   int predictedRank;
-        //   // Assume winning piece 2 ranks above
-        //   if (eliminatedPiecePowerLevel >= 13)
-        //     predictedRank = 999;
-        //   else
-        //     predictedRank = eliminatedPiecePowerLevel + 2;
-        //   bountyMap.put(winningPieceId, predictedRank);
-        // // Remove from bounty map if piece(s) eliminated
-        // } else if (newMove.getMoveType().getValue() == 2) {
-        //   int eliminatedPieceId = newMove.getEliminatedPiece().getPieceId();
-        //   if (bountyMap.containsKey(eliminatedPieceId))
-        //     bountyMap.remove(eliminatedPieceId);
-        // } else if (newMove.getMoveType().getValue() == 0) {
-        //   int srcPieceId = newMove.getSrcPieceOrigin().getPieceId();
-        //   int tgtPieceId = newMove.getTgtPieceOrigin().getPieceId();
-        //   if (bountyMap.containsKey(srcPieceId))
-        //     bountyMap.remove(srcPieceId);
-        //   if (bountyMap.containsKey(tgtPieceId))
-        //     bountyMap.remove(tgtPieceId);
-        // }
-        // // Gdx.app.log("Board", "AFTER: Evaluate Score " + gog.getCurrTurnMaker() + ": " + evaluateBoard());
-        // // System.out.println("");
-        //
-        // // Print pieces with bounty
-        // Gdx.app.log("Bounty", "Bounty Count: " + bountyMap.size());
-        // Iterator<Tile> iter = tiles.iterator();
-        // while (iter.hasNext()) {
-        //   Tile tile = iter.next();
-        //   if (tile.isTileOccupied()) {
-        //     Piece piece = tile.getPiece();
-        //     if (bountyMap.containsKey(piece.getPieceId())) {
-        //       Gdx.app.log("Bounty", piece.getPieceId() + " " + piece.getAlliance() + " " + piece.getRank() + " has a bounty of " + bountyMap.get(piece.getPieceId()));
-        //     }
-        //   }
-        // }
-
         gog.getMoveHistory().put(newMove.getTurnId(), newMove);
         gog.nextTurn();
       }
@@ -299,7 +261,7 @@ public class Board {
   public String ascii() {
     String debugBoard = "\nBoard Debug Board\n";
     debugBoard += "    0 1 2 3 4 5 6 7 8\n";
-    debugBoard += "    +-----------------\n";
+    debugBoard += "   +-----------------\n";
     for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES / 2; i += 9) {
       if (i < 10)
         debugBoard += " " + i + " |";

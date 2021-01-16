@@ -87,7 +87,8 @@ public class PieceUIManager {
   public boolean removePieceUI(int tileId) {
     TileUI tileUI = gameScreen.tilesUI.get(tileId);
     if (tileUI.getPieceUI() != null) {
-      tileUI.getPieceUI().addAction(Actions.removeActor());
+      tileUI.getPieceUI().addAction(
+          Actions.sequence(Actions.fadeOut(pieceAnimationDuration), Actions.removeActor()));
       tileUI.clearPieceUI();
       return true;
     }
@@ -114,7 +115,14 @@ public class PieceUIManager {
     mtaTravel.setY(destY);
     mtaTravel.setDuration(pieceAnimationDuration);
 
-    pieceUI.addAction(Actions.sequence(mtaLift, mtaTravel));
+    pieceUI.addAction(Actions.sequence(
+          Actions.parallel(
+            mtaLift,
+            Actions.sizeTo(pieceUI.getWidth() + 10, pieceUI.getHeight() + 10, pieceAnimationDuration)),
+          Actions.parallel(
+            mtaTravel,
+            Actions.sizeTo(pieceUI.getWidth(), pieceUI.getHeight(), pieceAnimationDuration)))
+        );
 
     pieceUI.setZIndex(999);   // Always on top of any pieces
     pieceUI.getColor().a = alpha; // Remove transparency

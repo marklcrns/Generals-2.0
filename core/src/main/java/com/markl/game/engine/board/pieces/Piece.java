@@ -143,6 +143,6 @@ public abstract class Piece {
   public abstract Piece clone();
   public abstract String getRank();
   public abstract Alliance getAlliance();
-  public abstract int getPowerLevel();
+  public abstract int getPowLvl();
   public abstract int getLegalPieceInstanceCount();
 }

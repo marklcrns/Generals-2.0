@@ -1,5 +1,6 @@
 package com.markl.game.engine.board;
 
+import com.badlogic.gdx.Gdx;
 import com.markl.game.Gog;
 import com.markl.game.engine.board.pieces.Piece;
 
@@ -48,6 +49,8 @@ public class Move {
   private Piece eliminatedPiece;      // Copy of the eliminated piece if move type is aggressive
   private boolean isExecuted = false; // boolean that holds if the this Move instance has bee executed
 
+  private MoveType bias = null;
+
   /**
    * Constructor that takes in the player who will move the piece, board,
    * source tile coordinates and target tile coordinates.
@@ -58,8 +61,7 @@ public class Move {
    * @param tgtTileId  location of the destination of the piece to be moved.
    */
   public Move(final Player player, final Board board,
-      final int srcTileId, final int tgtTileId)
-  {
+      final int srcTileId, final int tgtTileId) {
     this.player    = player;
     this.board     = board;
     this.gog      = board.getGog();
@@ -87,6 +89,12 @@ public class Move {
       this.tgtPieceOrigin = this.board.getTile(tgtTileId).getPiece().clone();
     else
       this.tgtPieceOrigin = null;
+
+    // Evaluate with bias regardless of engaging pieces ranks
+    if (this.bias != null) {
+      this.moveType = this.bias;
+      return;
+    }
 
     // Return if out of bounds or edge piece wrapping
     if (isOutOfBounds() || isSrcEdgePieceWrapping()) {
@@ -126,8 +134,7 @@ public class Move {
   public boolean execute() {
     switch (this.moveType.getValue()) {
       case -1: // INVALID
-        System.out.println("execute() E: Invalid move");
-        System.out.println(toString());
+        Gdx.app.log("Move", "Invalid Move");
         return false;
 
       case 0: // DRAW
@@ -143,11 +150,7 @@ public class Move {
 
         // Check if Flag has been maneuvered into the opposite end row of the board.
         if (isFlagSucceeded()) {
-          System.out.println(
-              "\n" + this.srcPieceOrigin.getAlliance() +
-              " player WON!\n");
-
-          this.gog.endGame(srcPieceOrigin.getPieceOwner());
+          endGame(srcPieceOrigin.getPieceOwner());
         }
         break;
 
@@ -157,22 +160,16 @@ public class Move {
         this.eliminatedPiece = this.tgtPieceOrigin;
 
         // Check if source or target piece is Flag rank, then conclude the game.
-        if (isTargetPieceFlag()) {
-          this.gog.endGame(srcPieceOrigin.getPieceOwner());
-          System.out.println("\n" + this.srcPieceOrigin.getAlliance() +
-                             " player WON!\n");
-        }
+        if (isTargetPieceFlag())
+          endGame(srcPieceOrigin.getPieceOwner());
         break;
 
       case 3: // AGGRESSIVE_LOSE
         this.board.getTile(this.srcTileId).removePiece();
         this.eliminatedPiece = this.srcPieceOrigin;
 
-        if (isSourcePieceFlag() && !isTargetPieceFlag()){
-          this.gog.endGame(tgtPieceOrigin.getPieceOwner());
-          System.out.println("\n" + this.tgtPieceOrigin.getAlliance() +
-                             " player WON!\n");
-        }
+        if (isSourcePieceFlag() && !isTargetPieceFlag())
+          endGame(tgtPieceOrigin.getPieceOwner());
         break;
 
       default:
@@ -286,7 +283,7 @@ public class Move {
       return true;
     else if (srcPieceOrigin.getRank() == "Spy" && tgtPieceOrigin.getRank() == "Private")
       return false;
-    else if (srcPieceOrigin.getPowerLevel() > tgtPieceOrigin.getPowerLevel())
+    else if (srcPieceOrigin.getPowLvl() > tgtPieceOrigin.getPowLvl())
       return true;
     else
       return false;
@@ -459,7 +456,7 @@ public class Move {
       case 1: // NORMAL
         // Check if Flag has been maneuvered into the opposite end row of the board.
         if (isFlagSucceeded())
-          this.board.getGog().restoreGame();
+          restoreGame();
 
         this.board.movePiece(this.tgtTileId, this.srcTileId);
         this.isExecuted = false;
@@ -469,7 +466,7 @@ public class Move {
 
       case 2: // AGGRESSIVE_WIN
         if (isTargetPieceFlag())
-          this.board.getGog().restoreGame();
+          restoreGame();
 
         this.board.movePiece(this.tgtTileId, this.srcTileId);
         this.board.getTile(this.tgtTileId).insertPiece(this.eliminatedPiece);
@@ -480,7 +477,7 @@ public class Move {
 
       case 3: // AGGRESSIVE_LOSE
         if (isSourcePieceFlag() && !isTargetPieceFlag())
-          this.board.getGog().restoreGame();
+          restoreGame();
 
         this.board.getTile(this.srcTileId).insertPiece(this.eliminatedPiece);
         this.eliminatedPiece = null;
@@ -542,6 +539,37 @@ public class Move {
   public void setTurnId(final int turnId) {
     this.turnId = turnId;
   }
+
+  public void endGame(Player winner) {
+    if (this.bias == null) {
+      this.gog.endGame(winner);
+      // Gdx.app.log("Move", "\n\n" + winner.getAlliance() + " player WON!\n");
+    }
+  }
+
+  public void restoreGame() {
+    if (this.bias == null) {
+      this.board.getGog().restoreGame();
+      // Gdx.app.log("Move", "Game Restored!");
+    }
+  }
+
+  public void setBias(MoveType bias) {
+    // Can only set loosing or winning bias
+    if (bias == MoveType.NORMAL || bias == MoveType.INVALID)
+      return;
+
+    this.bias = bias;
+  }
+
+  public MoveType getBias() {
+    if (this.bias != null)
+      return this.bias;
+
+    return null;
+  }
+
+
 
   @Override
   public String toString() {

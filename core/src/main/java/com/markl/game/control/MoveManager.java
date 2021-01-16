@@ -65,7 +65,8 @@ public class MoveManager {
           if (gameScreen.gog.getCurrTurnMakerPlayer().getAlliance() ==
               gameScreen.gog.getAI().getAIAlliance()) {
             Move aiMove = gameScreen.gog.getAI().generateMove();
-            makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, false, true);
+            if (aiMove != null) // Is this necessary?
+              makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, false, true);
           }
         }
       }

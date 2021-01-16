@@ -203,7 +203,7 @@ public class Gog {
   public Move undoMove() {
     if (hasUndo()) {
       Move lastMove = moveHistory.get(currentTurnId - 1);
-      Gdx.app.log("Gog", "undoMove(): " + lastMove.toString());
+      // Gdx.app.log("Gog", "undoMove(): " + lastMove.toString());
       if (lastMove.getTurnId() == currentTurnId - 1 &&
           lastMove.undoExecution()) {
           prevTurn();
@@ -217,7 +217,7 @@ public class Gog {
   public Move redoMove() {
     if (hasRedo()) {
       Move nextMove = moveHistory.get(currentTurnId);
-      Gdx.app.log("Gog", "redoMove(): " + nextMove.toString());
+      // Gdx.app.log("Gog", "redoMove(): " + nextMove.toString());
       if (nextMove.getTurnId() == currentTurnId &&
           nextMove.redoExecution()) {
         return nextMove;
@@ -254,8 +254,7 @@ public class Gog {
   }
 
   public boolean hasUndo() {
-    if ((firstMoveMaker == myAlliance && currentTurnId > 1) ||
-        (firstMoveMaker != myAlliance && currentTurnId > 2))
+    if (currentTurnId > 1)
       return true;
     return false;
   }

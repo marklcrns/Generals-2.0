@@ -125,20 +125,23 @@ public class GameScreen implements Screen {
     this.tilesUI = new LinkedList<TileUI>();
     this.pieceUIManager = new PieceUIManager(this);
 
+    Gdx.input.setInputProcessor(stage);
+
     if (gameMode == GameMode.SINGLE) {
       initEngine();
-      boardBuilder.createBoardRandomBuild();
+      boardBuilder.createTestBuild();
       gog.setMyPlayer(Alliance.WHITE, "white");
       gog.setEnemyPlayer(Alliance.BLACK, "black");
-      gog.addAI(new AIMinimax(2, this), Alliance.BLACK);
+      gog.addAI(new AIMinimax(3, this, AIMinimax.Disposition.AGGRESSIVE), Alliance.BLACK);
       // gog.addAI(new AIDumb(), Alliance.BLACK);
       initBoardUI();
-      initGame();
+      initGame(Alliance.WHITE);
 
       // Make AI move if first move maker
       if (gog.getCurrTurnMakerPlayer().getAlliance() == Alliance.BLACK) {
         Move aiMove = gog.getAI().generateMove();
-        moveManager.makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, true, true);
+        if (aiMove != null)
+          moveManager.makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, true, true);
       }
 
     } else if (gameMode == GameMode.LOCAL) {
@@ -152,8 +155,6 @@ public class GameScreen implements Screen {
       serverSocket.connectSocket();
       serverSocket.configSocketEvents();
     }
-
-    Gdx.input.setInputProcessor(stage);
   }
 
   @Override

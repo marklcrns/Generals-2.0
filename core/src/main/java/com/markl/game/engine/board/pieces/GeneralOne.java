@@ -47,7 +47,7 @@ public class GeneralOne extends Piece {
    * @return piece powerLevel.
    */
   @Override
-  public final int getPowerLevel() {
+  public final int getPowLvl() {
     return this.powerLevel;
   }
 

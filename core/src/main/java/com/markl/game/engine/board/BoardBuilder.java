@@ -57,11 +57,19 @@ public class BoardBuilder {
     int boardOffset = 0;
     setPiece(new GeneralFour(blackPiecesCount+whitePiecesCount++,
           this.board, playerBlack, black, boardOffset + row[3] + 4), false);
+    // setPiece(new Flag(blackPiecesCount+whitePiecesCount++,
+    //       this.board, playerBlack, black, boardOffset + row[3] + 5), false);
+    // setPiece(new GeneralThree(blackPiecesCount+whitePiecesCount++,
+    //       this.board, playerBlack, black, boardOffset + row[3] + 6), false);
 
     // White territory
     boardOffset = BoardUtils.TOTAL_BOARD_TILES / 2;
     setPiece(new Flag(blackPiecesCount+whitePiecesCount++,
           this.board, playerWhite, white, boardOffset + row[0] + 4), false);
+    // setPiece(new GeneralFive(blackPiecesCount+whitePiecesCount++,
+    //       this.board, playerWhite, white, boardOffset + row[0] + 5), false);
+    // setPiece(new GeneralThree(blackPiecesCount+whitePiecesCount++,
+    //       this.board, playerWhite, white, boardOffset + row[0] + 6), false);
   }
 
   /**
