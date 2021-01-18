@@ -13,9 +13,9 @@ Version 2.0 [LibGDX](https://libgdx.badlogicgames.com/) re-write of
 
 ![2020-11-24](demo/2020-11-24_demo_desktop.gif)
 
-### 2020-11-26
+### 2021-01-17
 
-![2020-11-26](demo/2020-11-26_demo_desktop.gif)
+![2021-01-17](demo/2020-01-07_demo_desktop.gif)
 
 ## Resources
 
