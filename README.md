@@ -15,7 +15,7 @@ Version 2.0 [LibGDX](https://libgdx.badlogicgames.com/) re-write of
 
 ### 2021-01-17
 
-![2021-01-17](demo/2020-01-07_demo_desktop.gif)
+![2021-01-17](demo/2021-01-17_demo_desktop.gif)
 
 ## Resources
 
