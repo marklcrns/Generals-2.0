@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
 import com.markl.game.Gog;
 import com.markl.game.engine.board.pieces.Piece;
 
@@ -17,11 +16,8 @@ import com.markl.game.engine.board.pieces.Piece;
  */
 public class Board {
 
-	private Gog gog;								// Game instance reference
-	private LinkedList<Tile> tiles; // List of all Tiles containing data of each piece
-
-	// TODO: MOVE into AiMinimax //
-	private HashMap<Integer, Integer> bountyMap = new HashMap<Integer, Integer>();
+	private Gog gog;                 // Game instance reference
+	private LinkedList<Tile> tiles;  // List of all Tiles containing data of each piece
 
 	/**
 	 * No argument constructor
@@ -61,11 +57,10 @@ public class Board {
 		// Check if piece owned by current turn maker
 		if ((!isRedo && currTurnMaker.isMyPiece(getTile(srcTileId).getPiece())) ||
 				(isRedo )) {
-			if (!isRedo) {
-				// TODO: DELETE after //
-				// Gdx.app.log("Board", "BEFORE: Evaluate Score " + gog.getCurrTurnMaker() + ": " + evaluateBoard());
+
+			// Evaluate only if not a redo move
+			if (!isRedo)
 				newMove.evaluate();
-			}
 
 			newMove.execute();
 
@@ -160,14 +155,13 @@ public class Board {
 	public boolean deletePiece(final int pieceTileId) {
 		if (this.getTile(pieceTileId).isTileOccupied()) {
 			this.getTile(pieceTileId).removePiece();
-
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	* Swaps two pieces and update piece coordinates.
+	 * Swaps two pieces and update piece coordinates.
 	 * @param srcPieceTileId source piece coordinates.
 	 * @param tgtPieceTileId target piece coordinates.
 	 * @return boolean true if successful, else false.
@@ -221,6 +215,24 @@ public class Board {
 		return null;
 	}
 
+	public Map<Integer, Piece> collectPieces(Alliance alliance) {
+		Map <Integer, Piece> pieces = new HashMap<Integer, Piece>();
+		Iterator<Tile> iter = tiles.iterator();
+
+		// Loop over tiles
+		while (iter.hasNext()) {
+			Tile tile = iter.next();
+			if (tile.isTileOccupied()) {
+				Piece piece = tile.getPiece();
+				if (alliance == piece.getAlliance()) {
+					pieces.put(piece.getPieceId(), piece);
+				}
+			}
+		}
+
+		return pieces;
+	}
+
 	/**
 	 * Gets current board state.
 	 * @return List<Tile> gameBoard field.
@@ -231,27 +243,21 @@ public class Board {
 
 	public List<Move> getLegalMoves() {
 		List<Move> legalMoves = new ArrayList<Move>();
-		Iterator<Tile> iter = tiles.iterator();
 		Map<Integer, Move> candidateMoves;
 
-		// Loop over tiles
-		while (iter.hasNext()) {
-			Tile tile = iter.next();
-			if (tile.isTileOccupied()) {
-				Piece piece = tile.getPiece();
-				if (gog.getCurrTurnMaker() == piece.getAlliance()) {
-					// Loop over candidate moves
-					candidateMoves = piece.evaluateMoves();
-					for (Map.Entry<Integer, Move> entry : candidateMoves.entrySet()) {
-						Move move = entry.getValue();
-						if (move != null && move.getMoveType().getValue() != -1)
-							legalMoves.add(move);
-					}
-				}
+		Map<Integer, Piece> pieces = collectPieces(gog.getCurrTurnMaker());
+
+		for (Map.Entry<Integer, Piece> pieceEntry : pieces.entrySet()) {
+			candidateMoves = pieceEntry.getValue().evaluateMoves();
+
+			for (Map.Entry<Integer, Move> moveEntry : candidateMoves.entrySet()) {
+				Move move = moveEntry.getValue();
+
+				if (move != null && move.getMoveType().getValue() != -1)
+					legalMoves.add(move);
 			}
 		}
 
-		Gdx.app.log(this.getClass().getName(), "legalMoves: " + legalMoves.size());
 		return legalMoves;
 	}
 

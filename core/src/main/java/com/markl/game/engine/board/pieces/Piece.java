@@ -18,131 +18,131 @@ import com.markl.game.engine.board.Tile;
  */
 public abstract class Piece {
 
-  public String rank;                 // Rank of the piece
-  public Board board;                 // Reference to game's Board
-  public int pieceId;                 // Piece unique identification
-  public int tileId;                  // Coordinates of this Piece instance
-  public int powerLevel;              // Power level of the piece to compare ranks
-  public int legalPieceInstanceCount; // Allowed amount of piece instance owned by a Player in a single game
-  public final Player owner;          // Player that owns this Piece
-  public final Alliance alliance;     // Piece alliance of this Piece
-  public Map<Integer, Move> moveSet;  // HashMap containing all currently available moves for this Piece instance
+	public String rank;                 // Rank of the piece
+	public Board board;                 // Reference to game's Board
+	public int pieceId;                 // Piece unique identification
+	public int tileId;                  // Coordinates of this Piece instance
+	public int powerLevel;              // Power level of the piece to compare ranks
+	public int legalPieceInstanceCount; // Allowed amount of piece instance owned by a Player in a single game
+	public final Player owner;          // Player that owns this Piece
+	public final Alliance alliance;     // Piece alliance of this Piece
+	public Map<Integer, Move> moveSet;  // HashMap containing all currently available moves for this Piece instance
 
-  /**
-   * Constructor that takes in the owner Player, and Alliance of this piece.
-   * Sets pieceTileId to -1 temporarily.
-   */
-  public Piece(int pieceId, final Board board, final Player owner, final Alliance alliance) {
-    this.pieceId = pieceId;
-    this.board = board;
-    this.owner = owner;
-    this.alliance = alliance;
-    this.tileId = -1;
-  }
+	/**
+	 * Constructor that takes in the owner Player, and Alliance of this piece.
+	 * Sets pieceTileId to -1 temporarily.
+	 */
+	public Piece(int pieceId, final Board board, final Player owner, final Alliance alliance) {
+		this.pieceId = pieceId;
+		this.board = board;
+		this.owner = owner;
+		this.alliance = alliance;
+		this.tileId = -1;
+	}
 
-  /**
-   * Constructor that takes in the owner Player, Alliance and coordinates of this
-   * Piece.
-   */
-  public Piece(int pieceId, final Board board, final Player owner,
-      final Alliance alliance, final int tileId)
-  {
-    this.pieceId = pieceId;
-    this.board = board;
-    this.owner = owner;
-    this.alliance = alliance;
-    this.tileId = tileId;
-  }
+	/**
+	 * Constructor that takes in the owner Player, Alliance and coordinates of this
+	 * Piece.
+	 */
+	public Piece(int pieceId, final Board board, final Player owner,
+			final Alliance alliance, final int tileId)
+	{
+		this.pieceId = pieceId;
+		this.board = board;
+		this.owner = owner;
+		this.alliance = alliance;
+		this.tileId = tileId;
+	}
 
-  /**
-   * Gets the piece ID this Piece.
-   * @return int pieceId field.
-   */
-  public int getPieceId() {
-    return this.pieceId;
-  }
+	/**
+	 * Gets the piece ID this Piece.
+	 * @return int pieceId field.
+	 */
+	public int getPieceId() {
+		return this.pieceId;
+	}
 
-  /**
-   * Gets the owner Player of this Piece.
-   * @return Player pieceOwner field.
-   */
-  public Player getPieceOwner() {
-    return this.owner;
-  }
+	/**
+	 * Gets the owner Player of this Piece.
+	 * @return Player pieceOwner field.
+	 */
+	public Player getPieceOwner() {
+		return this.owner;
+	}
 
-  /**
-   * Gets this Piece current coordinates.
-   * @return int pieceTileId field.
-   */
-  public int getPieceTileId() {
-    return this.tileId;
-  }
+	/**
+	 * Gets this Piece current coordinates.
+	 * @return int pieceTileId field.
+	 */
+	public int getPieceTileId() {
+		return this.tileId;
+	}
 
-  /**
-   * Sets this Piece current coordinates.
-   * @param tileId new piece coordinates.
-   */
-  public void setPieceTileId(final int tileId) {
-    this.tileId = tileId;
-  }
+	/**
+	 * Sets this Piece current coordinates.
+	 * @param tileId new piece coordinates.
+	 */
+	public void setPieceTileId(final int tileId) {
+		this.tileId = tileId;
+	}
 
-  /**
-   * Gets the current Tile containing this Piece.
-   * @param board Board to get the Tile from.
-   * @return Tile from the Board.
-   */
-  public Tile getTile() {
-    return this.board.getTile(tileId);
-  }
+	/**
+	 * Gets the current Tile containing this Piece.
+	 * @param board Board to get the Tile from.
+	 * @return Tile from the Board.
+	 */
+	public Tile getTile() {
+		return this.board.getTile(tileId);
+	}
 
-  /**
-   * Evaluate this Piece current possible moves. Depends on
-   * Move.evaluate() method.
-   * Directions are clockwise. 0 for upward direction, 1 right, 2 down, 3 left.
-   *
-   * @return Map<String, Move> HashMap of possible moves.
-   */
-  public Map<Integer, Move> evaluateMoves() {
-    moveSet = new HashMap<Integer, Move>();
-    int direction;
+	/**
+	 * Evaluate this Piece current possible moves. Depends on
+	 * Move.evaluate() method.
+	 * Directions are clockwise. 0 for upward direction, 1 right, 2 down, 3 left.
+	 *
+	 * @return Map<String, Move> HashMap of possible moves.
+	 */
+	public Map<Integer, Move> evaluateMoves() {
+		moveSet = new HashMap<Integer, Move>();
+		int direction;
 
-    direction = 0;    // Up
-    final int upAdjacentPieceTileId = this.tileId + -9;
-    if (this.tileId >= BoardUtils.SECOND_ROW_INIT) {
-      moveSet.put(direction, new Move(this.owner, this.board, this.tileId,
-            upAdjacentPieceTileId));
-      moveSet.get(direction).evaluate();
-    }
-    direction = 1;    // Right
-    final int rightAdjacentPieceTileId = this.tileId + 1;
-    if (rightAdjacentPieceTileId % 9 != 0) {
-      moveSet.put(direction, new Move(this.owner, this.board, this.tileId,
-            rightAdjacentPieceTileId));
-      moveSet.get(direction).evaluate();
-    }
-    direction = 2;    // Down
-    final int downAdjacentPieceTileId = this.tileId + 9;
-    if (this.tileId < BoardUtils.LAST_ROW_INIT) {
-      moveSet.put(direction, new Move(this.owner, this.board, this.tileId,
-            downAdjacentPieceTileId));
-      moveSet.get(direction).evaluate();
-    }
-    direction = 3;    // Left
-    final int leftAdjacentPieceTileId = this.tileId + -1;
-    if (this.tileId % 9 != 0) {
-      moveSet.put(direction, new Move(this.owner, this.board, this.tileId,
-            leftAdjacentPieceTileId));
-      moveSet.get(direction).evaluate();
-    }
+		direction = 0;    // Up
+		final int upAdjacentPieceTileId = this.tileId + -9;
+		if (this.tileId >= BoardUtils.SECOND_ROW_INIT) {
+			Move up = new Move(this.owner, this.board, this.tileId, upAdjacentPieceTileId);
+			up.evaluate();
+			moveSet.put(direction, up);
+		}
+		direction = 1;    // Right
+		final int rightAdjacentPieceTileId = this.tileId + 1;
+		if (rightAdjacentPieceTileId % 9 != 0) {
+			Move right = new Move(this.owner, this.board, this.tileId, rightAdjacentPieceTileId);
+			right.evaluate();
+			moveSet.put(direction, right);
+		}
+		direction = 2;    // Down
+		final int downAdjacentPieceTileId = this.tileId + 9;
+		if (this.tileId < BoardUtils.LAST_ROW_INIT) {
+			Move down = new Move(this.owner, this.board, this.tileId, downAdjacentPieceTileId);
+			down.evaluate();
+			moveSet.put(direction, down);
+		}
+		direction = 3;    // Left
+		final int leftAdjacentPieceTileId = this.tileId + -1;
+		if (this.tileId % 9 != 0) {
+			Move left = new Move(this.owner, this.board, this.tileId, leftAdjacentPieceTileId);
+			left.evaluate();
+			moveSet.put(direction, left);
+		}
 
-    return moveSet;
-  }
+		return moveSet;
+	}
 
-  //////////////////// Abstract methods to implement ////////////////////
+	//////////////////// Abstract methods to implement ////////////////////
 
-  public abstract Piece clone();
-  public abstract String getRank();
-  public abstract Alliance getAlliance();
-  public abstract int getPowLvl();
-  public abstract int getLegalPieceInstanceCount();
+	public abstract Piece clone();
+	public abstract String getRank();
+	public abstract Alliance getAlliance();
+	public abstract int getPowLvl();
+	public abstract int getLegalPieceInstanceCount();
 }

@@ -30,80 +30,80 @@ import com.markl.game.ui.Application;
  */
 public class SplashScreen implements Screen {
 
-  private final Application app;
+	private final Application app;
 
-  private Stage stage;
-  private Image pieceImg;
+	private Stage stage;
+	private Image pieceImg;
 
-  public SplashScreen(final Application app) {
-    this.app = app;
-    stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
-  }
+	public SplashScreen(final Application app) {
+		this.app = app;
+		stage = new Stage(new StretchViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, app.camera));
+	}
 
-  @Override
-  public void show() {
-    System.out.println("SplashScreen Show");
-    Gdx.input.setInputProcessor(stage);
+	@Override
+	public void show() {
+		System.out.println("SplashScreen Show");
+		Gdx.input.setInputProcessor(stage);
 
-    Texture pieceTex = app.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class);
-    pieceImg = new Image(pieceTex);
-    pieceImg.setWidth(64f);
-    pieceImg.setHeight(64f);
-    pieceImg.setOrigin(pieceImg.getWidth() / 2, pieceImg.getHeight() / 2);
-    pieceImg.setPosition(stage.getWidth() / 2 - 32, stage.getHeight() / 2 + 32);
-    pieceImg.addAction(sequence(alpha(0), scaleTo(.1f, .1f),
-          parallel(fadeIn(2f, Interpolation.pow2),
-            scaleTo(2f, 2f, 2.5f, Interpolation.pow5),
-            moveTo(stage.getWidth() / 2 - 32, stage.getHeight() / 2 - 32, 2f, Interpolation.swing)),
-          delay(1.5f), fadeOut(1.25f)));
+		Texture pieceTex = app.assets.get(getPieceImagePath("white", "GeneralFive"), Texture.class);
+		pieceImg = new Image(pieceTex);
+		pieceImg.setWidth(64f);
+		pieceImg.setHeight(64f);
+		pieceImg.setOrigin(pieceImg.getWidth() / 2, pieceImg.getHeight() / 2);
+		pieceImg.setPosition(stage.getWidth() / 2 - 32, stage.getHeight() / 2 + 32);
+		pieceImg.addAction(sequence(alpha(0), scaleTo(.1f, .1f),
+					parallel(fadeIn(2f, Interpolation.pow2),
+						scaleTo(2f, 2f, 2.5f, Interpolation.pow5),
+						moveTo(stage.getWidth() / 2 - 32, stage.getHeight() / 2 - 32, 2f, Interpolation.swing)),
+					delay(1.5f), fadeOut(1.25f)));
 
-    stage.addActor(pieceImg);
-  }
+		stage.addActor(pieceImg);
+	}
 
-  @Override
-  public void render(float delta) {
-    Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
+	@Override
+	public void render(float delta) {
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear screen
 
-    update(delta);
-    stage.draw();
-  }
+		update(delta);
+		stage.draw();
+	}
 
-  public void update(float delta) {
-    stage.act(delta);
+	public void update(float delta) {
+		stage.act(delta);
 
-    if (pieceImg.getActions().size == 0)
-      app.setScreen(app.mainMenuScreen);
-  }
+		if (pieceImg.getActions().size == 0)
+			app.setScreen(app.mainMenuScreen);
+	}
 
-  @Override
-  public void resize(int width, int height) {
-    System.out.println("GameScreen Resize");
-    stage.getViewport().update(width, height, false);
-  }
+	@Override
+	public void resize(int width, int height) {
+		System.out.println("GameScreen Resize");
+		stage.getViewport().update(width, height, false);
+	}
 
-  @Override
-  public void pause() {
-    // TODO Auto-generated method stub
+	@Override
+	public void pause() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
-  @Override
-  public void resume() {
-    // TODO Auto-generated method stub
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
-  @Override
-  public void hide() {
-    // TODO Auto-generated method stub
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
-  @Override
-  public void dispose() {
-    // TODO Auto-generated method stub
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
 
-  }
+	}
 
 }

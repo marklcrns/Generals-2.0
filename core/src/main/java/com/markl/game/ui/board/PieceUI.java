@@ -14,47 +14,47 @@ import com.markl.game.engine.board.Alliance;
  */
 public class PieceUI extends Actor {
 
-  public TileUI tileUI;
-  public String pieceRank;
-  public Alliance alliance;
-  private AtlasRegion pieceTexCurrent;
-  private AtlasRegion pieceTexShow;
-  private AtlasRegion pieceTexHidden;
-  public boolean isHidden;
+	public TileUI tileUI;
+	public String pieceRank;
+	public Alliance alliance;
+	private AtlasRegion pieceTexCurrent;
+	private AtlasRegion pieceTexShow;
+	private AtlasRegion pieceTexHidden;
+	public boolean isHidden;
 
-  /**
-   * No-args constructor
-   */
-  public PieceUI(TileUI tile, String pieceRank, Alliance alliance,
-                 AtlasRegion pieceTexShow, AtlasRegion pieceTexHidden) {
-    this.tileUI           = tile;
-    this.pieceRank        = pieceRank;
-    this.alliance         = alliance;
-    this.pieceTexShow     = pieceTexShow;
-    this.pieceTexHidden   = pieceTexHidden;
-    // Set current Texture displayed
-    this.pieceTexCurrent = pieceTexShow;
-    this.isHidden         = false;
-  }
+	/**
+	 * No-args constructor
+	 */
+	public PieceUI(TileUI tile, String pieceRank, Alliance alliance,
+			AtlasRegion pieceTexShow, AtlasRegion pieceTexHidden) {
+		this.tileUI           = tile;
+		this.pieceRank        = pieceRank;
+		this.alliance         = alliance;
+		this.pieceTexShow     = pieceTexShow;
+		this.pieceTexHidden   = pieceTexHidden;
+		// Set current Texture displayed
+		this.pieceTexCurrent = pieceTexShow;
+		this.isHidden         = false;
+	}
 
-  public void showPieceDisplay() {
-    if (isHidden) {
-      pieceTexCurrent = pieceTexShow;
-      isHidden = false;
-    }
-  }
+	public void showPieceDisplay() {
+		if (isHidden) {
+			pieceTexCurrent = pieceTexShow;
+			isHidden = false;
+		}
+	}
 
-  public void hidePieceDisplay() {
-    if (!isHidden) {
-      pieceTexCurrent = pieceTexHidden;
-      isHidden = true;
-    }
-  }
+	public void hidePieceDisplay() {
+		if (!isHidden) {
+			pieceTexCurrent = pieceTexHidden;
+			isHidden = true;
+		}
+	}
 
-  @Override
-  public void draw(Batch batch, float parentAlpha) {
-    Color color = getColor();
-    batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-    batch.draw(pieceTexCurrent, getX(), getY(), getWidth(), getHeight());
-  }
+	@Override
+	public void draw(Batch batch, float parentAlpha) {
+		Color color = getColor();
+		batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+		batch.draw(pieceTexCurrent, getX(), getY(), getWidth(), getHeight());
+	}
 }

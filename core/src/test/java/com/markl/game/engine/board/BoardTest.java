@@ -15,128 +15,128 @@ import org.junit.jupiter.api.Test;
 
 class BoardTest {
 
-  private Board board;
-  private BoardBuilder builder;
+	private Board board;
+	private BoardBuilder builder;
 
-  @BeforeEach
-  void setUp() {
-    this.board = new Board();
-    this.builder = new BoardBuilder(board);
-  }
+	@BeforeEach
+	void setUp() {
+		this.board = new Board();
+		this.builder = new BoardBuilder(board);
+	}
 
-  @Test
-  @DisplayName("Test Board.getAllTiles()")
-  void getAllTilesTest() {
-    assertNotNull(this.board.getAllTiles());
-  }
+	@Test
+	@DisplayName("Test Board.getAllTiles()")
+	void getAllTilesTest() {
+		assertNotNull(this.board.getAllTiles());
+	}
 
-  @Test
-  @DisplayName("Test Board.addTile()")
-  void addTileTest() {
-    assertEquals(this.board.getAllTiles().size(), 0);
+	@Test
+	@DisplayName("Test Board.addTile()")
+	void addTileTest() {
+		assertEquals(this.board.getAllTiles().size(), 0);
 
-    this.board.addTile(0, null);
+		this.board.addTile(0, null);
 
-    assertNotNull(this.board.getTile(0));
-    assertEquals(this.board.getAllTiles().size(), 1);
-  }
+		assertNotNull(this.board.getTile(0));
+		assertEquals(this.board.getAllTiles().size(), 1);
+	}
 
-  @Test
-  @DisplayName("Test Board.insertPiece()")
-  void insertPieceTest() {
-    this.board.addTile(0, null);
-    Piece flag = new Flag(this.board, null, null);
+	@Test
+	@DisplayName("Test Board.insertPiece()")
+	void insertPieceTest() {
+		this.board.addTile(0, null);
+		Piece flag = new Flag(this.board, null, null);
 
-    assertTrue(this.board.insertPiece(0, flag));
-    assertFalse(this.board.insertPiece(0, flag));
-    assertTrue(this.board.getTile(0).isTileOccupied());
-  }
+		assertTrue(this.board.insertPiece(0, flag));
+		assertFalse(this.board.insertPiece(0, flag));
+		assertTrue(this.board.getTile(0).isTileOccupied());
+	}
 
-  @Test
-  @DisplayName("Test Board.deletePiece()")
-  void deletePieceTest() {
-    this.board.addTile(0, null);
-    Piece flag = new Flag(this.board, null, null);
-    this.board.insertPiece(0, flag);
+	@Test
+	@DisplayName("Test Board.deletePiece()")
+	void deletePieceTest() {
+		this.board.addTile(0, null);
+		Piece flag = new Flag(this.board, null, null);
+		this.board.insertPiece(0, flag);
 
-    assertTrue(this.board.deletePiece(0));
-    assertFalse(this.board.deletePiece(0));
-    assertTrue(this.board.getTile(0).isTileEmpty());
-  }
+		assertTrue(this.board.deletePiece(0));
+		assertFalse(this.board.deletePiece(0));
+		assertTrue(this.board.getTile(0).isTileEmpty());
+	}
 
-  @Test
-  @DisplayName("Test Board.replacePiece")
-  void replacePieceTest() {
-    this.board.addTile(0, null);
-    this.board.addTile(1, null);
-    Piece flag = new Flag(this.board, null, null);
-    Piece spy = new Spy(this.board, null, null);
-    this.board.insertPiece(0, flag);
+	@Test
+	@DisplayName("Test Board.replacePiece")
+	void replacePieceTest() {
+		this.board.addTile(0, null);
+		this.board.addTile(1, null);
+		Piece flag = new Flag(this.board, null, null);
+		Piece spy = new Spy(this.board, null, null);
+		this.board.insertPiece(0, flag);
 
-    // Valid piece replacement
-    assertTrue(this.board.getTile(0).getPiece().getRank().equals("Flag"));
-    assertTrue(this.board.replacePiece(0, spy));
-    assertTrue(this.board.getTile(0).getPiece().getRank().equals("Spy"));
+		// Valid piece replacement
+		assertTrue(this.board.getTile(0).getPiece().getRank().equals("Flag"));
+		assertTrue(this.board.replacePiece(0, spy));
+		assertTrue(this.board.getTile(0).getPiece().getRank().equals("Spy"));
 
-    // Invalid piece replacement
-    assertFalse(this.board.replacePiece(1, spy));
-  }
+		// Invalid piece replacement
+		assertFalse(this.board.replacePiece(1, spy));
+	}
 
-  @Test
-  @DisplayName("Test Board.movePiece()")
-  void movePieceTest() {
-    this.board.addTile(0, null);
-    this.board.addTile(1, null);
-    Piece flag = new Flag(this.board, null, null);
-    this.board.insertPiece(0, flag);
+	@Test
+	@DisplayName("Test Board.movePiece()")
+	void movePieceTest() {
+		this.board.addTile(0, null);
+		this.board.addTile(1, null);
+		Piece flag = new Flag(this.board, null, null);
+		this.board.insertPiece(0, flag);
 
-    // Valid move piece
-    assertTrue(this.board.getTile(0).getPiece().getRank().equals("Flag"));
-    assertTrue(this.board.getTile(1).isTileEmpty());
-    assertTrue(this.board.movePiece(0, 1));
-    assertTrue(this.board.getTile(0).isTileEmpty());
-    assertTrue(this.board.getTile(1).getPiece().getRank().equals("Flag"));
+		// Valid move piece
+		assertTrue(this.board.getTile(0).getPiece().getRank().equals("Flag"));
+		assertTrue(this.board.getTile(1).isTileEmpty());
+		assertTrue(this.board.movePiece(0, 1));
+		assertTrue(this.board.getTile(0).isTileEmpty());
+		assertTrue(this.board.getTile(1).getPiece().getRank().equals("Flag"));
 
-    // Invalid move piece
-    assertFalse(this.board.movePiece(0, 1));
-  }
+		// Invalid move piece
+		assertFalse(this.board.movePiece(0, 1));
+	}
 
-  @Test
-  @DisplayName("Test Board.swapPiece()")
-  void swapPieceTest() {
-    this.board.addTile(0, null);
-    this.board.addTile(1, null);
-    this.board.addTile(2, null);
-    Piece flag = new Flag(this.board, null, null);
-    Piece spy = new Spy(this.board, null, null);
-    this.board.insertPiece(0, flag);
-    this.board.insertPiece(1, spy);
+	@Test
+	@DisplayName("Test Board.swapPiece()")
+	void swapPieceTest() {
+		this.board.addTile(0, null);
+		this.board.addTile(1, null);
+		this.board.addTile(2, null);
+		Piece flag = new Flag(this.board, null, null);
+		Piece spy = new Spy(this.board, null, null);
+		this.board.insertPiece(0, flag);
+		this.board.insertPiece(1, spy);
 
-    // Occupied Tile piece swap
-    assertTrue(this.board.getTile(0).getPiece().getRank().equals("Flag"));
-    assertTrue(this.board.getTile(1).getPiece().getRank().equals("Spy"));
+		// Occupied Tile piece swap
+		assertTrue(this.board.getTile(0).getPiece().getRank().equals("Flag"));
+		assertTrue(this.board.getTile(1).getPiece().getRank().equals("Spy"));
 
-    assertTrue(this.board.swapPiece(0, 1));
+		assertTrue(this.board.swapPiece(0, 1));
 
-    assertTrue(this.board.getTile(0).getPiece().getRank().equals("Spy"));
-    assertTrue(this.board.getTile(1).getPiece().getRank().equals("Flag"));
+		assertTrue(this.board.getTile(0).getPiece().getRank().equals("Spy"));
+		assertTrue(this.board.getTile(1).getPiece().getRank().equals("Flag"));
 
-    // Empty Tile piece swap
-    assertFalse(this.board.swapPiece(1, 2));
-  }
+		// Empty Tile piece swap
+		assertFalse(this.board.swapPiece(1, 2));
+	}
 
-  @Test
-  @DisplayName("Test Board.discardPieces()")
-  void discardPiecesTest() {
-    this.builder.createBoardDemoBuild();
-    this.builder.build(false);
+	@Test
+	@DisplayName("Test Board.discardPieces()")
+	void discardPiecesTest() {
+		this.builder.createBoardDemoBuild();
+		this.builder.build(false);
 
-    assertTrue(this.board.getTile(0).isTileOccupied());
-    this.board.clearBoard();
+		assertTrue(this.board.getTile(0).isTileOccupied());
+		this.board.clearBoard();
 
-    for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES; i++) {
-      assertTrue(this.board.getTile(i).isTileEmpty());
-    }
-  }
+		for (int i = 0; i < BoardUtils.TOTAL_BOARD_TILES; i++) {
+			assertTrue(this.board.getTile(i).isTileEmpty());
+		}
+	}
 
 }

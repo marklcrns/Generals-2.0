@@ -17,144 +17,143 @@ import com.markl.game.ui.screen.GameScreen.GameMode;
  */
 public class MoveManager {
 
-  private GameScreen gameScreen;
+	private GameScreen gameScreen;
 
-  public MoveManager(GameScreen gameScreen) {
-    this.gameScreen     = gameScreen;
-  }
+	public MoveManager(GameScreen gameScreen) {
+		this.gameScreen     = gameScreen;
+	}
 
-  public void makeMove(int srcTileId, int tgtTileId, boolean isUpdateServer,
-                       boolean isAiMove, boolean isAnimate) {
-    gameScreen.gog.clearMoveHistoryForward();
+	public void makeMove(int srcTileId, int tgtTileId, boolean isUpdateServer,
+			boolean isAiMove, boolean isAnimate) {
+		gameScreen.gog.clearMoveHistoryForward();
 
-    final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
+		final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
 
-    final PieceUI srcPieceUI = srcTileUI.getPieceUI();
-    final Move newMove = new Move(gameScreen.gog.getCurrTurnMakerPlayer(), gameScreen.board, srcTileId, tgtTileId);
-    final int moveType = gameScreen.board.move(newMove, false);
+		final PieceUI srcPieceUI = srcTileUI.getPieceUI();
+		final Move newMove = new Move(gameScreen.gog.getCurrTurnMakerPlayer(), gameScreen.board, srcTileId, tgtTileId);
+		final int moveType = gameScreen.board.move(newMove, false);
 
-    if (moveType != -1) {
+		if (moveType != -1) {
 
-      if (isAnimate) {
-        if (moveType == 0) {
-          gameScreen.pieceUIManager.removePieceUI(srcTileId);
-          gameScreen.pieceUIManager.removePieceUI(tgtTileId);
-        } else if (moveType == 1) {
-          gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
-        } else if (moveType == 2) {
-          gameScreen.pieceUIManager.removePieceUI(tgtTileId);
-          gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
-        } else if (moveType == 3) {
-          // TODO animate aggressive lose on the other client
-          gameScreen.pieceUIManager.removePieceUI(srcTileId);
-        }
+			if (isAnimate) {
+				if (moveType == 0) {
+					gameScreen.pieceUIManager.removePieceUI(srcTileId);
+					gameScreen.pieceUIManager.removePieceUI(tgtTileId);
+				} else if (moveType == 1) {
+					gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
+				} else if (moveType == 2) {
+					gameScreen.pieceUIManager.removePieceUI(tgtTileId);
+					gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
+				} else if (moveType == 3) {
+					// TODO animate aggressive lose on the other client
+					gameScreen.pieceUIManager.removePieceUI(srcTileId);
+				}
 
-        gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
-        gameScreen.prevMove = newMove;
-      }
+				gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
+				gameScreen.prevMove = newMove;
+			}
 
-      // TODO: Delete later //
-      // Gdx.app.log("MoveManager", gameScreen.gog.printMoveHistory());
+			// TODO: Delete later //
+			// Gdx.app.log(this.getClas().getName(), gameScreen.gog.printMoveHistory());
 
-      if (gameScreen.gameMode == GameMode.ONLINE) {
-        if (isUpdateServer)
-          gameScreen.serverSocket.updateMove(newMove);
-      } else {
-        // Make AI Move
-        if (gameScreen.gog.isRunning() && isAiMove) {
-          if (gameScreen.gog.getCurrTurnMakerPlayer().getAlliance() ==
-              gameScreen.gog.getAI().getAIAlliance()) {
-            Move aiMove = gameScreen.gog.getAI().generateMove();
-            if (aiMove != null) // Is this necessary?
-              makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, false, true);
-          }
-        }
-      }
-    } else {
-      // Move piece back to original position
-      gameScreen.pieceUIManager.animateFollow(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
-    }
+			if (gameScreen.gameMode == GameMode.ONLINE) {
+				if (isUpdateServer)
+					gameScreen.serverSocket.updateMove(newMove);
+			} else {
+				// Make AI Move
+				if (gameScreen.gog.isRunning() && isAiMove) {
+					if (gameScreen.gog.getCurrTurnMakerPlayer().getAlliance() ==
+							gameScreen.gog.getAI().getAIAlliance()) {
+						Move aiMove = gameScreen.gog.getAI().generateMove();
+						if (aiMove != null) // Is this necessary?
+							makeMove(aiMove.getSrcTileId(), aiMove.getTgtTileId(), false, false, true);
+							}
+				}
+			}
+		} else {
+			// Move piece back to original position
+			gameScreen.pieceUIManager.animateFollow(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
+		}
 
-    // TODO: Improve //
-    // if (!gameScreen.gog.isRunning()) {
-    //   gameScreen.pieceUIManager.showAllPieceUI();
-    // }
-  }
+		// TODO: Improve //
+		// if (!gameScreen.gog.isRunning()) {
+		//   gameScreen.pieceUIManager.showAllPieceUI();
+		// }
+	}
 
-  public boolean undoLastMove(boolean isAnimate) {
-    Move lastMove = gameScreen.gog.undoMove();
-    if (lastMove == null)
-      return false;
+	public boolean undoLastMove(boolean isAnimate) {
+		Move lastMove = gameScreen.gog.undoMove();
+		if (lastMove == null)
+			return false;
 
-    int moveType = lastMove.getMoveType().getValue();
-    int srcTileId = lastMove.getSrcTileId();
-    int tgtTileId = lastMove.getTgtTileId();
+		int moveType = lastMove.getMoveType().getValue();
+		int srcTileId = lastMove.getSrcTileId();
+		int tgtTileId = lastMove.getTgtTileId();
 
-    if (moveType != -1 && isAnimate) {
-      if (moveType == 0) {
-        gameScreen.pieceUIManager.generatePieceUI(srcTileId);
-        gameScreen.pieceUIManager.generatePieceUI(tgtTileId);
-        gameScreen.tilesUI.get(tgtTileId).getPieceUI().hidePieceDisplay();
-      } else if (moveType == 1) {
-        gameScreen.pieceUIManager.movePieceUI(tgtTileId, srcTileId);
-      } else if (moveType == 2) {
-        gameScreen.pieceUIManager.movePieceUI(tgtTileId, srcTileId);
-        gameScreen.pieceUIManager.generatePieceUI(tgtTileId);
-        gameScreen.tilesUI.get(tgtTileId).getPieceUI().hidePieceDisplay();
-      } else if (moveType == 3) {
-        gameScreen.pieceUIManager.generatePieceUI(srcTileId);
-      }
+		if (moveType != -1 && isAnimate) {
+			if (moveType == 0) {
+				gameScreen.pieceUIManager.generatePieceUI(srcTileId);
+				gameScreen.pieceUIManager.generatePieceUI(tgtTileId);
+				gameScreen.tilesUI.get(tgtTileId).getPieceUI().hidePieceDisplay();
+			} else if (moveType == 1) {
+				gameScreen.pieceUIManager.movePieceUI(tgtTileId, srcTileId);
+			} else if (moveType == 2) {
+				gameScreen.pieceUIManager.movePieceUI(tgtTileId, srcTileId);
+				gameScreen.pieceUIManager.generatePieceUI(tgtTileId);
+				gameScreen.tilesUI.get(tgtTileId).getPieceUI().hidePieceDisplay();
+			} else if (moveType == 3) {
+				gameScreen.pieceUIManager.generatePieceUI(srcTileId);
+			}
 
-      // TODO: Delete later //
-      // Gdx.app.log("MoveManager", "" + gameScreen.gog.printMoveHistory());
+			// TODO: Delete later //
+			// Gdx.app.log(this.getClas().getName(), "" + gameScreen.gog.printMoveHistory());
 
-      // Remove old origin TileUI highlight
-      gameScreen.activeTileUI = null;
-      gameScreen.activeSrcPiece = null;
-      // Assign prior move to undoMove into prevMove
-      gameScreen.prevMove = gameScreen.gog.getMoveHistory().get(lastMove.getTurnId() - 1);
-    }
-
-
-    return true;
-  }
-
-  public boolean redoNextMove(boolean isAnimate) {
-    Move nextMove = gameScreen.gog.redoMove();
-    if (nextMove == null)
-      return false;
-
-    int srcTileId = nextMove.getSrcTileId();
-    int tgtTileId = nextMove.getTgtTileId();
-    final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
-
-    final int moveType = gameScreen.board.move(nextMove, true);
+			// Remove old origin TileUI highlight
+			gameScreen.activeTileUI = null;
+			gameScreen.activeSrcPiece = null;
+			// Assign prior move to undoMove into prevMove
+			gameScreen.prevMove = gameScreen.gog.getMoveHistory().get(lastMove.getTurnId() - 1);
+		}
 
 
-    if (moveType != -1 && isAnimate) {
-      if (moveType == 0) {
-        gameScreen.pieceUIManager.removePieceUI(srcTileId);
-        gameScreen.pieceUIManager.removePieceUI(tgtTileId);
-      } else if (moveType == 1) {
-        gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
-      } else if (moveType == 2) {
-        gameScreen.pieceUIManager.removePieceUI(tgtTileId);
-        gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
-      } else if (moveType == 3) {
-        // TODO animate aggressive lose on the other client
-        gameScreen.pieceUIManager.removePieceUI(srcTileId);
-      }
+		return true;
+	}
 
-      gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
-      gameScreen.prevMove = nextMove;
+	public boolean redoNextMove(boolean isAnimate) {
+		Move nextMove = gameScreen.gog.redoMove();
+		if (nextMove == null)
+			return false;
 
-      // TODO: Delete later //
-      // Gdx.app.log("MoveManager", "" + gameScreen.gog.printMoveHistory());
+		int srcTileId = nextMove.getSrcTileId();
+		int tgtTileId = nextMove.getTgtTileId();
+		final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
 
-      if (!gameScreen.gog.isRunning()) {
-        gameScreen.pieceUIManager.showAllPieceUI();
-      }
-    }
-    return true;
-  }
+		final int moveType = gameScreen.board.move(nextMove, true);
+
+		if (moveType != -1 && isAnimate) {
+			if (moveType == 0) {
+				gameScreen.pieceUIManager.removePieceUI(srcTileId);
+				gameScreen.pieceUIManager.removePieceUI(tgtTileId);
+			} else if (moveType == 1) {
+				gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
+			} else if (moveType == 2) {
+				gameScreen.pieceUIManager.removePieceUI(tgtTileId);
+				gameScreen.pieceUIManager.movePieceUI(srcTileId, tgtTileId);
+			} else if (moveType == 3) {
+				// TODO animate aggressive lose on the other client
+				gameScreen.pieceUIManager.removePieceUI(srcTileId);
+			}
+
+			gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
+			gameScreen.prevMove = nextMove;
+
+			// TODO: Delete later //
+			// Gdx.app.log(this.getClas().getName(), "" + gameScreen.gog.printMoveHistory());
+
+			if (!gameScreen.gog.isRunning()) {
+				gameScreen.pieceUIManager.showAllPieceUI();
+			}
+		}
+		return true;
+	}
 }
