@@ -17,44 +17,31 @@ public class PieceUI extends Actor {
 	public TileUI tileUI;
 	public String pieceRank;
 	public Alliance alliance;
-	private AtlasRegion pieceTexCurrent;
-	private AtlasRegion pieceTexShow;
+	private AtlasRegion pieceTexVisible;
 	private AtlasRegion pieceTexHidden;
-	public boolean isHidden;
+	public boolean isVisible = false;
 
 	/**
 	 * No-args constructor
 	 */
-	public PieceUI(TileUI tile, String pieceRank, Alliance alliance,
-			AtlasRegion pieceTexShow, AtlasRegion pieceTexHidden) {
+	public PieceUI(TileUI tile, String pieceRank, Alliance alliance) {
 		this.tileUI           = tile;
 		this.pieceRank        = pieceRank;
 		this.alliance         = alliance;
-		this.pieceTexShow     = pieceTexShow;
-		this.pieceTexHidden   = pieceTexHidden;
-		// Set current Texture displayed
-		this.pieceTexCurrent = pieceTexShow;
-		this.isHidden         = false;
 	}
 
-	public void showPieceDisplay() {
-		if (isHidden) {
-			pieceTexCurrent = pieceTexShow;
-			isHidden = false;
-		}
-	}
-
-	public void hidePieceDisplay() {
-		if (!isHidden) {
-			pieceTexCurrent = pieceTexHidden;
-			isHidden = true;
-		}
-	}
+	public void show() { if (!isVisible) { this.isVisible = true; } }
+	public void hide() { if (isVisible) { this.isVisible = false; } }
+	public void setPieceTexVisible(AtlasRegion tex) { this.pieceTexVisible = tex; }
+	public void setPieceTexHidden(AtlasRegion tex)  { this.pieceTexHidden = tex; }
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		Color color = getColor();
 		batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
-		batch.draw(pieceTexCurrent, getX(), getY(), getWidth(), getHeight());
+		if (isVisible)
+			batch.draw(pieceTexVisible, getX(), getY(), getWidth(), getHeight());
+		else
+			batch.draw(pieceTexHidden, getX(), getY(), getWidth(), getHeight());
 	}
 }

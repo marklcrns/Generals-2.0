@@ -24,7 +24,7 @@ public class MoveManager {
 	}
 
 	public void makeMove(int srcTileId, int tgtTileId, boolean isUpdateServer,
-			boolean isAiMove, boolean isAnimate) {
+	                     boolean isAiMove, boolean isAnimate) {
 		gameScreen.gog.clearMoveHistoryForward();
 
 		final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
@@ -61,7 +61,7 @@ public class MoveManager {
 					gameScreen.serverSocket.updateMove(newMove);
 			} else {
 				// Make AI Move
-				if (gameScreen.gog.isRunning() && isAiMove) {
+				if (gameScreen.gog.isPlaying() && isAiMove) {
 					if (gameScreen.gog.getCurrTurnMakerPlayer().getAlliance() ==
 							gameScreen.gog.getAI().getAIAlliance()) {
 						Move aiMove = gameScreen.gog.getAI().generateMove();
@@ -72,13 +72,12 @@ public class MoveManager {
 			}
 		} else {
 			// Move piece back to original position
-			gameScreen.pieceUIManager.animateFollow(srcPieceUI, srcTileUI.getX(), srcTileUI.getY(), 1);
+			gameScreen.pieceUIManager.animateRelapse(srcPieceUI, 1);
 		}
 
-		// TODO: Improve //
-		// if (!gameScreen.gog.isRunning()) {
-		//   gameScreen.pieceUIManager.showAllPieceUI();
-		// }
+		if (gameScreen.gog.isGameOver()) {
+		  gameScreen.pieceUIManager.showAllPieceUI();
+		}
 	}
 
 	public boolean undoLastMove(boolean isAnimate) {
@@ -94,13 +93,13 @@ public class MoveManager {
 			if (moveType == 0) {
 				gameScreen.pieceUIManager.generatePieceUI(srcTileId);
 				gameScreen.pieceUIManager.generatePieceUI(tgtTileId);
-				gameScreen.tilesUI.get(tgtTileId).getPieceUI().hidePieceDisplay();
+				gameScreen.tilesUI.get(tgtTileId).getPieceUI().hide();
 			} else if (moveType == 1) {
 				gameScreen.pieceUIManager.movePieceUI(tgtTileId, srcTileId);
 			} else if (moveType == 2) {
 				gameScreen.pieceUIManager.movePieceUI(tgtTileId, srcTileId);
 				gameScreen.pieceUIManager.generatePieceUI(tgtTileId);
-				gameScreen.tilesUI.get(tgtTileId).getPieceUI().hidePieceDisplay();
+				gameScreen.tilesUI.get(tgtTileId).getPieceUI().hide();
 			} else if (moveType == 3) {
 				gameScreen.pieceUIManager.generatePieceUI(srcTileId);
 			}
@@ -150,10 +149,35 @@ public class MoveManager {
 			// TODO: Delete later //
 			// Gdx.app.log(this.getClas().getName(), "" + gameScreen.gog.printMoveHistory());
 
-			if (!gameScreen.gog.isRunning()) {
+			if (!gameScreen.gog.isPlaying()) {
 				gameScreen.pieceUIManager.showAllPieceUI();
 			}
 		}
 		return true;
 	}
+
+	public void relocate(int srcTileId, int tgtTileId, boolean isUpdateServer,
+	                     boolean isAnimate) {
+
+		final TileUI srcTileUI = gameScreen.tilesUI.get(srcTileId);
+		final PieceUI srcPieceUI = srcTileUI.getPieceUI();
+
+		if (gameScreen.board.movePiece(srcTileId, tgtTileId)) {
+			if (isAnimate) {
+				gameScreen.pieceUIManager.relocatePieceUI(srcTileId, tgtTileId);
+			}
+		} else {
+			gameScreen.pieceUIManager.animateRelapse(srcPieceUI, 1);
+		}
+
+		gameScreen.activeTileUI = null; // Remove old origin TileUI highlight
+
+		// TODO: Update server //
+		// if (gameScreen.gameMode == GameMode.ONLINE) {
+		// 	if (isUpdateServer)
+		// 		gameScreen.serverSocket.updateMove(newMove);
+		// }
+
+	}
+
 }

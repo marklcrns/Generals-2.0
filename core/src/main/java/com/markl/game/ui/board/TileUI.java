@@ -64,13 +64,13 @@ public class TileUI extends Rectangle {
 		return this.pieceUI;
 	}
 
-	public boolean isTileUIOccupied() {
+	public boolean isOccupied() {
 		if (pieceUI != null)
 			return true;
 		return false;
 	}
 
-	public boolean isTileUIEmpty() {
+	public boolean isEmpty() {
 		if (pieceUI == null)
 			return true;
 		return false;

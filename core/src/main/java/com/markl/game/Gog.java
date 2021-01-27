@@ -20,13 +20,28 @@ import com.markl.game.engine.board.Player;
  */
 public class Gog {
 
+	/**
+	 * Enum class for Game states
+	 *
+	 * IDLE				  = -1
+	 * ARRANGE_MODE = 0
+	 * RUNNING      = 1
+	 * GAME_OVER    = 2
+	 */
+	public enum GameState {
+		IDLE(-1), ARRANGE_MODE(0), PLAYING(1), GAME_OVER(2);
+		private final int value;
+
+		GameState(final int value) { this.value = value; }
+		public int getValue() { return this.value; }
+	}
+
+	private GameState gameState;
 	private Alliance firstMoveMaker;        // First Player to make a move
 	private Alliance myAlliance;            // My Player alliance for TileUI orientation
 	private Player myPlayer;                // My Player
 	private Player enemyPlayer;             // Enemy Player
 	private Alliance currentTurnMaker;      // Current player to make move
-	private String blackPlayerName = "";    // Black player's name assigned when game initialized
-	private String whitePlayerName = "";    // White player's name assigned when game initialized
 	private Map<Integer, Move> moveHistory; // Move history
 	private Player gameWinner;              // Game winner
 
@@ -35,9 +50,7 @@ public class Gog {
 	private Player blackPlayer;             // Player instance that all contains all infos on black pieces
 	private Player whitePlayer;             // Player instance that all contains all infos on white pieces
 	private AI ai;
-	private boolean hasGameStarted = false; // Turns true when game started
-	private boolean hasGameEnded = false;   // Turns true when game started
-	private int currentTurnId = 0;              // Current turn of the game
+	private int currentTurnId = 0;          // Current turn of the game
 	private int blackPiecesCount = 0;
 	private int whitePiecesCount = 0;
 
@@ -70,13 +83,32 @@ public class Gog {
 		this.boardBuilder = new BoardBuilder(board);
 	}
 
+	public boolean enterGame() {
+		if (this.gameState == null) {
+			arrangePieces();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Enter ARRANGE_MODE
+	 */
+	public boolean arrangePieces() {
+		if (this.gameState != GameState.ARRANGE_MODE) {
+			this.gameState = GameState.ARRANGE_MODE;
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Start game.
 	 */
 	public boolean start() {
-		if (!this.hasGameStarted) {
+		if (this.gameState != GameState.PLAYING) {
+			this.gameState = GameState.PLAYING;
 			this.currentTurnId = 1;
-			this.hasGameStarted = true;
 			return true;
 		}
 		return false;
@@ -86,13 +118,13 @@ public class Gog {
 	 * Start game.
 	 */
 	public boolean start(Alliance firstMoveMaker) {
-		if (!this.hasGameStarted) {
+		if (this.gameState != GameState.PLAYING) {
 			if (this.currentTurnMaker == null) {
 				setFirstMoveMaker(firstMoveMaker);
 				this.currentTurnMaker = firstMoveMaker;
 			}
 			this.currentTurnId = 1;
-			this.hasGameStarted = true;
+			this.gameState = GameState.PLAYING;
 			return true;
 		}
 		return false;
@@ -111,12 +143,12 @@ public class Gog {
 	 */
 	public void endGame(Player winner) {
 		this.gameWinner = winner;
-		this.hasGameEnded = true;
+		this.gameState = GameState.GAME_OVER;
 	}
 
 	public void restoreGame() {
 		this.gameWinner = null;
-		this.hasGameEnded = false;
+		this.gameState = GameState.PLAYING;
 	}
 
 	public void setMyAlliance(Alliance myAlliance) {
@@ -172,12 +204,12 @@ public class Gog {
 
 	public void nextTurn() {
 		switchTurnMakerPlayer();
-		incrementTurnId();
+		incTurnId();
 	}
 
 	public void prevTurn() {
 		switchTurnMakerPlayer();
-		decrementTurnId();
+		decTurnId();
 	}
 
 	public Map<Integer, Move> getMoveHistory() {
@@ -245,12 +277,6 @@ public class Gog {
 			else
 				this.currentTurnMaker = Alliance.BLACK;
 		}
-	}
-
-	public boolean isRunning() {
-		if (this.hasGameStarted && !this.hasGameEnded)
-			return true;
-		return false;
 	}
 
 	public boolean hasUndo() {
@@ -350,27 +376,30 @@ public class Gog {
 		return this.ai;
 	}
 
-	public void decrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId--; }
-	public void incrementTurnId() { if (this.currentTurnId > 0) this.currentTurnId++; }
+	public void decTurnId() { if (this.currentTurnId > 0) this.currentTurnId--; }
+	public void incTurnId() { if (this.currentTurnId > 0) this.currentTurnId++; }
 
 	/** Accessor methods */
+	public boolean isIdle()        { if (this.gameState == GameState.IDLE) return true; return false; }
+	public boolean isArrangeMode() { if (this.gameState == GameState.ARRANGE_MODE) return true; return false; }
+	public boolean isPlaying()     { if (this.gameState == GameState.PLAYING) return true; return false; }
+	public boolean isGameOver()    { if (this.gameState == GameState.GAME_OVER) return true; return false; }
+
 	public int getCurrTurn()               { return this.currentTurnId; }
-	public Alliance getMyAlliance()        { return this.myAlliance; }
-	public Alliance getFirstMoveMaker()    { return this.firstMoveMaker; }
-	public Player getPlayerWinner()        { if (this.hasGameEnded) return this.gameWinner; else return null; }
+	public GameState getGameState()				 { return this.gameState; }
+	public Player getWinnerPlayer()        { if (isGameOver()) return this.gameWinner; else return null; }
 	public Player getMyPlayer()            { return this.myPlayer; }
 	public Player getEnemyPlayer()         { return this.enemyPlayer; }
-	public String getBlackPlayerName()     { return this.blackPlayerName; }
-	public String getWhitePlayerName()     { return this.whitePlayerName; }
-	public Alliance getCurrTurnMaker()     { return this.currentTurnMaker; }
 	public Player getCurrTurnMakerPlayer() { return getPlayer(this.currentTurnMaker); }
+	public Alliance getMyAlliance()        { return this.myAlliance; }
+	public Alliance getFirstMoveMaker()    { return this.firstMoveMaker; }
+	public Alliance getCurrTurnMaker()     { return this.currentTurnMaker; }
 	public Board getBoard()                { return this.board; }
 	public BoardBuilder getBoardBuilder()  { return this.boardBuilder; }
 
 	/** Modifier methods */
-	public void setBoard(Board board)           { this.board = board; }
-	public void setBlackPlayerName(String name) { this.blackPlayerName = name; }
-	public void setWhitePlayerName(String name) { this.whitePlayerName = name; }
+	public void setBoard(Board board)      { this.board = board; }
+	public void setGameState(GameState gs) { this.gameState = gs; }
 
 	@Override
 	protected Object clone() throws CloneNotSupportedException {

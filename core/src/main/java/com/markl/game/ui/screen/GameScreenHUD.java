@@ -21,6 +21,7 @@ import com.markl.game.util.Constants;
  */
 public class GameScreenHUD {
 
+	private Label startLbl;
 	private Label undoLbl;
 	private Label redoLbl;
 	private Label aiDebugLbl;
@@ -34,15 +35,47 @@ public class GameScreenHUD {
 	public Table createGameHUD() {
 		Table table = new Table();
 		LabelStyle labelStyle = new LabelStyle(gameScreen.app.font, Color.WHITE);
+		startLbl = new Label("START", labelStyle);
 		undoLbl = new Label("UNDO", labelStyle);
 		redoLbl = new Label("REDO", labelStyle);
 		aiDebugLbl = new Label("AI DEBUG", labelStyle);
 
+		startLbl.setAlignment(Align.center);
 		undoLbl.setAlignment(Align.center);
+		undoLbl.setVisible(false);
 		redoLbl.setAlignment(Align.center);
+		redoLbl.setVisible(false);
+		aiDebugLbl.setAlignment(Align.center);
+		aiDebugLbl.setVisible(false);
+
+		startLbl.addListener(new ClickListener() {
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				undoLbl.setColor(Color.YELLOW);
+				super.enter(event, x, y, pointer, fromActor);
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				undoLbl.setColor(Color.WHITE);
+				super.exit(event, x, y, pointer, toActor);
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				gameScreen.activeTileUI = null;
+				gameScreen.destTileUI = null;
+				gameScreen.gog.start();
+
+				startLbl.setVisible(false);
+				undoLbl.setVisible(true);
+				redoLbl.setVisible(true);
+				aiDebugLbl.setVisible(true);
+				super.touchUp(event, x, y, pointer, button);
+			}
+		});
 
 		undoLbl.addListener(new ClickListener() {
-
 			@Override
 			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
 				undoLbl.setColor(Color.YELLOW);
@@ -63,7 +96,6 @@ public class GameScreenHUD {
 		});
 
 		redoLbl.addListener(new ClickListener() {
-
 			@Override
 			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
 				redoLbl.setColor(Color.YELLOW);
@@ -84,7 +116,6 @@ public class GameScreenHUD {
 		});
 
 		aiDebugLbl.addListener(new ClickListener() {
-
 			@Override
 			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
 				aiDebugLbl.setColor(Color.YELLOW);
@@ -109,6 +140,7 @@ public class GameScreenHUD {
 		});
 
 		table.row();
+		table.add(startLbl).padRight(10).fillX();
 		table.add(undoLbl).padRight(10).fillX();
 		table.add(redoLbl).padRight(10).fillX();
 		table.add(aiDebugLbl).padRight(10).fillX();

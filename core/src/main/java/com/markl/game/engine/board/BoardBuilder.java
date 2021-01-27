@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.markl.game.engine.board.pieces.Captain;
 import com.markl.game.engine.board.pieces.Colonel;
 import com.markl.game.engine.board.pieces.Flag;
@@ -370,13 +371,12 @@ public class BoardBuilder {
 	 *
 	 * @param isDebug toggles debug mode
 	 */
-	public void build(boolean isDebugMode) {
+	public void build(boolean isMissingAllowed) {
 		// Checks if all pieces has been set
-		if ((this.boardConfig.size() == 42 || this.boardConfig.size() == 21) &&
-				!isDebugMode) {
-			System.out.println("build() FAILED: Missing piece(s).");
+		if ((this.boardConfig.size() == 42 || this.boardConfig.size() == 21) && !isMissingAllowed) {
+			Gdx.app.log(this.getClass().getName(), "ERROR: Missing piece(s)");
 			return;
-				}
+		}
 
 		this.board.clearBoard();
 		List<Tile> tiles = this.board.getAllTiles();
@@ -387,9 +387,11 @@ public class BoardBuilder {
 			if (tiles.get(entry.getKey()).isTileEmpty()) {
 				tiles.get(entry.getKey()).insertPiece(entry.getValue());
 			}
-		};
+		}
+
 		this.board.getGog().setBlackPiecesCount(this.blackPiecesCount);
-		this.board.getGog().setWhitePiecesCount(this.whitePiecesCount); }
+		this.board.getGog().setWhitePiecesCount(this.whitePiecesCount);
+	}
 
 	/**
 	 * Sets piece in designated Tile id.

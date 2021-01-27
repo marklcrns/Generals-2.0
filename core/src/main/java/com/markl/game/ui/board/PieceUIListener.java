@@ -38,11 +38,7 @@ public class PieceUIListener extends ClickListener {
 
 	@Override
 	public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-		if (isPieceTouchable() && gameScreen.activeTileUI != pieceUI.tileUI) {
-			makePieceUIActive();
-		} else if (gameScreen.activeTileUI == pieceUI.tileUI){
-			makePieceUIInactive();
-		}
+		toggleTileUIActivity();
 		return super.touchDown(event, x, y, pointer, button);
 	}
 
@@ -50,9 +46,10 @@ public class PieceUIListener extends ClickListener {
 	public void touchDragged(InputEvent event, float x, float y, int pointer) {
 		super.touchDragged(event, x, y, pointer);
 		if (isPieceTouchable()) {
-			if (gameScreen.activeTileUI != pieceUI.tileUI) {
+
+			if (!isTileUIActive())
 				makePieceUIActive();
-			}
+
 			// Set click/touch position relative to world coordinates
 			mousePos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 			gameScreen.app.camera.unproject(mousePos); // mousePos is now in world coordinates
@@ -77,13 +74,19 @@ public class PieceUIListener extends ClickListener {
 			pieceUIManager.animateFollow(pieceUI,
 					mousePos.x - pieceUI.getWidth() * 0.5f,
 					mousePos.y - pieceUI.getHeight() * 0.5f,
-					0.5f); // Make piece transparent
+					0.5f); // Tranparency
 
 			gameScreen.destTileUI = null;
 
 			// TODO optimize to lookup only the closest TileUI(s)
 			for (int i = 0; i < gameScreen.tilesUI.size(); i++) {
 				TileUI tileUI = gameScreen.tilesUI.get(i);
+
+				if (gameScreen.gog.isArrangeMode() &&
+				    gameScreen.board.getTile(i).getTerritory() !=
+				    gameScreen.gog.getCurrTurnMaker()) {
+					continue;
+				}
 
 				// Get center coords of tile
 				final float tX  = TILE_SIZE * 0.5f + tileUI.x;
@@ -120,10 +123,13 @@ public class PieceUIListener extends ClickListener {
 	public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 		super.touchUp(event, x, y, pointer, button);
 		if (isPieceTouchable()) {
-			if (gameScreen.destTileUI != null) {
-				moveManager.makeMove(pieceUI.tileUI.getTileId(), gameScreen.destTileUI.getTileId(), true, true, true);
+			if (gameScreen.destTileUI == null) {
+				pieceUIManager.animateRelapse(pieceUI, 1);
 			} else {
-				pieceUIManager.animateFollow(pieceUI, pieceUI.tileUI.x, pieceUI.tileUI.y, 1);
+				if (gameScreen.gog.isPlaying())
+					moveManager.makeMove(pieceUI.tileUI.getTileId(), gameScreen.destTileUI.getTileId(), true, true, true);
+				else if (gameScreen.gog.isArrangeMode())
+					moveManager.relocate(pieceUI.tileUI.getTileId(), gameScreen.destTileUI.getTileId(), true, true);
 			}
 			clearSnapTileHighlights();
 			// Clear destination tile and active piece
@@ -134,13 +140,25 @@ public class PieceUIListener extends ClickListener {
 	}
 
 	public boolean isPieceTouchable() {
-		if (isOwnedByTurnMakerPlayer() && gameScreen.gog.isRunning()) {
+		if (isOwnedByTurnMakerPlayer() && (gameScreen.gog.isPlaying() || gameScreen.gog.isArrangeMode())) {
 			if (gameScreen.gameMode == GameMode.ONLINE)
 				return isCurrentTurnMaker();
 			else
 				return true;
 		}
 		return false;
+	}
+
+	public boolean isTileUIActive() {
+		return gameScreen.activeTileUI == pieceUI.tileUI;
+	}
+
+	public void toggleTileUIActivity() {
+		if (isPieceTouchable() && !isTileUIActive()) {
+			makePieceUIActive();
+		} else if (isTileUIActive()) {
+			makePieceUIInactive();
+		}
 	}
 
 	public void makePieceUIActive() {

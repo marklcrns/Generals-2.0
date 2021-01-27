@@ -98,7 +98,7 @@ public class AIMinimax extends AI {
 	}
 
 	public void placeBounty(Move move, boolean isAiTurn) {
-		if (move != null && gog.hasUndo() && gog.isRunning()) {
+		if (move != null && gog.hasUndo() && gog.isPlaying()) {
 			// Place bounty on AGGRESSIVE_LOSE
 			if (move.getMoveType().getValue() == 3 && isAiTurn) {
 
@@ -233,7 +233,7 @@ public class AIMinimax extends AI {
 				Gdx.app.log(this.getClass().getName(), "move: " + nextMove);
 				Gdx.app.log(this.getClass().getName(), "max-before: " + max);
 
-				if (gog.isRunning()) {
+				if (gog.isPlaying()) {
 					max = Math.max(max, minimax(gog, gs, depth - 1, !isMaximizing));
 				}
 
@@ -254,7 +254,7 @@ public class AIMinimax extends AI {
 				Gdx.app.log(this.getClass().getName(), "move: " + nextMove);
 				Gdx.app.log(this.getClass().getName(), "min-before: " + min);
 
-				if (gog.isRunning()) {
+				if (gog.isPlaying()) {
 					min = Math.min(min, minimax(gog, gs, depth - 1, isMaximizing));
 				}
 

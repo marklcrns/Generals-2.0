@@ -30,10 +30,7 @@ public class Move {
 		INVALID(-1), DRAW(0), NORMAL(1), AGGRESSIVE_WIN(2), AGGRESSIVE_LOSE(3);
 		private final int value;
 
-		MoveType(final int value) {
-			this.value = value;
-		}
-
+		MoveType(final int value) { this.value = value; }
 		public int getValue() { return this.value; }
 	}
 
