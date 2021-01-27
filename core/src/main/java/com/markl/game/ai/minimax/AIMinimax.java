@@ -178,7 +178,7 @@ public class AIMinimax extends AI {
 
 	public Move minimaxRoot(Gog gog, GameScreen gs, int depth, boolean isMaximizing) {
 		this.nodeCount = 0;
-		int bestScore = -9999;
+		int bestScore = Integer.MIN_VALUE;
 		Move bestMove = null;
 
 		List<Move> legalMoves = gog.getBoard().getLegalMoves();
@@ -222,7 +222,7 @@ public class AIMinimax extends AI {
 		List<Move> legalMoves = gog.getBoard().getLegalMoves();
 
 		if (isMaximizing) {
-			int max = -9999;
+			int max = Integer.MIN_VALUE;
 			for (int i = 0; i < legalMoves.size(); i++) {
 				this.nodeCount++;
 				Move nextMove = legalMoves.get(i);
@@ -243,7 +243,7 @@ public class AIMinimax extends AI {
 			}
 			return max;
 		} else {
-			int min = 9999;
+			int min = Integer.MAX_VALUE;
 			for (int i = 0; i < legalMoves.size(); i++) {
 				this.nodeCount++;
 				Move nextMove = legalMoves.get(i);
