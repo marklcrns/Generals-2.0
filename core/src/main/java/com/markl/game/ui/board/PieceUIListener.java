@@ -79,7 +79,8 @@ public class PieceUIListener extends ClickListener {
 			gameScreen.destTileUI = null;
 
 			// TODO optimize to lookup only the closest TileUI(s)
-			for (int i = 0; i < gameScreen.tilesUI.size(); i++) {
+			int tilesUISize = gameScreen.tilesUI.size();
+			for (int i = 0; i < tilesUISize; i++) {
 				TileUI tileUI = gameScreen.tilesUI.get(i);
 
 				if (gameScreen.gog.isArrangeMode() &&

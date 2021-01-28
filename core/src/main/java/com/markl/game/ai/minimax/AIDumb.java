@@ -36,6 +36,7 @@ public class AIDumb extends AI {
 		int randomMyPieceIdx;
 		Map<Integer, Move> candidateMoves;
 		List<Integer> legalMoves = new ArrayList<Integer>();
+		int legalMovesSize = legalMoves.size();
 
 		do {
 			// Get random piece to move
@@ -47,7 +48,7 @@ public class AIDumb extends AI {
 				if (move.getMoveType() != MoveType.INVALID)
 					legalMoves.add(direction);
 			});
-		} while (legalMoves.size() == 0);
+		} while (legalMovesSize == 0);
 
 		// Pick random legal move and return
 		int randomMoveIdx = Utils.getRandomInt(0, legalMoves.size() - 1);

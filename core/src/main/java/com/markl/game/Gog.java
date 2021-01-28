@@ -221,8 +221,9 @@ public class Gog {
 
 	public String printMoveHistory() {
 		String moveHistoryStr = "";
+		int historySize = moveHistory.size();
 
-		for (int i = 1; i < moveHistory.size() + 1; i++) {
+		for (int i = 1; i < historySize + 1; i++) {
 			if (i == currentTurnId)
 				moveHistoryStr += "\n-> " + moveHistory.get(i).toString();
 			else
@@ -259,7 +260,8 @@ public class Gog {
 	}
 
 	public void clearMoveHistoryForward() {
-		for (int i = moveHistory.size(); i >= currentTurnId; i--) {
+		int historySize = moveHistory.size();
+		for (int i = historySize; i >= currentTurnId; i--) {
 			Move removedMove = moveHistory.remove(i);
 			// TODO: DELETE ME //
 			// Gdx.app.log("Removed Move", removedMove.toString());

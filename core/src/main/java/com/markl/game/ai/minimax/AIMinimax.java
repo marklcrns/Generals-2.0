@@ -183,8 +183,9 @@ public class AIMinimax extends AI {
 		Move bestMove = null;
 
 		List<Move> legalMoves = gog.getBoard().getLegalMoves();
+		int legalMovesSize = legalMoves.size();
 
-		for (int i = 0; i < legalMoves.size(); i++) {
+		for (int i = 0; i < legalMovesSize; i++) {
 			this.nodeCount++;
 			Move nextMove = legalMoves.get(i);
 			makeHypotheticalMove(nextMove, gs);
@@ -221,10 +222,11 @@ public class AIMinimax extends AI {
 			return evaluateBoard();
 
 		List<Move> legalMoves = gog.getBoard().getLegalMoves();
+		int legalMovesSize = legalMoves.size();
 
 		if (isMaximizing) {
 			int max = Integer.MIN_VALUE;
-			for (int i = 0; i < legalMoves.size(); i++) {
+			for (int i = 0; i < legalMovesSize; i++) {
 				this.nodeCount++;
 				Move nextMove = legalMoves.get(i);
 				makeHypotheticalMove(nextMove, gs);
@@ -245,7 +247,7 @@ public class AIMinimax extends AI {
 			return max;
 		} else {
 			int min = Integer.MAX_VALUE;
-			for (int i = 0; i < legalMoves.size(); i++) {
+			for (int i = 0; i < legalMovesSize; i++) {
 				this.nodeCount++;
 				Move nextMove = legalMoves.get(i);
 				makeHypotheticalMove(nextMove, gs);
