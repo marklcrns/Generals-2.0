@@ -210,6 +210,28 @@ public class PieceUIManager {
 		}
 	}
 
+	public void hideMyPieceUI() {
+		Iterator<TileUI> iterator = gameScreen.tilesUI.iterator();
+		while (iterator.hasNext()) {
+			TileUI tileUI = iterator.next();
+			if (tileUI.isOccupied()) {
+				boolean isMyPiece = gameScreen.gog.getMyPlayer().getAlliance() == tileUI.getPieceUI().alliance;
+				if (isMyPiece) tileUI.getPieceUI().hide();
+			}
+		}
+	}
+
+	public void hideEnemyPieceUI() {
+		Iterator<TileUI> iterator = gameScreen.tilesUI.iterator();
+		while (iterator.hasNext()) {
+			TileUI tileUI = iterator.next();
+			if (tileUI.isOccupied()) {
+				boolean isEnemyPiece = gameScreen.gog.getEnemyPlayer().getAlliance() == tileUI.getPieceUI().alliance;
+				if (isEnemyPiece) tileUI.getPieceUI().hide();
+			}
+		}
+	}
+
 	public void toggleAllPieceUI() {
 		Iterator<TileUI> iterator = gameScreen.tilesUI.iterator();
 		while (iterator.hasNext()) {

@@ -155,6 +155,7 @@ public class AIMinimax extends AI {
 			// Gdx.app.log(this.getClass().getName(), "AFTER: Evaluate Score " + gog.getCurrTurnMaker() + ": " + evaluateBoard());
 			// System.out.println("");
 
+			// TODO: Delete Me //
 			// // Print pieces with bounty
 			// Gdx.app.log(this.getClass().getName(), "Bounty Count: " + bountyMap.size());
 			// Iterator<Tile> iter = gog.getBoard().getAllTiles().iterator();

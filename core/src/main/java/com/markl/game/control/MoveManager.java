@@ -112,6 +112,10 @@ public class MoveManager {
 			gameScreen.activeSrcPiece = null;
 			// Assign prior move to undoMove into prevMove
 			gameScreen.prevMove = gameScreen.gog.getMoveHistory().get(lastMove.getTurnId() - 1);
+
+			if (gameScreen.gog.isPlaying()) {
+				gameScreen.pieceUIManager.hideEnemyPieceUI();
+			}
 		}
 
 
@@ -149,7 +153,7 @@ public class MoveManager {
 			// TODO: Delete later //
 			// Gdx.app.log(this.getClas().getName(), "" + gameScreen.gog.printMoveHistory());
 
-			if (!gameScreen.gog.isPlaying()) {
+			if (gameScreen.gog.isGameOver()) {
 				gameScreen.pieceUIManager.showAllPieceUI();
 			}
 		}
