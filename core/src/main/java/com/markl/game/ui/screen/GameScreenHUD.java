@@ -21,149 +21,149 @@ import com.markl.game.util.Constants;
  */
 public class GameScreenHUD {
 
-	private Label startLbl;
-	private Label undoLbl;
-	private Label redoLbl;
-	private Label aiDebugLbl;
+  private Label startLbl;
+  private Label undoLbl;
+  private Label redoLbl;
+  private Label aiDebugLbl;
 
-	private GameScreen gameScreen;
+  private GameScreen gameScreen;
 
-	public GameScreenHUD(GameScreen gameScreen) {
-		this.gameScreen = gameScreen;
-	}
+  public GameScreenHUD(GameScreen gameScreen) {
+    this.gameScreen = gameScreen;
+  }
 
-	public Table createGameHUD() {
-		Table table = new Table();
-		LabelStyle labelStyle = new LabelStyle(gameScreen.app.font, Color.WHITE);
-		startLbl = new Label("START", labelStyle);
-		undoLbl = new Label("UNDO", labelStyle);
-		redoLbl = new Label("REDO", labelStyle);
-		aiDebugLbl = new Label("AI DEBUG", labelStyle);
+  public Table createGameHUD() {
+    Table table = new Table();
+    LabelStyle labelStyle = new LabelStyle(gameScreen.app.font, Color.WHITE);
+    startLbl = new Label("START", labelStyle);
+    undoLbl = new Label("UNDO", labelStyle);
+    redoLbl = new Label("REDO", labelStyle);
+    aiDebugLbl = new Label("AI DEBUG", labelStyle);
 
-		startLbl.setAlignment(Align.center);
-		undoLbl.setAlignment(Align.center);
-		undoLbl.setVisible(false);
-		redoLbl.setAlignment(Align.center);
-		redoLbl.setVisible(false);
-		aiDebugLbl.setAlignment(Align.center);
-		aiDebugLbl.setVisible(false);
+    startLbl.setAlignment(Align.center);
+    undoLbl.setAlignment(Align.center);
+    undoLbl.setVisible(false);
+    redoLbl.setAlignment(Align.center);
+    redoLbl.setVisible(false);
+    aiDebugLbl.setAlignment(Align.center);
+    aiDebugLbl.setVisible(false);
 
-		startLbl.addListener(new ClickListener() {
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				undoLbl.setColor(Color.YELLOW);
-				super.enter(event, x, y, pointer, fromActor);
-			}
+    startLbl.addListener(new ClickListener() {
+      @Override
+      public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+        undoLbl.setColor(Color.YELLOW);
+        super.enter(event, x, y, pointer, fromActor);
+      }
 
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-				undoLbl.setColor(Color.WHITE);
-				super.exit(event, x, y, pointer, toActor);
-			}
+      @Override
+      public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+        undoLbl.setColor(Color.WHITE);
+        super.exit(event, x, y, pointer, toActor);
+      }
 
-			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				gameScreen.activeTileUI = null;
-				gameScreen.destTileUI = null;
-				gameScreen.gog.start();
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        gameScreen.activeTileUI = null;
+        gameScreen.destTileUI = null;
+        gameScreen.gog.start();
 
-				startLbl.setVisible(false);
-				undoLbl.setVisible(true);
-				redoLbl.setVisible(true);
-				aiDebugLbl.setVisible(true);
-				super.touchUp(event, x, y, pointer, button);
-			}
-		});
+        startLbl.setVisible(false);
+        undoLbl.setVisible(true);
+        redoLbl.setVisible(true);
+        aiDebugLbl.setVisible(true);
+        super.touchUp(event, x, y, pointer, button);
+      }
+    });
 
-		undoLbl.addListener(new ClickListener() {
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				undoLbl.setColor(Color.YELLOW);
-				super.enter(event, x, y, pointer, fromActor);
-			}
+    undoLbl.addListener(new ClickListener() {
+      @Override
+      public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+        undoLbl.setColor(Color.YELLOW);
+        super.enter(event, x, y, pointer, fromActor);
+      }
 
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-				undoLbl.setColor(Color.WHITE);
-				super.exit(event, x, y, pointer, toActor);
-			}
+      @Override
+      public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+        undoLbl.setColor(Color.WHITE);
+        super.exit(event, x, y, pointer, toActor);
+      }
 
-			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				gameScreen.moveManager.undoLastMove(true);
-				super.touchUp(event, x, y, pointer, button);
-			}
-		});
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        gameScreen.moveManager.undoLastMove(true);
+        super.touchUp(event, x, y, pointer, button);
+      }
+    });
 
-		redoLbl.addListener(new ClickListener() {
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				redoLbl.setColor(Color.YELLOW);
-				super.enter(event, x, y, pointer, fromActor);
-			}
+    redoLbl.addListener(new ClickListener() {
+      @Override
+      public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+        redoLbl.setColor(Color.YELLOW);
+        super.enter(event, x, y, pointer, fromActor);
+      }
 
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-				redoLbl.setColor(Color.WHITE);
-				super.exit(event, x, y, pointer, toActor);
-			}
+      @Override
+      public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+        redoLbl.setColor(Color.WHITE);
+        super.exit(event, x, y, pointer, toActor);
+      }
 
-			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				gameScreen.moveManager.redoNextMove(true);
-				super.touchUp(event, x, y, pointer, button);
-			}
-		});
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        gameScreen.moveManager.redoNextMove(true);
+        super.touchUp(event, x, y, pointer, button);
+      }
+    });
 
-		aiDebugLbl.addListener(new ClickListener() {
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				aiDebugLbl.setColor(Color.YELLOW);
-				super.enter(event, x, y, pointer, fromActor);
-			}
+    aiDebugLbl.addListener(new ClickListener() {
+      @Override
+      public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+        aiDebugLbl.setColor(Color.YELLOW);
+        super.enter(event, x, y, pointer, fromActor);
+      }
 
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-				aiDebugLbl.setColor(Color.WHITE);
-				super.exit(event, x, y, pointer, toActor);
-			}
+      @Override
+      public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+        aiDebugLbl.setColor(Color.WHITE);
+        super.exit(event, x, y, pointer, toActor);
+      }
 
-			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				Stage stage = gameScreen.stage;
-				if (!stage.getActors().contains(gameScreen.aiDebuggerWin, true))
-					gameScreen.stage.addActor(gameScreen.aiDebuggerWin);
-				else
-					gameScreen.aiDebuggerWin.addAction(Actions.removeActor());
-				super.touchUp(event, x, y, pointer, button);
-			}
-		});
+      @Override
+      public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+        Stage stage = gameScreen.stage;
+        if (!stage.getActors().contains(gameScreen.aiDebuggerWin, true))
+          gameScreen.stage.addActor(gameScreen.aiDebuggerWin);
+        else
+          gameScreen.aiDebuggerWin.addAction(Actions.removeActor());
+        super.touchUp(event, x, y, pointer, button);
+      }
+    });
 
-		table.row();
-		table.add(startLbl).padRight(10).fillX();
-		table.add(undoLbl).padRight(10).fillX();
-		table.add(redoLbl).padRight(10).fillX();
-		table.add(aiDebugLbl).padRight(10).fillX();
+    table.row();
+    table.add(startLbl).padRight(10).fillX();
+    table.add(undoLbl).padRight(10).fillX();
+    table.add(redoLbl).padRight(10).fillX();
+    table.add(aiDebugLbl).padRight(10).fillX();
 
-		return table;
-	}
+    return table;
+  }
 
-	public void rebuildGameHUD() {
-		Table hud = createGameHUD();
-		Container<Table> tableContainer = new Container<Table>();
+  public void rebuildGameHUD() {
+    Table hud = createGameHUD();
+    Container<Table> tableContainer = new Container<Table>();
 
-		float screenWidth = Constants.VIEWPORT_WIDTH;
-		float screenHeight = Constants.VIEWPORT_HEIGHT;
+    float screenWidth = Constants.VIEWPORT_WIDTH;
+    float screenHeight = Constants.VIEWPORT_HEIGHT;
 
-		float containerWidth = screenWidth * 0.6f;
-		float containerHeight = screenHeight * 0.1f;
+    float containerWidth = screenWidth * 0.6f;
+    float containerHeight = screenHeight * 0.1f;
 
-		tableContainer.setSize(containerWidth, containerHeight);
-		tableContainer.setPosition((screenWidth - containerWidth) / 2.0f, (screenHeight - containerHeight));
-		tableContainer.fillX();
+    tableContainer.setSize(containerWidth, containerHeight);
+    tableContainer.setPosition((screenWidth - containerWidth) / 2.0f, (screenHeight - containerHeight));
+    tableContainer.fillX();
 
-		tableContainer.setActor(hud);
-		gameScreen.stage.addActor(tableContainer);
-	}
+    tableContainer.setActor(hud);
+    gameScreen.stage.addActor(tableContainer);
+  }
 
 }

@@ -9,13 +9,13 @@ package com.markl.game.engine.board;
  * Date: Sep 24, 2020
  */
 public enum Alliance {
-	WHITE("WHITE"),
-	BLACK("BLACK");
-	final String value;
+  WHITE("WHITE"),
+  BLACK("BLACK");
+  final String value;
 
-	Alliance(final String value) {
-		this.value = value;
-	}
+  Alliance(final String value) {
+    this.value = value;
+  }
 
-	public String getValue() { return this.value; }
+  public String getValue() { return this.value; }
 }

@@ -10,75 +10,75 @@ import com.badlogic.gdx.math.Rectangle;
  */
 public class TileUI extends Rectangle {
 
-	private int id;
-	private PieceUI pieceUI;
+  private int id;
+  private PieceUI pieceUI;
 
-	/**
-	 * No-argument constructor
-	 */
-	public TileUI() {}
+  /**
+   * No-argument constructor
+   */
+  public TileUI() {}
 
-	/**
-	 * Constructor function that takes in tileId and Rectangle params.
-	 *
-	 * @param tileId
-	 */
-	public TileUI (int tileId, float x, float y, float width, float height) {
-		super(x, y, width, height);
-		this.id = tileId;
-	}
+  /**
+   * Constructor function that takes in tileId and Rectangle params.
+   *
+   * @param tileId
+   */
+  public TileUI (int tileId, float x, float y, float width, float height) {
+    super(x, y, width, height);
+    this.id = tileId;
+  }
 
-	/**
-	 * Constructor function that takes in tileId, Rectangle params and pieceUI.
-	 *
-	 * @param tileId
-	 */
-	public TileUI (int tileId, float x, float y,
-			float width, float height, PieceUI pieceUI)
-	{
-		super(x, y, width, height);
-		this.id = tileId;
-		this.pieceUI = pieceUI;
-	}
+  /**
+   * Constructor function that takes in tileId, Rectangle params and pieceUI.
+   *
+   * @param tileId
+   */
+  public TileUI (int tileId, float x, float y,
+      float width, float height, PieceUI pieceUI)
+  {
+    super(x, y, width, height);
+    this.id = tileId;
+    this.pieceUI = pieceUI;
+  }
 
-	public int getTileId() {
-		return this.id;
-	}
+  public int getTileId() {
+    return this.id;
+  }
 
-	public void setPieceUI(PieceUI pieceUI) {
-		pieceUI.tileUI = this;
-		this.pieceUI = pieceUI;
-	}
+  public void setPieceUI(PieceUI pieceUI) {
+    pieceUI.tileUI = this;
+    this.pieceUI = pieceUI;
+  }
 
-	public void clearPieceUI() {
-		if (pieceUI != null) {
+  public void clearPieceUI() {
+    if (pieceUI != null) {
 
-			if (pieceUI.tileUI == this)
-				pieceUI.tileUI = null;
+      if (pieceUI.tileUI == this)
+        pieceUI.tileUI = null;
 
-			this.pieceUI = null;
-		}
-	}
+      this.pieceUI = null;
+    }
+  }
 
-	public PieceUI getPieceUI() {
-		return this.pieceUI;
-	}
+  public PieceUI getPieceUI() {
+    return this.pieceUI;
+  }
 
-	public boolean isOccupied() {
-		if (pieceUI != null)
-			return true;
-		return false;
-	}
+  public boolean isOccupied() {
+    if (pieceUI != null)
+      return true;
+    return false;
+  }
 
-	public boolean isEmpty() {
-		if (pieceUI == null)
-			return true;
-		return false;
-	}
+  public boolean isEmpty() {
+    if (pieceUI == null)
+      return true;
+    return false;
+  }
 
-	@Override
-	public String toString() {
-		return "id=" + id + ";x=" + this.x + ";y=" + this.y +
-			";width=" + this.width + ";height=" + this.height;
-	}
+  @Override
+  public String toString() {
+    return "id=" + id + ";x=" + this.x + ";y=" + this.y +
+      ";width=" + this.width + ";height=" + this.height;
+  }
 }

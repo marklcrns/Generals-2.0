@@ -13,18 +13,18 @@ import com.markl.game.ui.screen.GameScreen;
  */
 public class AiDebuggerWindow extends Window {
 
-	private GameScreen gameScreen;
+  private GameScreen gameScreen;
 
-	public AiDebuggerWindow(String title, Skin skin, GameScreen gameScreen) {
-		super(title, skin);
-		this.gameScreen = gameScreen;
-	}
+  public AiDebuggerWindow(String title, Skin skin, GameScreen gameScreen) {
+    super(title, skin);
+    this.gameScreen = gameScreen;
+  }
 
-	@Override
-	public void draw(Batch batch, float parentAlpha) {
-		// gameScreen.drawBoard();
-		// gameScreen.drawTileHighlights();
-		super.draw(batch, parentAlpha);
-	}
+  @Override
+  public void draw(Batch batch, float parentAlpha) {
+    // gameScreen.drawBoard();
+    // gameScreen.drawTileHighlights();
+    super.draw(batch, parentAlpha);
+  }
 
 }
